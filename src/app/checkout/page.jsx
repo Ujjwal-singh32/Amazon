@@ -1,57 +1,61 @@
 "use client";
-import React,{ useState } from 'react';
-import { Check, Truck, CreditCard, DollarSign, Gift, Building2, Banknote, Wallet } from 'lucide-react';
-
+import React, { useState } from "react";
+import {
+  Check,
+  Truck,
+  CreditCard,
+  DollarSign,
+  Gift,
+  Building2,
+  Banknote,
+  Wallet,
+} from "lucide-react";
+import Navbar from "@/components/Navbar";
 export default function AmazonCheckout() {
-  const [selectedPayment, setSelectedPayment] = useState('credit');
-  const [orderType, setOrderType] = useState('group');
-  const [packaging, setPackaging] = useState('eco');
+  const [selectedPayment, setSelectedPayment] = useState("credit");
+  const [orderType, setOrderType] = useState("group");
+  const [packaging, setPackaging] = useState("eco");
 
   const orderItems = [
     {
       id: 1,
-      name: 'Sony WH-1000XM4 Wireless Headphones',
+      name: "Sony WH-1000XM4 Wireless Headphones",
       price: 349.99,
       quantity: 1,
-      image: '/api/placeholder/60/60'
+      image: "/api/placeholder/60/60",
     },
     {
       id: 2,
-      name: 'iPhone 15 Pro Case',
+      name: "iPhone 15 Pro Case",
       price: 29.99,
       quantity: 1,
-      image: '/api/placeholder/60/60'
-    }
+      image: "/api/placeholder/60/60",
+    },
   ];
 
   const subtotal = 379.98;
   const shipping = 9.99;
   const groupDiscount = -5.99;
-  const tax = 30.40;
+  const tax = 30.4;
   const total = 404.39;
 
   const paymentMethods = [
-    { id: 'credit', label: 'Credit or debit card', icon: CreditCard, details: 'Visa •••• 1234 | Expires 12/25' },
-    { id: 'paypal', label: 'PayPal', icon: DollarSign, details: null },
-    { id: 'amazon', label: 'Amazon Pay', icon: Wallet, details: null },
-    { id: 'gift', label: 'Gift Card', icon: Gift, details: null },
-    { id: 'bank', label: 'Bank Transfer', icon: Building2, details: null },
-    { id: 'cash', label: 'Cash on Delivery', icon: Banknote, details: null }
+    {
+      id: "credit",
+      label: "Credit or debit card",
+      icon: CreditCard,
+      details: "Visa •••• 1234 | Expires 12/25",
+    },
+    { id: "paypal", label: "PayPal", icon: DollarSign, details: null },
+    { id: "amazon", label: "Amazon Pay", icon: Wallet, details: null },
+    { id: "gift", label: "Gift Card", icon: Gift, details: null },
+    { id: "bank", label: "Bank Transfer", icon: Building2, details: null },
+    { id: "cash", label: "Cash on Delivery", icon: Banknote, details: null },
   ];
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-gray-800 text-white px-6 py-4">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <div className="text-2xl font-bold">amazon</div>
-          <div className="flex items-center space-x-4">
-            <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center">
-              <span className="text-sm">👤</span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <Navbar />
 
       <div className="max-w-7xl mx-auto px-6 py-8">
         {/* Checkout Header */}
@@ -77,10 +81,16 @@ export default function AmazonCheckout() {
             <div className="bg-white rounded-lg p-6 shadow-sm">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center font-bold">1</div>
-                  <h2 className="text-xl font-semibold">Choose a delivery address</h2>
+                  <div className="w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center font-bold">
+                    1
+                  </div>
+                  <h2 className="text-xl font-semibold">
+                    Choose a delivery address
+                  </h2>
                 </div>
-                <button className="text-orange-500 hover:underline">Change</button>
+                <button className="text-orange-500 hover:underline">
+                  Change
+                </button>
               </div>
               <div className="border-l-4 border-orange-500 pl-4">
                 <div className="font-semibold">John Doe</div>
@@ -93,16 +103,25 @@ export default function AmazonCheckout() {
             {/* Order Type & Packaging */}
             <div className="bg-white rounded-lg p-6 shadow-sm">
               <div className="flex items-center space-x-3 mb-6">
-                <div className="w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center font-bold">2</div>
-                <h2 className="text-xl font-semibold">Order Type & Packaging</h2>
+                <div className="w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center font-bold">
+                  2
+                </div>
+                <h2 className="text-xl font-semibold">
+                  Order Type & Packaging
+                </h2>
               </div>
 
               <div className="space-y-4">
                 <div className="bg-green-50 border border-green-200 rounded-lg p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <div className="font-semibold text-green-800">Selected Order Type: Group Order</div>
-                      <div className="text-sm text-green-600">Your order will be grouped with nearby orders to reduce shipping costs</div>
+                      <div className="font-semibold text-green-800">
+                        Selected Order Type: Group Order
+                      </div>
+                      <div className="text-sm text-green-600">
+                        Your order will be grouped with nearby orders to reduce
+                        shipping costs
+                      </div>
                     </div>
                     <Check className="w-5 h-5 text-green-600" />
                   </div>
@@ -111,8 +130,12 @@ export default function AmazonCheckout() {
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <div className="font-semibold text-blue-800">Selected Packaging: Compostable Packaging</div>
-                      <div className="text-sm text-blue-600">Made from cornstarch and mushroom materials</div>
+                      <div className="font-semibold text-blue-800">
+                        Selected Packaging: Compostable Packaging
+                      </div>
+                      <div className="text-sm text-blue-600">
+                        Made from cornstarch and mushroom materials
+                      </div>
                     </div>
                     <Truck className="w-5 h-5 text-blue-600" />
                   </div>
@@ -123,15 +146,22 @@ export default function AmazonCheckout() {
             {/* Payment Method */}
             <div className="bg-white rounded-lg p-6 shadow-sm">
               <div className="flex items-center space-x-3 mb-6">
-                <div className="w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center font-bold">3</div>
-                <h2 className="text-xl font-semibold">Choose a payment method</h2>
+                <div className="w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center font-bold">
+                  3
+                </div>
+                <h2 className="text-xl font-semibold">
+                  Choose a payment method
+                </h2>
               </div>
 
               <div className="space-y-3">
                 {paymentMethods.map((method) => {
                   const IconComponent = method.icon;
                   return (
-                    <div key={method.id} className="border rounded-lg p-4 hover:bg-gray-50 cursor-pointer">
+                    <div
+                      key={method.id}
+                      className="border rounded-lg p-4 hover:bg-gray-50 cursor-pointer"
+                    >
                       <label className="flex items-center space-x-3 cursor-pointer">
                         <input
                           type="radio"
@@ -145,11 +175,15 @@ export default function AmazonCheckout() {
                         <div className="flex-1">
                           <div className="font-medium">{method.label}</div>
                           {method.details && (
-                            <div className="text-sm text-gray-500">{method.details}</div>
+                            <div className="text-sm text-gray-500">
+                              {method.details}
+                            </div>
                           )}
                         </div>
-                        {method.id === 'credit' && (
-                          <button className="text-orange-500 hover:underline text-sm">Change</button>
+                        {method.id === "credit" && (
+                          <button className="text-orange-500 hover:underline text-sm">
+                            Change
+                          </button>
                         )}
                       </label>
                     </div>
@@ -164,9 +198,13 @@ export default function AmazonCheckout() {
                     <span className="text-white text-xs">!</span>
                   </div>
                   <div>
-                    <div className="font-semibold text-yellow-800">Group Order Notice</div>
+                    <div className="font-semibold text-yellow-800">
+                      Group Order Notice
+                    </div>
                     <div className="text-sm text-yellow-700 mt-1">
-                      Since you selected Group Order, your order will be processed at the end of the day and grouped with nearby orders. You'll receive dispatch details within 24 hour
+                      Since you selected Group Order, your order will be
+                      processed at the end of the day and grouped with nearby
+                      orders. You'll receive dispatch details within 24 hour
                     </div>
                   </div>
                 </div>
@@ -186,13 +224,15 @@ export default function AmazonCheckout() {
                     <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center">
                       <div className="w-12 h-12 bg-blue-600 rounded flex items-center justify-center">
                         <span className="text-white text-xs font-bold">
-                          {item.id === 1 ? 'WH' : 'IP'}
+                          {item.id === 1 ? "WH" : "IP"}
                         </span>
                       </div>
                     </div>
                     <div className="flex-1">
                       <div className="font-medium text-sm">{item.name}</div>
-                      <div className="text-sm text-gray-500">Qty: {item.quantity}</div>
+                      <div className="text-sm text-gray-500">
+                        Qty: {item.quantity}
+                      </div>
                       <div className="font-semibold">${item.price}</div>
                     </div>
                   </div>
@@ -229,7 +269,8 @@ export default function AmazonCheckout() {
               </button>
 
               <div className="text-xs text-gray-500 text-center mt-3">
-                By placing your order, you agree to Amazon's privacy notice and conditions of use.
+                By placing your order, you agree to Amazon's privacy notice and
+                conditions of use.
               </div>
             </div>
           </div>
