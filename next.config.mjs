@@ -1,11 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  images: {
+    domains: ['pngimg.com'], 
+  },
   async redirects() {
     return [
       {
         source: '/',
         destination: '/home',
-        permanent: false, // use true if you want a permanent redirect
+        permanent: false, 
       },
     ];
   },
