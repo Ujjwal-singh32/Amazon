@@ -60,19 +60,19 @@ function Navbar() {
 
         {/* Right Nav */}
         <div className="text-white flex items-center text-xs space-x-6 ml-4 whitespace-nowrap">
-          <div className="cursor-pointer">
+          <div className="cursor-pointer" onClick={() => router.push("/profile")}>
             <p className="hover:underline">Hello, User</p>
             <p className="font-extrabold md:text-sm">Account & Lists</p>
           </div>
 
-          <div className="cursor-pointer">
+          <div className="cursor-pointer " onClick={() => router.push("/orders")}>
             <p>Returns</p>
             <p className="font-extrabold md:text-sm">& Orders</p>
           </div>
 
           <div
             className="relative flex items-center cursor-pointer"
-            onClick={() => router.push("/checkout")}
+            onClick={() => router.push("/cart")}
           >
             <span className="absolute top-0 right-0 md:right-10 h-4 w-4 bg-yellow-400 text-center rounded-full text-black font-bold">
               {items.length}

@@ -1,69 +1,38 @@
 "use client";
 
-import React from 'react';
-import { Search, ShoppingCart, User, Leaf, Cloud, Recycle, Award } from 'lucide-react';
-
+import React from "react";
+import {
+  Search,
+  ShoppingCart,
+  User,
+  Leaf,
+  Cloud,
+  Recycle,
+  Award,
+} from "lucide-react";
+import Navbar from "@/components/Navbar";
 export default function AmazonGreenDashboard() {
   const carbonData = [
-    { month: 'Jan', value: 0.8 },
-    { month: 'Feb', value: 1.2 },
-    { month: 'Mar', value: 0.9 },
-    { month: 'Apr', value: 1.5 },
-    { month: 'May', value: 1.1 },
-    { month: 'Jun', value: 1.4 }
+    { month: "Jan", value: 0.8 },
+    { month: "Feb", value: 1.2 },
+    { month: "Mar", value: 0.9 },
+    { month: "Apr", value: 1.5 },
+    { month: "May", value: 1.1 },
+    { month: "Jun", value: 1.4 },
   ];
 
   const pointsData = [
-    { month: 'Jan', value: 47 },
-    { month: 'Feb', value: 68 },
-    { month: 'Mar', value: 53 },
-    { month: 'Apr', value: 78 },
-    { month: 'May', value: 62 },
-    { month: 'Jun', value: 85 }
+    { month: "Jan", value: 47 },
+    { month: "Feb", value: 68 },
+    { month: "Mar", value: 53 },
+    { month: "Apr", value: 78 },
+    { month: "May", value: 62 },
+    { month: "Jun", value: 85 },
   ];
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-gray-900 text-white">
-        <div className="flex items-center justify-between px-4 py-2">
-          <div className="flex items-center space-x-4">
-            <div className="text-2xl font-bold">amazon</div>
-            <div className="flex items-center text-sm">
-              <span>📍 Deliver to John</span>
-            </div>
-          </div>
-          
-          <div className="flex-1 max-w-2xl mx-8">
-            <div className="flex">
-              <input 
-                type="text" 
-                placeholder="Search Amazon" 
-                className="flex-1 px-4 py-2 text-black rounded-l-md"
-              />
-              <button className="bg-yellow-500 hover:bg-yellow-600 px-4 py-2 rounded-r-md">
-                <Search className="w-5 h-5 text-black" />
-              </button>
-            </div>
-          </div>
-          
-          <div className="flex items-center space-x-6 text-sm">
-            <div>
-              <div>Hello, John</div>
-              <div className="font-bold">Account & Lists</div>
-            </div>
-            <div>
-              <div>Returns</div>
-              <div className="font-bold">& Orders</div>
-            </div>
-            <div className="flex items-center">
-              <ShoppingCart className="w-6 h-6 mr-1" />
-              <span className="font-bold">Cart</span>
-            </div>
-          </div>
-        </div>
-      </header>
-
+      <Navbar />
       {/* User Profile Section */}
       <div className="bg-white p-6">
         <div className="flex items-center space-x-4">
@@ -75,9 +44,7 @@ export default function AmazonGreenDashboard() {
             <p className="text-gray-600">john.smith@email.com</p>
             <p className="text-gray-600">Member since 2019</p>
             <div className="flex items-center mt-1">
-              <div className="flex text-yellow-400">
-                ⭐⭐⭐⭐⭐
-              </div>
+              <div className="flex text-yellow-400">⭐⭐⭐⭐⭐</div>
               <span className="ml-2 text-sm text-gray-600">Prime Member</span>
             </div>
           </div>
@@ -97,29 +64,45 @@ export default function AmazonGreenDashboard() {
           <div className="bg-blue-100 p-6 rounded-lg">
             <div className="flex items-center mb-3">
               <Cloud className="w-6 h-6 text-blue-600 mr-2" />
-              <h3 className="text-lg font-semibold text-blue-800">Emissions Saved</h3>
+              <h3 className="text-lg font-semibold text-blue-800">
+                Emissions Saved
+              </h3>
             </div>
-            <div className="text-3xl font-bold text-blue-900 mb-1">1.4 kg CO2</div>
+            <div className="text-3xl font-bold text-blue-900 mb-1">
+              1.4 kg CO2
+            </div>
             <div className="text-blue-700 text-sm mb-1">saved this month</div>
-            <div className="text-blue-600 text-xs">Equivalent to planting a small tree</div>
+            <div className="text-blue-600 text-xs">
+              Equivalent to planting a small tree
+            </div>
           </div>
 
           {/* Plastics Avoided */}
           <div className="bg-purple-100 p-6 rounded-lg">
             <div className="flex items-center mb-3">
               <Recycle className="w-6 h-6 text-purple-600 mr-2" />
-              <h3 className="text-lg font-semibold text-purple-800">Plastics Avoided</h3>
+              <h3 className="text-lg font-semibold text-purple-800">
+                Plastics Avoided
+              </h3>
             </div>
-            <div className="text-3xl font-bold text-purple-900 mb-1">3.5 kg</div>
-            <div className="text-purple-700 text-sm mb-1">Plastic wastes prevented</div>
-            <div className="text-purple-600 text-xs">Enough to fill a medium sized recycling bin</div>
+            <div className="text-3xl font-bold text-purple-900 mb-1">
+              3.5 kg
+            </div>
+            <div className="text-purple-700 text-sm mb-1">
+              Plastic wastes prevented
+            </div>
+            <div className="text-purple-600 text-xs">
+              Enough to fill a medium sized recycling bin
+            </div>
           </div>
 
           {/* Green Points */}
           <div className="bg-green-100 p-6 rounded-lg">
             <div className="flex items-center mb-3">
               <Award className="w-6 h-6 text-green-600 mr-2" />
-              <h3 className="text-lg font-semibold text-green-800">Green Points</h3>
+              <h3 className="text-lg font-semibold text-green-800">
+                Green Points
+              </h3>
             </div>
             <div className="text-3xl font-bold text-green-900 mb-1">418</div>
             <div className="text-green-700 text-sm mb-3">Current Balance</div>
@@ -133,26 +116,52 @@ export default function AmazonGreenDashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
           {/* Carbon Footprint Chart */}
           <div className="bg-white p-6 rounded-lg shadow-sm">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">Carbon Footprint Over Months</h3>
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">
+              Carbon Footprint Over Months
+            </h3>
             <div className="relative h-48 mb-8">
               <svg className="w-full h-full" viewBox="0 0 400 200">
                 {/* Grid lines */}
                 <defs>
-                  <pattern id="grid" width="40" height="20" patternUnits="userSpaceOnUse">
-                    <path d="M 40 0 L 0 0 0 20" fill="none" stroke="#f0f0f0" strokeWidth="1"/>
+                  <pattern
+                    id="grid"
+                    width="40"
+                    height="20"
+                    patternUnits="userSpaceOnUse"
+                  >
+                    <path
+                      d="M 40 0 L 0 0 0 20"
+                      fill="none"
+                      stroke="#f0f0f0"
+                      strokeWidth="1"
+                    />
                   </pattern>
                 </defs>
                 <rect width="100%" height="100%" fill="url(#grid)" />
-                
+
                 {/* Y-axis labels */}
-                <text x="10" y="20" className="text-xs fill-gray-400">1.5</text>
-                <text x="10" y="50" className="text-xs fill-gray-400">1.4</text>
-                <text x="10" y="80" className="text-xs fill-gray-400">1.3</text>
-                <text x="10" y="110" className="text-xs fill-gray-400">1.2</text>
-                <text x="10" y="140" className="text-xs fill-gray-400">1.1</text>
-                <text x="10" y="170" className="text-xs fill-gray-400">1.0</text>
-                <text x="10" y="195" className="text-xs fill-gray-400">0.9</text>
-                
+                <text x="10" y="20" className="text-xs fill-gray-400">
+                  1.5
+                </text>
+                <text x="10" y="50" className="text-xs fill-gray-400">
+                  1.4
+                </text>
+                <text x="10" y="80" className="text-xs fill-gray-400">
+                  1.3
+                </text>
+                <text x="10" y="110" className="text-xs fill-gray-400">
+                  1.2
+                </text>
+                <text x="10" y="140" className="text-xs fill-gray-400">
+                  1.1
+                </text>
+                <text x="10" y="170" className="text-xs fill-gray-400">
+                  1.0
+                </text>
+                <text x="10" y="195" className="text-xs fill-gray-400">
+                  0.9
+                </text>
+
                 {/* Line path */}
                 <path
                   d="M 50 180 L 110 120 L 170 160 L 230 20 L 290 140 L 350 60"
@@ -162,7 +171,7 @@ export default function AmazonGreenDashboard() {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 />
-                
+
                 {/* Data points */}
                 {[
                   { x: 50, y: 180 },
@@ -170,7 +179,7 @@ export default function AmazonGreenDashboard() {
                   { x: 170, y: 160 },
                   { x: 230, y: 20 },
                   { x: 290, y: 140 },
-                  { x: 350, y: 60 }
+                  { x: 350, y: 60 },
                 ].map((point, index) => (
                   <circle
                     key={index}
@@ -183,11 +192,13 @@ export default function AmazonGreenDashboard() {
                   />
                 ))}
               </svg>
-              
+
               {/* X-axis labels */}
               <div className="absolute bottom-0 left-0 right-0 flex justify-between px-12">
                 {carbonData.map((item, index) => (
-                  <span key={index} className="text-xs text-gray-600">{item.month}</span>
+                  <span key={index} className="text-xs text-gray-600">
+                    {item.month}
+                  </span>
                 ))}
               </div>
             </div>
@@ -199,11 +210,13 @@ export default function AmazonGreenDashboard() {
 
           {/* Green Points Chart */}
           <div className="bg-white p-6 rounded-lg shadow-sm">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">Green Points Earned</h3>
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">
+              Green Points Earned
+            </h3>
             <div className="flex items-end space-x-2 h-48">
               {pointsData.map((item, index) => (
                 <div key={index} className="flex-1 flex flex-col items-center">
-                  <div 
+                  <div
                     className="w-full bg-green-500 rounded-t-sm mb-2"
                     style={{ height: `${item.value * 2}px` }}
                   ></div>
@@ -222,11 +235,15 @@ export default function AmazonGreenDashboard() {
         <div className="bg-gradient-to-r from-green-400 to-blue-500 p-8 rounded-lg text-center text-white">
           <div className="text-4xl mb-4">💬</div>
           <blockquote className="text-lg mb-4 italic">
-            "Every small action you take towards sustainability creates ripples of positive change. Your commitment to green choices today is building a better tomorrow for generations to come."
+            "Every small action you take towards sustainability creates ripples
+            of positive change. Your commitment to green choices today is
+            building a better tomorrow for generations to come."
           </blockquote>
           <div className="flex items-center justify-center">
             <span className="text-pink-200 mr-2">💚</span>
-            <span className="font-medium">Thank you for making a difference!</span>
+            <span className="font-medium">
+              Thank you for making a difference!
+            </span>
           </div>
         </div>
       </div>
