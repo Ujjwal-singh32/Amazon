@@ -8,14 +8,16 @@ import {
 } from 'lucide-react';
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
-
+import { useRouter } from 'next/navigation';
 export default function AmazonCart() {
   const [orderType, setOrderType] = useState("group");
   const [packaging, setPackaging] = useState("reusable");
   const [headphoneQty, setHeadphoneQty] = useState(1);
   const [caseQty, setCaseQty] = useState(2);
+  const router = useRouter();
 
   return (
+    
     <div className="min-h-screen bg-gray-50">
       <Navbar />
 
@@ -428,7 +430,7 @@ export default function AmazonCart() {
           {/* Order Summary Sidebar */}
           <div className="lg:w-80">
 
-            <div className="bg-white rounded-lg border sticky top-30 max-h-screen overflow-y-auto">
+            <div className="bg-white rounded-lg border sticky top-6 max-h-screen overflow-y-auto">
               <div className="p-6 border-b">
                 <h2 className="text-xl font-medium">Order Summary</h2>
               </div>
@@ -463,7 +465,10 @@ export default function AmazonCart() {
                   <div className="bg-green-100 text-green-600 px-4 py-2 rounded-full text-sm font-medium">Congratulations, you will earn 150 green points on this order</div>
                 </div>
                 
-                <button className="w-full bg-yellow-400 text-black py-3 rounded-full text-lg font-medium hover:bg-yellow-500 mb-4">
+                <button
+                  className="w-full bg-yellow-400 text-black py-3 rounded-full text-lg font-medium hover:bg-yellow-500 mb-4"
+                  onClick={() => router.push('/checkout')}
+                >
                   Proceed to Buy
                 </button>
                 
