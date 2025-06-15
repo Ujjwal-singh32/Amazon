@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import React, { useState } from "react";
-import { SignedIn, SignedOut, UserButton, SignInButton, ClerkProvider } from "@clerk/nextjs";
+import { SignedIn, SignedOut, UserButton, SignInButton } from "@clerk/nextjs";
 import {
   Bars3Icon,
   MagnifyingGlassIcon,
@@ -21,7 +21,7 @@ function Navbar() {
   };
 
   return (
-    <ClerkProvider>
+    
     <div className="sticky top-0 z-50">
       {/* Top nav */}
       <div className="flex items-center bg-[#131921] px-4 py-1 h-[60px]">
@@ -115,7 +115,7 @@ function Navbar() {
     </div>
   </div>
     </div >
-    </ClerkProvider>
+    
   );
 }
 

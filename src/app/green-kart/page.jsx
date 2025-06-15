@@ -4,6 +4,8 @@ import React from "react";
 import { FaLeaf } from "react-icons/fa";
 import GreenNavbar from "@/components/GreenNavbar";
 import Footer from "@/components/Footer";
+import { useRouter } from "next/navigation";
+
 
 const dummyProducts = [
   {
@@ -143,8 +145,9 @@ const dummyProducts = [
 ];
 
 export default function Home() {
+  const router = useRouter();
   return (
-     <>
+    <>
       <GreenNavbar />
 
       {/* Hero Section */}
@@ -157,15 +160,19 @@ export default function Home() {
             <p className="text-md md:text-xl text-green-800 mt-2">
               Where Every Purchase Plants a Better Future.
             </p>
-            <button className="mt-4 bg-green-600 text-white px-5 py-2 rounded-md hover:bg-green-700">
-              Explore Green Products
+            <button
+              onClick={() => router.push("/profile")}
+              className="mt-4 bg-green-600 text-white px-5 py-2 rounded-md hover:bg-green-700"
+            >
+              Explore Green Contribution
             </button>
+
           </div>
         </div>
         <img
           src="/env2.jpeg"
           alt="Green Mission"
-           className="mt-4 md:mt-0 w-5/6 md:w-[55%] h-[120px] md:h-[200px] rounded-lg shadow"
+          className="mt-4 md:mt-0 w-5/6 md:w-[55%] h-[120px] md:h-[200px] rounded-lg shadow"
         />
       </section>
 
@@ -234,7 +241,7 @@ export default function Home() {
         </section>
       ))}
       {/* Footer Section */}
-      <Footer/>
+      <Footer />
     </>
   );
 }
