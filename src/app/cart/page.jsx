@@ -17,6 +17,8 @@ import {
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import { useRouter } from "next/navigation";
+import Footer from "@/components/Footer";
+
 export default function AmazonCart() {
   const router = useRouter();
   const [orderType, setOrderType] = useState("group");
@@ -465,6 +467,7 @@ export default function AmazonCart() {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

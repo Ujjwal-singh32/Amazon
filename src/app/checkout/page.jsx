@@ -11,6 +11,8 @@ import {
   Wallet,
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+
 export default function AmazonCheckout() {
   const [selectedPayment, setSelectedPayment] = useState("credit");
   const [orderType, setOrderType] = useState("group");
@@ -264,18 +266,19 @@ export default function AmazonCheckout() {
               </div>
 
               {/* Place Order Button */}
-              <button className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 px-4 rounded-lg mt-6 transition-colors">
+              <button className="w-full bg-yellow-400 hover:bg-yellow-500 text-blue-900 font-bold py-3 rounded-lg mt-6 shadow-md">
                 Place your order
               </button>
 
-              <div className="text-xs text-gray-500 text-center mt-3">
-                By placing your order, you agree to Amazon's privacy notice and
-                conditions of use.
+              <div className="text-center text-sm text-gray-500 mt-4">
+                By placing your order, you agree to Amazon's privacy notice
+                and conditions of use.
               </div>
             </div>
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

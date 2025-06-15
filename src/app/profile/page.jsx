@@ -11,6 +11,8 @@ import {
   Award,
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+
 export default function AmazonGreenDashboard() {
   const carbonData = [
     { month: "Jan", value: 0.8 },
@@ -247,6 +249,7 @@ export default function AmazonGreenDashboard() {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

@@ -5,6 +5,7 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { products } from "@/assets/assets";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 const SearchPage = () => {
   const searchParams = useSearchParams();
@@ -129,6 +130,7 @@ const SearchPage = () => {
           </div>
         </div>
       )}
+      <Footer />
     </>
   );
 };

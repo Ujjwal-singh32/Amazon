@@ -13,7 +13,7 @@ function ProductCard({ id, title, price, description, category, image, rating })
 
   return (
     <Card 
-      className="group hover:shadow-lg transition-all duration-300 cursor-pointer min-w-[220px] max-w-[280px] min-h-[450px] flex flex-col"
+      className="group hover:shadow-lg hover:bg-gray-200 transition-all duration-300 cursor-pointer min-w-[220px] max-w-[280px] min-h-[450px] flex flex-col"
       onClick={() => router.push(`/products/${id}`)}
     >
       <CardHeader className="relative p-4 flex-shrink-0">
@@ -29,7 +29,7 @@ function ProductCard({ id, title, price, description, category, image, rating })
       
       <CardContent className="p-4 flex flex-col min-h-[180px]">
         <div className="h-[56px] flex-shrink-0">
-          <h4 className="font-semibold text-lg line-clamp-2 text-gray-900 group-hover:text-blue-600 transition-colors">
+          <h4 className="font-semibold text-lg line-clamp-2 text-gray-900 group-hover:text-[#fa6103] transition-colors">
             {title}
           </h4>
         </div>
@@ -46,19 +46,19 @@ function ProductCard({ id, title, price, description, category, image, rating })
           <span className="text-xs text-gray-500 ml-1">({count})</span>
         </div>
 
-        <div className="h-[40px] flex-shrink-0">
+        <div>
           <p className="text-sm text-gray-700 line-clamp-2">
             {description}
           </p>
         </div>
 
-        <div className="flex items-center justify-between mt-auto flex-shrink-0">
-          <p className="text-lg font-bold text-blue-600">
+        <div className="flex items-center justify-between mt-6 flex-shrink-0">
+          <p className="text-lg font-bold text-[#fa6103]">
             ${price.toFixed(2)}
           </p>
           <Button 
             variant="outline" 
-            className="hover:bg-blue-600 hover:text-white transition-colors"
+            className="hover:bg-[#fa6103] hover:text-white transition-colors cursor-pointer"
             onClick={(e) => {
               e.stopPropagation();
               // Add to cart logic here

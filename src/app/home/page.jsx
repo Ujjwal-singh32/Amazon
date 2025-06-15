@@ -200,25 +200,25 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Categories Grid - Retained, moved further down */}
+        {/* Shop by Category */}
         <section className="bg-white rounded-lg shadow-md mb-8 py-6">
           <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-2xl font-bold mb-6 text-gray-800">Shop by Category</h2>
-            <ProductSlider>
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">Shop by Category</h2>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
               {categories.map((category) => (
                 <CategoryCard key={category.title} {...category} />
               ))}
-            </ProductSlider>
+            </div>
           </div>
         </section>
 
-        {/* Frequently repurchased (Product Cards) */}
+        {/* Recommended Products (Product Cards) */}
         <section className="bg-white rounded-lg shadow-md mb-8 py-6">
           <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-gray-800">Frequently repurchased in Green</h2>
+              <h2 className="text-2xl font-bold text-gray-800">Recommended Products</h2>
               <Button variant="link" className="text-blue-600 hover:text-blue-800 text-base">
-                View more
+                Discover more
               </Button>
             </div>
             <ProductSlider>
@@ -229,13 +229,13 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Inspired by your shopping trends (Product Cards) */}
-        <section className="bg-white rounded-lg shadow-md mb-8 py-6">
+        {/* Best Sellers (Product Cards) */}
+        <section className="bg-white rounded-lg shadow-md py-6">
           <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-gray-800">Inspired by your shopping trends</h2>
+              <h2 className="text-2xl font-bold text-gray-800">Best Sellers</h2>
               <Button variant="link" className="text-blue-600 hover:text-blue-800 text-base">
-                View more
+                Explore all
               </Button>
             </div>
             <ProductSlider>
@@ -245,8 +245,8 @@ export default function HomePage() {
             </ProductSlider>
           </div>
         </section>
+
       </main>
-
       <Footer />
     </div>
   );
