@@ -1,70 +1,198 @@
 "use client";
 
-import React from 'react';
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, ResponsiveContainer } from 'recharts';
+import React, { useEffect, useState } from 'react';
+import { LineChart, Line, BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, Legend, PieChart, Pie, Cell, AreaChart, Area, CartesianGrid } from 'recharts';
+import Footer from "@/components/Footer";
+import Navbar from "@/components/Navbar";
+import { useUser } from "@clerk/nextjs";
 import { useRouter } from 'next/navigation';
-const carbonData = [
-  { month: 'Jan', co2: 3 },
-  { month: 'Feb', co2: 7.5 },
-  { month: 'Mar', co2: 11 },
-  { month: 'Apr', co2: 6 },
-  { month: 'May', co2: 2.5 },
-  { month: 'Jun', co2: 8 }
-];
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
 
-const pointsData = [
-  { month: 'Jan', points: 45 },
-  { month: 'Feb', points: 38 },
-  { month: 'Mar', points: 78 },
-  { month: 'Apr', points: 55 },
-  { month: 'May', points: 115 },
-  { month: 'Jun', points: 92 }
-];
+// Custom tooltip component for better styling
+const CustomTooltip = ({ active, payload, label }) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-white p-3 rounded-lg shadow-lg border border-gray-100">
+        <p className="text-gray-600 font-medium">{label}</p>
+        <p className="text-emerald-600 font-bold">{`${payload[0].value} ${payload[0].name}`}</p>
+      </div>
+    );
+  }
+  return null;
+};
+
+// Demo data for testing
+const demoUserData = {
+  userId: "demo123",
+  name: "John Smith",
+  email: "john.smith@example.com",
+  phone: "+1 (555) 123-4567",
+  address: [{
+    street: "123 Green Street",
+    city: "Eco City",
+    state: "Green State",
+    country: "USA",
+    pincode: "12345"
+  }],
+  isPrimeMember: true,
+  memberSince: "2023-01-15",
+  ordersPlaced: 47,
+  isTrustedReviewer: true,
+  greenStats: {
+    emissionsSavedKg: 12.4,
+    plasticsAvoidedKg: 8.5,
+    greenPoints: 418,
+    waterSavedLiters: 125,
+    ecoPackages: 12,
+    groupedOrders: 3,
+    forestAreaSavedSqM: 0.3,
+    monthlyCarbonData: [
+      { month: 'Jan', co2: 3.2 },
+      { month: 'Feb', co2: 2.8 },
+      { month: 'Mar', co2: 4.1 },
+      { month: 'Apr', co2: 3.5 },
+      { month: 'May', co2: 2.9 },
+      { month: 'Jun', co2: 3.8 }
+    ],
+    monthlyPointsData: [
+      { month: 'Jan', points: 45 },
+      { month: 'Feb', points: 38 },
+      { month: 'Mar', points: 78 },
+      { month: 'Apr', points: 55 },
+      { month: 'May', points: 115 },
+      { month: 'Jun', points: 92 }
+    ],
+    monthlyEmissionsData: [
+      { month: 'Jan', emissions: 2.1 },
+      { month: 'Feb', emissions: 2.5 },
+      { month: 'Mar', emissions: 1.8 },
+      { month: 'Apr', emissions: 2.3 },
+      { month: 'May', emissions: 2.0 },
+      { month: 'Jun', emissions: 1.7 }
+    ],
+    monthlyPlasticsData: [
+      { month: 'Jan', plastics: 1.2 },
+      { month: 'Feb', plastics: 1.5 },
+      { month: 'Mar', plastics: 1.8 },
+      { month: 'Apr', plastics: 1.4 },
+      { month: 'May', plastics: 1.6 },
+      { month: 'Jun', plastics: 1.3 }
+    ],
+    monthlyWaterData: [
+      { month: 'Jan', water: 15 },
+      { month: 'Feb', water: 18 },
+      { month: 'Mar', water: 22 },
+      { month: 'Apr', water: 20 },
+      { month: 'May', water: 25 },
+      { month: 'Jun', water: 25 }
+    ],
+    monthlyGroupedOrdersData: [
+      { month: 'Jan', orders: 2 },
+      { month: 'Feb', orders: 3 },
+      { month: 'Mar', orders: 1 },
+      { month: 'Apr', orders: 4 },
+      { month: 'May', orders: 2 },
+      { month: 'Jun', orders: 3 }
+    ]
+  }
+};
 
 export default function AmazonDashboard() {
+  const { user } = useUser();
   const router = useRouter();
+  const [userData, setUserData] = useState(demoUserData);
+  const [loading, setLoading] = useState(false);
+
+
+  // Commented out the actual data fetching for now
+  /*
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await fetch(`/api/users/${user?.id}`);
+        const data = await response.json();
+        setUserData(data);
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (user?.id) {
+      fetchUserData();
+    }
+  }, [user?.id]);
+  */
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-500"></div>
+      </div>
+    );
+  }
+
+  const greenStats = userData?.greenStats || {
+    emissionsSavedKg: 0,
+    plasticsAvoidedKg: 0,
+    greenPoints: 0,
+    waterSavedLiters: 0,
+    ecoPackages: 0,
+    groupedOrders: 0,
+    forestAreaSavedSqM: 0,
+    monthlyCarbonData: [],
+    monthlyPointsData: [],
+    monthlyEmissionsData: [],
+    monthlyPlasticsData: [],
+    monthlyWaterData: [],
+    monthlyGroupedOrdersData: []
+  };
+
+  const impactData = [
+    { name: 'Emissions Saved', value: greenStats.emissionsSavedKg },
+    { name: 'Plastics Avoided', value: greenStats.plasticsAvoidedKg },
+    { name: 'Water Saved', value: greenStats.waterSavedLiters },
+    { name: 'Forest Area Saved', value: greenStats.forestAreaSavedSqM }
+  ];
+
   return (
     <div className="min-h-screen bg-gray-50">
+      <Navbar/>
 
-      {/* Header */}
-      <div className="bg-gray-800 text-white px-6 py-3 flex justify-between items-center">
-        <div className="flex items-center space-x-2">
-          <div className="bg-orange-400 text-black px-2 py-1 text-sm font-bold rounded">a</div>
-          <span className="font-semibold text-lg">Amazon</span>
-        </div>
-        <div className="flex items-center space-x-4">
-          <span>Hello, John</span>
-          <div className="w-6 h-6 border border-white rounded"></div>
-        </div>
-      </div>
-
-      <div className="max-w-7xl mx-auto p-6">
-        <h1 className="text-2xl font-semibold mb-6 text-gray-800">Your Account</h1>
+      <div className="max-w-7xl mx-auto p-4 sm:p-6">
+        <h1 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 text-gray-800">Your Account</h1>
         
         {/* User Profile Section */}
-        <div className="bg-white rounded-lg p-6 mb-6 shadow-sm">
-          <div className="flex items-center mb-6">
-            <div className="w-16 h-16 rounded-full bg-blue-500 flex items-center justify-center mr-4">
-              <span className="text-white text-xl font-semibold">JS</span>
+        <div className="bg-white rounded-lg p-4 sm:p-6 mb-4 sm:mb-6 shadow-sm">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start mb-6">
+            <div className="w-16 h-16 rounded-full bg-blue-500 flex items-center justify-center mb-4 sm:mb-0 sm:mr-4">
+              <span className="text-white text-xl font-semibold">
+                {userData?.name?.charAt(0) || 'U'}
+              </span>
             </div>
-            <div>
-              <h2 className="text-xl font-semibold">John Smith</h2>
-              <p className="text-gray-600">Prime Member since 2019</p>
-              <div className="flex items-center mt-1">
-                <span className="text-orange-400 text-sm">★</span>
-                <span className="text-sm text-gray-600 ml-1">Trusted Reviewer</span>
-              </div>
+            <div className="text-center sm:text-left">
+              <h2 className="text-xl font-semibold">{userData?.name}</h2>
+              <p className="text-gray-600">
+                {userData?.isPrimeMember ? 'Prime Member' : 'Member'} since {new Date(userData?.memberSince).toLocaleDateString()}
+              </p>
+              {userData?.isTrustedReviewer && (
+                <div className="flex items-center justify-center sm:justify-start mt-1">
+                  <span className="text-orange-400 text-sm">★</span>
+                  <span className="text-sm text-gray-600 ml-1">Trusted Reviewer</span>
+                </div>
+              )}
             </div>
           </div>
 
-          {/* User Details Grid - 6 items in 2 rows */}
-          <div className="grid grid-cols-3 gap-4">
+          {/* User Details Grid - Responsive */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <div className="bg-blue-50 p-4 rounded-lg">
               <div className="flex items-center mb-2">
                 <span className="text-blue-600 mr-2">✉</span>
                 <span className="font-medium text-gray-700">Email</span>
               </div>
-              <p className="text-gray-800">john.smith@email.com</p>
+              <p className="text-gray-800 text-sm sm:text-base break-all">{userData?.email || user?.primaryEmailAddress?.emailAddress}</p>
             </div>
             
             <div className="bg-green-50 p-4 rounded-lg">
@@ -72,15 +200,19 @@ export default function AmazonDashboard() {
                 <span className="text-green-600 mr-2">📞</span>
                 <span className="font-medium text-gray-700">Phone</span>
               </div>
-              <p className="text-gray-800">+1 (555) 123-4567</p>
+              <p className="text-gray-800">{userData?.phone || 'Not provided'}</p>
             </div>
 
-            <div className="bg-purple-50 p-4 rounded-lg">
+            <div className="bg-purple-50 p-4 rounded-lg sm:col-span-2 lg:col-span-1">
               <div className="flex items-center mb-2">
                 <span className="text-purple-600 mr-2">📍</span>
                 <span className="font-medium text-gray-700">Address</span>
               </div>
-              <p className="text-gray-800">123 Main St, New York, NY 10001</p>
+              <p className="text-gray-800 text-sm sm:text-base">
+                {userData?.address?.[0] ? 
+                  `${userData.address[0].street}, ${userData.address[0].city}, ${userData.address[0].state} ${userData.address[0].pincode}` :
+                  'No address provided'}
+              </p>
             </div>
 
             <div className="bg-orange-50 p-4 rounded-lg">
@@ -88,7 +220,7 @@ export default function AmazonDashboard() {
                 <span className="text-orange-600 mr-2">📅</span>
                 <span className="font-medium text-gray-700">Member Since</span>
               </div>
-              <p className="text-gray-800">March 15, 2019</p>
+              <p className="text-gray-800">{new Date(userData?.memberSince).toLocaleDateString()}</p>
             </div>
 
             <div className="bg-red-50 p-4 rounded-lg">
@@ -96,8 +228,7 @@ export default function AmazonDashboard() {
                 <span className="text-red-600 mr-2">📦</span>
                 <span className="font-medium text-gray-700">Orders Placed</span>
               </div>
-              <p className="text-gray-800">247</p>
-
+              <p className="text-gray-800">{userData?.ordersPlaced || 0}</p>
             </div>
 
             <div className="bg-indigo-50 p-4 rounded-lg">
@@ -105,36 +236,36 @@ export default function AmazonDashboard() {
                 <span className="text-indigo-600 mr-2">⭐</span>
                 <span className="font-medium text-gray-700">Prime Member</span>
               </div>
-              <p className="text-gray-800">Yes</p>
+              <p className="text-gray-800">{userData?.isPrimeMember ? 'Yes' : 'No'}</p>
             </div>
           </div>
         </div>
 
         {/* Green Dashboard */}
-        <div className="bg-green-100 rounded-lg p-6 shadow-sm">
+        <div className="bg-green-100 rounded-lg p-4 sm:p-6 shadow-sm">
           <div className="flex items-center mb-6">
             <span className="text-green-600 text-2xl mr-3">🌱</span>
-            <h2 className="text-2xl font-semibold text-green-800">GREEN DASHBOARD</h2>
+            <h2 className="text-xl sm:text-2xl font-semibold text-green-800">GREEN DASHBOARD</h2>
           </div>
 
-          {/* Stats Grid */}
-          <div className="grid grid-cols-4 gap-4 mb-8">
-            <div className="bg-blue-400 text-white p-6 rounded-lg">
+          {/* Stats Grid - Responsive */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 sm:mb-8">
+            <div className="bg-blue-400 text-white p-4 sm:p-6 rounded-lg">
               <div className="flex items-center mb-2">
                 <span className="mr-2">☁️</span>
                 <span className="text-sm">Emissions Saved</span>
               </div>
-              <div className="text-2xl font-bold">1.4 kg CO2</div>
+              <div className="text-xl sm:text-2xl font-bold">{greenStats.emissionsSavedKg.toFixed(1)} kg CO2</div>
               <div className="text-xs opacity-90">saved this month</div>
               <div className="text-xs mt-1 opacity-80">Equivalent to planting a small tree</div>
             </div>
 
-            <div className="bg-purple-400 text-white p-6 rounded-lg">
+            <div className="bg-purple-400 text-white p-4 sm:p-6 rounded-lg">
               <div className="flex items-center mb-2">
                 <span className="mr-2">♻️</span>
                 <span className="text-sm">Plastics Avoided</span>
               </div>
-              <div className="text-2xl font-bold">3.5 kg</div>
+              <div className="text-xl sm:text-2xl font-bold">{greenStats.plasticsAvoidedKg.toFixed(1)} kg</div>
               <div className="text-xs opacity-90">plastic waste prevented</div>
               <div className="text-xs mt-1 opacity-80">Enough to fill a medium recycling bin</div>
             </div>
@@ -154,104 +285,210 @@ export default function AmazonDashboard() {
               </button>
           </div>
           
-            <div className="bg-cyan-400 text-white p-6 rounded-lg">
+            <div className="bg-cyan-400 text-white p-4 sm:p-6 rounded-lg">
               <div className="flex items-center mb-2">
                 <span className="mr-2">💧</span>
                 <span className="text-sm">Water Saved</span>
               </div>
-              <div className="text-2xl font-bold">125 L</div>
+              <div className="text-xl sm:text-2xl font-bold">{greenStats.waterSavedLiters} L</div>
               <div className="text-xs opacity-90">this month</div>
               <div className="text-xs mt-1 opacity-80">Equivalent to 2.5 bathtubs</div>
             </div>
           </div>
 
-          {/* Second Row Stats */}
-          <div className="grid grid-cols-3 gap-4 mb-8">
-            <div className="bg-orange-400 text-white p-6 rounded-lg">
+          {/* Second Row Stats - Responsive */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6 sm:mb-8">
+            <div className="bg-orange-400 text-white p-4 sm:p-6 rounded-lg">
               <div className="flex items-center mb-2">
                 <span className="mr-2">📦</span>
                 <span className="text-sm">Eco Packages</span>
               </div>
-              <div className="text-2xl font-bold">12</div>
+              <div className="text-xl sm:text-2xl font-bold">{greenStats.ecoPackages}</div>
               <div className="text-xs opacity-90">Sustainable Deliveries</div>
             </div>
 
-            <div className="bg-pink-400 text-white p-6 rounded-lg">
+            <div className="bg-pink-400 text-white p-4 sm:p-6 rounded-lg">
               <div className="flex items-center mb-2">
                 <span className="mr-2">🚴</span>
                 <span className="text-sm">Grouped Orders</span>
               </div>
-              <div className="text-2xl font-bold">3</div>
+              <div className="text-xl sm:text-2xl font-bold">{greenStats.groupedOrders}</div>
               <div className="text-xs opacity-90">Eco-Friendly and Cost-Effective Delivery</div>
             </div>
 
-            <div className="bg-indigo-400 text-white p-6 rounded-lg">
+            <div className="bg-indigo-400 text-white p-4 sm:p-6 rounded-lg">
               <div className="flex items-center mb-2">
                 <span className="mr-2">🌲</span>
                 <span className="text-sm">Forest Impact</span>
               </div>
-              <div className="text-2xl font-bold">0.3 m²</div>
+              <div className="text-xl sm:text-2xl font-bold">{greenStats.forestAreaSavedSqM.toFixed(1)} m²</div>
               <div className="text-xs opacity-90">forest area protected</div>
             </div>
           </div>
 
-          {/* Charts Section */}
-          <div className="grid grid-cols-2 gap-6 mb-6">
-            <div className="bg-white p-6 rounded-lg">
-              <h3 className="text-lg font-semibold mb-4 text-gray-800">Carbon Footprint Over Time</h3>
-              <div className="h-64">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={carbonData}>
-                    <XAxis dataKey="month" axisLine={false} tickLine={false} />
-                    <YAxis axisLine={false} tickLine={false} />
-                    <Line 
-                      type="monotone" 
-                      dataKey="co2" 
-                      stroke="#22c55e" 
-                      strokeWidth={2}
-                      dot={{ fill: '#22c55e', strokeWidth: 2, r: 4 }}
-                      activeDot={{ r: 6 }}
-                    />
-                  </LineChart>
-
-                </ResponsiveContainer>
+          {/* Enhanced Graphs Section with Vibrant Colors */}
+          <div className="space-y-8">
+            {/* Row 1 */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              {/* Emissions Saved Graph */}
+              <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
+                <h3 className="text-xl font-semibold mb-6 text-gray-800 flex items-center">
+                  <span className="w-2 h-6 bg-violet-500 rounded-full mr-3"></span>
+                  Emissions Saved Over Time
+                </h3>
+                <div className="h-[300px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={greenStats.monthlyCarbonData}>
+                      <defs>
+                        <linearGradient id="emissionsGradient" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.8}/>
+                          <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0}/>
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                      <XAxis dataKey="month" stroke="#666" />
+                      <YAxis stroke="#666" />
+                      <Tooltip content={<CustomTooltip />} />
+                      <Legend />
+                      <Area 
+                        type="monotone" 
+                        dataKey="co2" 
+                        stroke="#8B5CF6" 
+                        fillOpacity={1} 
+                        fill="url(#emissionsGradient)"
+                        strokeWidth={2}
+                      />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
               </div>
-              <div className="flex items-center mt-2">
-                <div className="w-4 h-2 bg-red-400 mr-2"></div>
-                <span className="text-sm text-gray-600">CO2 Emissions (kg)</span>
+
+              {/* Plastics Avoided Graph */}
+              <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
+                <h3 className="text-xl font-semibold mb-6 text-gray-800 flex items-center">
+                  <span className="w-2 h-6 bg-emerald-500 rounded-full mr-3"></span>
+                  Plastics Avoided Over Time
+                </h3>
+                <div className="h-[300px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={greenStats.monthlyCarbonData}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                      <XAxis dataKey="month" stroke="#666" />
+                      <YAxis stroke="#666" />
+                      <Tooltip content={<CustomTooltip />} />
+                      <Legend />
+                      <Bar 
+                        dataKey="co2" 
+                        fill="#10B981"
+                        radius={[4, 4, 0, 0]}
+                        maxBarSize={60}
+                      />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
               </div>
             </div>
 
-            <div className="bg-white p-6 rounded-lg">
-              <h3 className="text-lg font-semibold mb-4 text-gray-800">Green Points Earned</h3>
-              <div className="h-64">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={pointsData} barCategoryGap="20%">
-                    <XAxis dataKey="month" axisLine={false} tickLine={false} />
-                    <YAxis axisLine={false} tickLine={false} />
-                    <Bar dataKey="points" fill="#22c55e" radius={[2, 2, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-              <div className="flex items-center mt-2">
-                <div className="w-4 h-2 bg-green-500 mr-2"></div>
-                <span className="text-sm text-gray-600">Green Points</span>
+            {/* Row 2 */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              {/* Water Saved Graph */}
+              <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
+                <h3 className="text-xl font-semibold mb-6 text-gray-800 flex items-center">
+                  <span className="w-2 h-6 bg-sky-500 rounded-full mr-3"></span>
+                  Water Saved Over Time
+                </h3>
+                <div className="h-[300px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={greenStats.monthlyPointsData}>
+                      <defs>
+                        <linearGradient id="waterGradient" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#0EA5E9" stopOpacity={0.8}/>
+                          <stop offset="95%" stopColor="#0EA5E9" stopOpacity={0}/>
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                      <XAxis dataKey="month" stroke="#666" />
+                      <YAxis stroke="#666" />
+                      <Tooltip content={<CustomTooltip />} />
+                      <Legend />
+                      <Line 
+                        type="monotone" 
+                        dataKey="points" 
+                        stroke="#0EA5E9" 
+                        strokeWidth={2}
+                        dot={{ fill: '#0EA5E9', strokeWidth: 2, r: 4 }}
+                        activeDot={{ r: 6, fill: '#0EA5E9' }}
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
               </div>
 
+              {/* Grouped Orders Graph */}
+              <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
+                <h3 className="text-xl font-semibold mb-6 text-gray-800 flex items-center">
+                  <span className="w-2 h-6 bg-amber-500 rounded-full mr-3"></span>
+                  Grouped Orders Over Time
+                </h3>
+                <div className="h-[300px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={greenStats.monthlyPointsData}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                      <XAxis dataKey="month" stroke="#666" />
+                      <YAxis stroke="#666" />
+                      <Tooltip content={<CustomTooltip />} />
+                      <Legend />
+                      <Bar 
+                        dataKey="points" 
+                        fill="#F59E0B"
+                        radius={[4, 4, 0, 0]}
+                        maxBarSize={60}
+                      />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Impact Distribution Chart */}
+          <div className="bg-white p-4 sm:p-6 rounded-lg mb-6">
+            <h3 className="text-base sm:text-lg font-semibold mb-4 text-gray-800">Environmental Impact Distribution</h3>
+            <div className="h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={impactData}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    outerRadius={80}
+                    fill="#8884d8"
+                    dataKey="value"
+                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                  >
+                    {impactData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
             </div>
           </div>
 
           {/* Quote Section */}
-          <div className="bg-green-600 text-white p-6 rounded-lg text-center">
-            <div className="text-4xl mb-4">🌱</div>
-            <blockquote className="text-lg italic mb-2">
+          <div className="bg-green-600 text-white p-4 sm:p-6 rounded-lg text-center">
+            <div className="text-3xl sm:text-4xl mb-4">🌱</div>
+            <blockquote className="text-base sm:text-lg italic mb-2">
               "Every small action towards sustainability creates ripples of positive change for our planet."
             </blockquote>
             <p className="text-sm opacity-90">Thank you for making a difference with every order! 🌿</p>
-
           </div>
         </div>
       </div>
+      <Footer/>
     </div>
   );
 }

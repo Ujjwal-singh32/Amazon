@@ -5,6 +5,7 @@ import { FaLeaf } from "react-icons/fa";
 import GreenNavbar from "@/components/GreenNavbar";
 import Footer from "@/components/Footer";
 import { useRouter } from "next/navigation";
+import { useCart } from "@/context/CartContext";
 
 
 const dummyProducts = [
@@ -146,6 +147,21 @@ const dummyProducts = [
 
 export default function Home() {
   const router = useRouter();
+  const { addToCart } = useCart();
+
+  const handleAddToCart = (product) => {
+    const productToAdd = {
+      id: product.id,
+      title: product.name,
+      price: parseFloat(product.price.replace('$', '')),
+      description: `${product.brand} - ${product.tags.join(', ')}`,
+      category: 'Green Products',
+      image: product.image,
+      rating: { rate: 4.5, count: 100 }
+    };
+    addToCart(productToAdd);
+  };
+
   return (
     <>
       <GreenNavbar />
@@ -230,8 +246,11 @@ export default function Home() {
                     <button className="bg-green-600 text-white text-sm px-3 py-1 rounded-lg hover:bg-green-700">
                       🌿 View Details
                     </button>
-                    <button className="border border-green-600 text-green-700 text-sm px-3 py-1 rounded-lg hover:bg-green-50">
-                      🔄 Compare
+                    <button 
+                      onClick={() => handleAddToCart(product)}
+                      className="border border-green-600 text-green-700 text-sm px-3 py-1 rounded-lg hover:bg-green-50"
+                    >
+                      🛒 Add to Cart
                     </button>
                   </div>
                 </div>
@@ -241,7 +260,7 @@ export default function Home() {
         </section>
       ))}
       {/* Footer Section */}
-      {/* <Footer /> */}
+      <Footer />
     </>
   );
 }
