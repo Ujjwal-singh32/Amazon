@@ -1,4 +1,5 @@
 "use client";
+
 import React from 'react';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, ResponsiveContainer } from 'recharts';
 
@@ -23,6 +24,7 @@ const pointsData = [
 export default function AmazonDashboard() {
   return (
     <div className="min-h-screen bg-gray-50">
+
       {/* Header */}
       <div className="bg-gray-800 text-white px-6 py-3 flex justify-between items-center">
         <div className="flex items-center space-x-2">
@@ -94,6 +96,7 @@ export default function AmazonDashboard() {
                 <span className="font-medium text-gray-700">Orders Placed</span>
               </div>
               <p className="text-gray-800">247</p>
+
             </div>
 
             <div className="bg-indigo-50 p-4 rounded-lg">
@@ -139,6 +142,7 @@ export default function AmazonDashboard() {
             <div className="flex items-center mb-2">
               <span className="mr-2">🎯</span>
               <span className="text-sm">Green Points</span>
+
             </div>
             <div className="text-2xl font-bold">418</div>
             <div className="text-xs opacity-90 mb-3">Current Balance</div> {/* Added bottom margin for spacing */}
@@ -231,6 +235,7 @@ export default function AmazonDashboard() {
                 <div className="w-4 h-2 bg-green-500 mr-2"></div>
                 <span className="text-sm text-gray-600">Green Points</span>
               </div>
+
             </div>
           </div>
 
@@ -241,6 +246,7 @@ export default function AmazonDashboard() {
               "Every small action towards sustainability creates ripples of positive change for our planet."
             </blockquote>
             <p className="text-sm opacity-90">Thank you for making a difference with every order! 🌿</p>
+
           </div>
         </div>
       </div>
