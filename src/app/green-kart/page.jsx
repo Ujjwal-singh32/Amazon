@@ -241,7 +241,7 @@ export default function Home() {
         </section>
       ))}
       {/* Footer Section */}
-      {/* <Footer /> */}
+      <Footer />
     </>
   );
 }

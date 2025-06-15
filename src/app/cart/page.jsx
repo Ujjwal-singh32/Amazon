@@ -2,25 +2,14 @@
 
 import React, { useState } from "react";
 import {
-  Package,
-  Recycle,
-  Leaf,
-  ShoppingCart,
-  Search,
-  User,
-  ArrowLeft,
-  Plus,
-  Minus,
-  Heart,
-  RotateCcw,
-  MapPin,
-} from "lucide-react";
-import Navbar from "@/components/Navbar";
-import { useRouter } from "next/navigation";
+
+  Package, Recycle, Leaf, ShoppingCart, Search, User,
+  ArrowLeft, Plus, Minus, Heart, RotateCcw, MapPin
+} from 'lucide-react';
 import Footer from "@/components/Footer";
+import Navbar from "@/components/Navbar";
 
 export default function AmazonCart() {
-  const router = useRouter();
   const [orderType, setOrderType] = useState("group");
   const [packaging, setPackaging] = useState("reusable");
   const [headphoneQty, setHeadphoneQty] = useState(1);
@@ -240,11 +229,17 @@ export default function AmazonCart() {
               <div className="space-y-6">
                 {/* Sony Headphones */}
                 <div className="flex flex-col sm:flex-row gap-4 pb-6 border-b">
-                  <img
-                    src="/api/placeholder/150/150"
-                    alt="Sony Headphones"
-                    className="w-32 h-32 object-cover rounded-lg"
-                  />
+                
+                  <div className="w-32 h-32 bg-gradient-to-br from-gray-800 to-black rounded-lg flex items-center justify-center relative overflow-hidden">
+                    <div className="w-20 h-20 bg-gray-700 rounded-full flex items-center justify-center">
+                      <div className="w-16 h-16 bg-gray-600 rounded-full flex items-center justify-center">
+                        <div className="w-8 h-8 bg-gray-500 rounded-full"></div>
+                      </div>
+                    </div>
+                    <div className="absolute top-2 left-2 w-4 h-4 bg-red-500 rounded-full"></div>
+                    <div className="absolute bottom-2 right-2 text-xs text-white font-bold">SONY</div>
+                  </div>
+
                   <div className="flex-1">
                     <h3 className="font-medium text-lg mb-2">
                       Sony WH-1000XM4 Wireless Noise Canceling Headphones
@@ -292,11 +287,16 @@ export default function AmazonCart() {
 
                 {/* iPhone Case */}
                 <div className="flex flex-col sm:flex-row gap-4 pb-6 border-b">
-                  <img
-                    src="/api/placeholder/150/150"
-                    alt="iPhone Case"
-                    className="w-32 h-32 object-cover rounded-lg"
-                  />
+
+                  <div className="w-32 h-32 bg-gradient-to-br from-blue-50 to-gray-100 rounded-lg flex items-center justify-center relative border-2 border-gray-200">
+                    <div className="w-20 h-28 bg-white rounded-xl border border-gray-300 relative shadow-sm">
+                      <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-8 h-1 bg-gray-800 rounded-full"></div>
+                      <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-6 h-6 border-2 border-gray-400 rounded-full"></div>
+                      <div className="absolute top-6 right-1 w-2 h-8 bg-gray-300 rounded-full"></div>
+                    </div>
+                    <div className="absolute bottom-2 right-2 text-xs text-gray-600 font-bold">15 Pro Max</div>
+                  </div>
+
                   <div className="flex-1">
                     <h3 className="font-medium text-lg mb-2">
                       iPhone 15 Pro Max Case - Clear with MagSafe
@@ -358,14 +358,17 @@ export default function AmazonCart() {
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {/* AirPods */}
                 <div className="border rounded-lg p-4">
-                  <img
-                    src="/api/placeholder/200/200"
-                    alt="AirPods Pro"
-                    className="w-full h-48 object-cover rounded-lg mb-4"
-                  />
-                  <h3 className="font-medium mb-2">
-                    Apple AirPods Pro (2nd Gen)
-                  </h3>
+
+                  <div className="w-full h-48 bg-gradient-to-br from-white to-gray-100 rounded-lg mb-4 flex items-center justify-center relative">
+                    <div className="w-24 h-16 bg-white rounded-2xl shadow-lg flex items-center justify-center relative">
+                      <div className="w-8 h-8 bg-white rounded-full shadow-md absolute -top-2 -left-2"></div>
+                      <div className="w-8 h-8 bg-white rounded-full shadow-md absolute -top-2 -right-2"></div>
+                      <div className="w-2 h-2 bg-gray-400 rounded-full absolute top-1 left-1/2 transform -translate-x-1/2"></div>
+                    </div>
+                    <div className="absolute bottom-4 right-4 text-sm text-gray-600 font-bold">AirPods Pro</div>
+                  </div>
+                  <h3 className="font-medium mb-2">Apple AirPods Pro (2nd Gen)</h3>
+
                   <div className="flex items-center gap-2 mb-4">
                     <span className="text-xl font-bold text-red-600">
                       $199.99
@@ -381,14 +384,16 @@ export default function AmazonCart() {
 
                 {/* USB Cable */}
                 <div className="border rounded-lg p-4">
-                  <img
-                    src="/api/placeholder/200/200"
-                    alt="USB Cable"
-                    className="w-full h-48 object-cover rounded-lg mb-4"
-                  />
-                  <h3 className="font-medium mb-2">
-                    USB-C to Lightning Cable (3ft)
-                  </h3>
+                  <div className="w-full h-48 bg-gradient-to-br from-gray-50 to-gray-200 rounded-lg mb-4 flex items-center justify-center relative">
+                    <div className="w-32 h-2 bg-white rounded-full relative shadow-sm">
+                      <div className="absolute -left-3 -top-1 w-6 h-4 bg-gray-600 rounded"></div>
+                      <div className="absolute -right-3 -top-1 w-6 h-4 bg-white border-2 border-gray-300 rounded"></div>
+                    </div>
+                    <div className="absolute bottom-4 left-4 text-sm text-gray-600 font-bold">USB-C</div>
+                    <div className="absolute bottom-4 right-4 text-sm text-gray-600 font-bold">Lightning</div>
+                  </div>
+                  <h3 className="font-medium mb-2">USB-C to Lightning Cable (3ft)</h3>
+
                   <div className="flex items-center gap-2 mb-4">
                     <span className="text-xl font-bold">$15.99</span>
                   </div>
@@ -399,14 +404,16 @@ export default function AmazonCart() {
 
                 {/* Phone Stand */}
                 <div className="border rounded-lg p-4 sm:col-span-2 lg:col-span-1">
-                  <img
-                    src="/api/placeholder/200/200"
-                    alt="Phone Stand"
-                    className="w-full h-48 object-cover rounded-lg mb-4"
-                  />
-                  <h3 className="font-medium mb-2">
-                    Adjustable Phone Stand for Desk
-                  </h3>
+
+                  <div className="w-full h-48 bg-gradient-to-br from-gray-100 to-gray-300 rounded-lg mb-4 flex items-center justify-center relative">
+                    <div className="w-16 h-24 bg-gray-600 rounded-lg relative">
+                      <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 w-12 h-16 bg-gray-800 rounded border border-gray-500"></div>
+                      <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-20 h-3 bg-gray-700 rounded-full"></div>
+                    </div>
+                    <div className="absolute bottom-4 right-4 text-sm text-gray-600 font-bold">Stand</div>
+                  </div>
+                  <h3 className="font-medium mb-2">Adjustable Phone Stand for Desk</h3>
+
                   <div className="flex items-center gap-2 mb-4">
                     <span className="text-xl font-bold">$15.99</span>
                   </div>
@@ -420,49 +427,51 @@ export default function AmazonCart() {
 
           {/* Order Summary Sidebar */}
           <div className="lg:w-80">
-            <div className="bg-white rounded-lg border p-6 sticky top-6">
-              <h2 className="text-xl font-medium mb-6">Order Summary</h2>
 
-              <div className="space-y-3 mb-6">
-                <div className="flex justify-between">
-                  <span>Items (3):</span>
-                  <span>$379.97</span>
+            <div className="bg-white rounded-lg border sticky top-6 max-h-screen overflow-y-auto">
+              <div className="p-6 border-b">
+                <h2 className="text-xl font-medium">Order Summary</h2>
+              </div>
+              
+              <div className="p-6">
+                <div className="space-y-3 mb-6">
+                  <div className="flex justify-between">
+                    <span>Items (3):</span>
+                    <span>$379.97</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Shipping & handling:</span>
+                    <span>$8.99</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Packaging fee:</span>
+                    <span>$4.99</span>
+                  </div>
+                  <div className="flex justify-between text-green-600">
+                    <span>Group order discount:</span>
+                    <span>-$4.50</span>
+                  </div>
+                  <hr />
+                  <div className="flex justify-between text-xl font-bold">
+                    <span>Order total:</span>
+                    <span>$388.45</span>
+                  </div>
+
                 </div>
-                <div className="flex justify-between">
-                  <span>Shipping & handling:</span>
-                  <span>$8.99</span>
+                
+                <div className="flex justify-center mb-6">
+                  <div className="bg-green-100 text-green-600 px-4 py-2 rounded-full text-sm font-medium">Congratulations, you will earn 150 green points on this order</div>
                 </div>
-                <div className="flex justify-between">
-                  <span>Packaging fee:</span>
-                  <span>$4.99</span>
-                </div>
-                <div className="flex justify-between text-green-600">
-                  <span>Group order discount:</span>
-                  <span>-$4.50</span>
-                </div>
-                <hr />
-                <div className="flex justify-between text-xl font-bold">
-                  <span>Order total:</span>
-                  <span>$388.45</span>
-                </div>
+                
+                <button className="w-full bg-yellow-400 text-black py-3 rounded-full text-lg font-medium hover:bg-yellow-500 mb-4">
+                  Proceed to Buy
+                </button>
+                
+                <p className="text-xs text-gray-600 text-center">
+                  By placing your order, you agree to our terms and conditions
+                </p>
               </div>
 
-              <div className="flex justify-center mb-6">
-                <div className="bg-green-100 text-green-600 px-4 py-2 rounded-full text-sm font-medium">
-                  Congratulations, you will earn 150 green points on this order
-                </div>
-              </div>
-
-              <button
-                className="w-full bg-yellow-400 text-black py-3 rounded-full text-lg font-medium hover:bg-yellow-500 mb-4"
-                onClick={() => router.push("/checkout")}
-              >
-                Proceed to Buy
-              </button>
-
-              <p className="text-xs text-gray-600 text-center">
-                By placing your order, you agree to our terms and conditions
-              </p>
             </div>
           </div>
         </div>

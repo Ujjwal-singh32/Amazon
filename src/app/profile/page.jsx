@@ -1,252 +1,243 @@
 "use client";
 
-import React from "react";
-import {
-  Search,
-  ShoppingCart,
-  User,
-  Leaf,
-  Cloud,
-  Recycle,
-  Award,
-} from "lucide-react";
+import React from 'react';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, ResponsiveContainer } from 'recharts';
-import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import Navbar from "@/components/Navbar";
 
-export default function AmazonGreenDashboard() {
-  const carbonData = [
-    { month: "Jan", value: 0.8 },
-    { month: "Feb", value: 1.2 },
-    { month: "Mar", value: 0.9 },
-    { month: "Apr", value: 1.5 },
-    { month: "May", value: 1.1 },
-    { month: "Jun", value: 1.4 },
-  ];
+const carbonData = [
+  { month: 'Jan', co2: 3 },
+  { month: 'Feb', co2: 7.5 },
+  { month: 'Mar', co2: 11 },
+  { month: 'Apr', co2: 6 },
+  { month: 'May', co2: 2.5 },
+  { month: 'Jun', co2: 8 }
+];
 
-  const pointsData = [
-    { month: "Jan", value: 47 },
-    { month: "Feb", value: 68 },
-    { month: "Mar", value: 53 },
-    { month: "Apr", value: 78 },
-    { month: "May", value: 62 },
-    { month: "Jun", value: 85 },
-  ];
+const pointsData = [
+  { month: 'Jan', points: 45 },
+  { month: 'Feb', points: 38 },
+  { month: 'Mar', points: 78 },
+  { month: 'Apr', points: 55 },
+  { month: 'May', points: 115 },
+  { month: 'Jun', points: 92 }
+];
 
+export default function AmazonDashboard() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
-      {/* User Profile Section */}
-      <div className="bg-white p-6">
-        <div className="flex items-center space-x-4">
-          <div className="w-16 h-16 bg-gradient-to-br from-pink-400 to-blue-500 rounded-full flex items-center justify-center">
-            <User className="w-8 h-8 text-white" />
+
+      <div className="max-w-7xl mx-auto p-6">
+        <h1 className="text-2xl font-semibold mb-6 text-gray-800">Your Account</h1>
+        
+        {/* User Profile Section */}
+        <div className="bg-white rounded-lg p-6 mb-6 shadow-sm">
+          <div className="flex items-center mb-6">
+            <div className="w-16 h-16 rounded-full bg-blue-500 flex items-center justify-center mr-4">
+              <span className="text-white text-xl font-semibold">JS</span>
+            </div>
+            <div>
+              <h2 className="text-xl font-semibold">John Smith</h2>
+              <p className="text-gray-600">Prime Member since 2019</p>
+              <div className="flex items-center mt-1">
+                <span className="text-orange-400 text-sm">★</span>
+                <span className="text-sm text-gray-600 ml-1">Trusted Reviewer</span>
+              </div>
+            </div>
           </div>
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900">John Smith</h2>
-            <p className="text-gray-600">john.smith@email.com</p>
-            <p className="text-gray-600">Member since 2019</p>
-            <div className="flex items-center mt-1">
-              <div className="flex text-yellow-400">⭐⭐⭐⭐⭐</div>
-              <span className="ml-2 text-sm text-gray-600">Prime Member</span>
+
+          {/* User Details Grid - 6 items in 2 rows */}
+          <div className="grid grid-cols-3 gap-4">
+            <div className="bg-blue-50 p-4 rounded-lg">
+              <div className="flex items-center mb-2">
+                <span className="text-blue-600 mr-2">✉</span>
+                <span className="font-medium text-gray-700">Email</span>
+              </div>
+              <p className="text-gray-800">john.smith@email.com</p>
+            </div>
+            
+            <div className="bg-green-50 p-4 rounded-lg">
+              <div className="flex items-center mb-2">
+                <span className="text-green-600 mr-2">📞</span>
+                <span className="font-medium text-gray-700">Phone</span>
+              </div>
+              <p className="text-gray-800">+1 (555) 123-4567</p>
+            </div>
+
+            <div className="bg-purple-50 p-4 rounded-lg">
+              <div className="flex items-center mb-2">
+                <span className="text-purple-600 mr-2">📍</span>
+                <span className="font-medium text-gray-700">Address</span>
+              </div>
+              <p className="text-gray-800">123 Main St, New York, NY 10001</p>
+            </div>
+
+            <div className="bg-orange-50 p-4 rounded-lg">
+              <div className="flex items-center mb-2">
+                <span className="text-orange-600 mr-2">📅</span>
+                <span className="font-medium text-gray-700">Member Since</span>
+              </div>
+              <p className="text-gray-800">March 15, 2019</p>
+            </div>
+
+            <div className="bg-red-50 p-4 rounded-lg">
+              <div className="flex items-center mb-2">
+                <span className="text-red-600 mr-2">📦</span>
+                <span className="font-medium text-gray-700">Orders Placed</span>
+              </div>
+              <p className="text-gray-800">247</p>
+
+            </div>
+
+            <div className="bg-indigo-50 p-4 rounded-lg">
+              <div className="flex items-center mb-2">
+                <span className="text-indigo-600 mr-2">⭐</span>
+                <span className="font-medium text-gray-700">Prime Member</span>
+              </div>
+              <p className="text-gray-800">Yes</p>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Green Dashboard */}
-      <div className="bg-green-50 p-6">
-        <div className="flex items-center mb-6">
-          <Leaf className="w-6 h-6 text-green-600 mr-2" />
-          <h2 className="text-2xl font-bold text-gray-800">GREEN DASHBOARD</h2>
-        </div>
-
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          {/* Emissions Saved */}
-          <div className="bg-blue-100 p-6 rounded-lg">
-            <div className="flex items-center mb-3">
-              <Cloud className="w-6 h-6 text-blue-600 mr-2" />
-              <h3 className="text-lg font-semibold text-blue-800">
-                Emissions Saved
-              </h3>
-            </div>
-            <div className="text-3xl font-bold text-blue-900 mb-1">
-              1.4 kg CO2
-            </div>
-            <div className="text-blue-700 text-sm mb-1">saved this month</div>
-            <div className="text-blue-600 text-xs">
-              Equivalent to planting a small tree
-            </div>
+        {/* Green Dashboard */}
+        <div className="bg-green-100 rounded-lg p-6 shadow-sm">
+          <div className="flex items-center mb-6">
+            <span className="text-green-600 text-2xl mr-3">🌱</span>
+            <h2 className="text-2xl font-semibold text-green-800">GREEN DASHBOARD</h2>
           </div>
 
-          {/* Plastics Avoided */}
-          <div className="bg-purple-100 p-6 rounded-lg">
-            <div className="flex items-center mb-3">
-              <Recycle className="w-6 h-6 text-purple-600 mr-2" />
-              <h3 className="text-lg font-semibold text-purple-800">
-                Plastics Avoided
-              </h3>
+          {/* Stats Grid */}
+          <div className="grid grid-cols-4 gap-4 mb-8">
+            <div className="bg-blue-400 text-white p-6 rounded-lg">
+              <div className="flex items-center mb-2">
+                <span className="mr-2">☁</span>
+                <span className="text-sm">Emissions Saved</span>
+              </div>
+              <div className="text-2xl font-bold">1.4 kg CO2</div>
+              <div className="text-xs opacity-90">saved this month</div>
+              <div className="text-xs mt-1 opacity-80">Equivalent to planting a small tree</div>
             </div>
-            <div className="text-3xl font-bold text-purple-900 mb-1">
-              3.5 kg
-            </div>
-            <div className="text-purple-700 text-sm mb-1">
-              Plastic wastes prevented
-            </div>
-            <div className="text-purple-600 text-xs">
-              Enough to fill a medium sized recycling bin
-            </div>
-          </div>
 
-          {/* Green Points */}
-          <div className="bg-green-100 p-6 rounded-lg">
-            <div className="flex items-center mb-3">
-              <Award className="w-6 h-6 text-green-600 mr-2" />
-              <h3 className="text-lg font-semibold text-green-800">
-                Green Points
-              </h3>
+            <div className="bg-purple-400 text-white p-6 rounded-lg">
+              <div className="flex items-center mb-2">
+                <span className="mr-2">♻</span>
+                <span className="text-sm">Plastics Avoided</span>
+              </div>
+              <div className="text-2xl font-bold">3.5 kg</div>
+              <div className="text-xs opacity-90">plastic waste prevented</div>
+              <div className="text-xs mt-1 opacity-80">Enough to fill a medium recycling bin</div>
             </div>
-            <div className="text-3xl font-bold text-green-900 mb-1">418</div>
-            <div className="text-green-700 text-sm mb-3">Current Balance</div>
-            <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+
+            <div className="bg-green-400 text-white p-6 rounded-lg">
+            <div className="flex items-center mb-2">
+              <span className="mr-2">🎯</span>
+              <span className="text-sm">Green Points</span>
+
+            </div>
+            <div className="text-2xl font-bold">418</div>
+            <div className="text-xs opacity-90 mb-3">Current Balance</div> {/* Added bottom margin for spacing */}
+
+            <button className="bg-white hover:bg-yellow-300 text-green-800 font-medium px-3 py-1 rounded text-xs transition duration-200">
               Redeem Now
             </button>
           </div>
-        </div>
+          
+            <div className="bg-cyan-400 text-white p-6 rounded-lg">
+              <div className="flex items-center mb-2">
+                <span className="mr-2">💧</span>
+                <span className="text-sm">Water Saved</span>
+              </div>
+              <div className="text-2xl font-bold">125 L</div>
+              <div className="text-xs opacity-90">this month</div>
+              <div className="text-xs mt-1 opacity-80">Equivalent to 2.5 bathtubs</div>
+            </div>
+          </div>
 
-        {/* Charts */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          {/* Carbon Footprint Chart */}
-          <div className="bg-white p-6 rounded-lg shadow-sm">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">
-              Carbon Footprint Over Months
-            </h3>
-            <div className="relative h-48 mb-8">
-              <svg className="w-full h-full" viewBox="0 0 400 200">
-                {/* Grid lines */}
-                <defs>
-                  <pattern
-                    id="grid"
-                    width="40"
-                    height="20"
-                    patternUnits="userSpaceOnUse"
-                  >
-                    <path
-                      d="M 40 0 L 0 0 0 20"
-                      fill="none"
-                      stroke="#f0f0f0"
-                      strokeWidth="1"
+          {/* Second Row Stats */}
+          <div className="grid grid-cols-3 gap-4 mb-8">
+            <div className="bg-orange-400 text-white p-6 rounded-lg">
+              <div className="flex items-center mb-2">
+                <span className="mr-2">📦</span>
+                <span className="text-sm">Eco Packages</span>
+              </div>
+              <div className="text-2xl font-bold">12</div>
+              <div className="text-xs opacity-90">Sustainable Deliveries</div>
+            </div>
+
+            <div className="bg-pink-400 text-white p-6 rounded-lg">
+              <div className="flex items-center mb-2">
+                <span className="mr-2">🚴</span>
+                <span className="text-sm">Grouped Orders</span>
+              </div>
+              <div className="text-2xl font-bold">3</div>
+              <div className="text-xs opacity-90">Eco-Friendly and Cost-Effective Delivery</div>
+            </div>
+
+            <div className="bg-indigo-400 text-white p-6 rounded-lg">
+              <div className="flex items-center mb-2">
+                <span className="mr-2">🌲</span>
+                <span className="text-sm">Forest Impact</span>
+              </div>
+              <div className="text-2xl font-bold">0.3 m²</div>
+              <div className="text-xs opacity-90">forest area protected</div>
+            </div>
+          </div>
+
+          {/* Charts Section */}
+          <div className="grid grid-cols-2 gap-6 mb-6">
+            <div className="bg-white p-6 rounded-lg">
+              <h3 className="text-lg font-semibold mb-4 text-gray-800">Carbon Footprint Over Time</h3>
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={carbonData}>
+                    <XAxis dataKey="month" axisLine={false} tickLine={false} />
+                    <YAxis axisLine={false} tickLine={false} />
+                    <Line 
+                      type="monotone" 
+                      dataKey="co2" 
+                      stroke="#22c55e" 
+                      strokeWidth={2}
+                      dot={{ fill: '#22c55e', strokeWidth: 2, r: 4 }}
+                      activeDot={{ r: 6 }}
                     />
-                  </pattern>
-                </defs>
-                <rect width="100%" height="100%" fill="url(#grid)" />
+                  </LineChart>
 
-                {/* Y-axis labels */}
-                <text x="10" y="20" className="text-xs fill-gray-400">
-                  1.5
-                </text>
-                <text x="10" y="50" className="text-xs fill-gray-400">
-                  1.4
-                </text>
-                <text x="10" y="80" className="text-xs fill-gray-400">
-                  1.3
-                </text>
-                <text x="10" y="110" className="text-xs fill-gray-400">
-                  1.2
-                </text>
-                <text x="10" y="140" className="text-xs fill-gray-400">
-                  1.1
-                </text>
-                <text x="10" y="170" className="text-xs fill-gray-400">
-                  1.0
-                </text>
-                <text x="10" y="195" className="text-xs fill-gray-400">
-                  0.9
-                </text>
-
-                {/* Line path */}
-                <path
-                  d="M 50 180 L 110 120 L 170 160 L 230 20 L 290 140 L 350 60"
-                  fill="none"
-                  stroke="#4ade80"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-
-                {/* Data points */}
-                {[
-                  { x: 50, y: 180 },
-                  { x: 110, y: 120 },
-                  { x: 170, y: 160 },
-                  { x: 230, y: 20 },
-                  { x: 290, y: 140 },
-                  { x: 350, y: 60 },
-                ].map((point, index) => (
-                  <circle
-                    key={index}
-                    cx={point.x}
-                    cy={point.y}
-                    r="4"
-                    fill="#4ade80"
-                    stroke="white"
-                    strokeWidth="2"
-                  />
-                ))}
-              </svg>
-
-              {/* X-axis labels */}
-              <div className="absolute bottom-0 left-0 right-0 flex justify-between px-12">
-                {carbonData.map((item, index) => (
-                  <span key={index} className="text-xs text-gray-600">
-                    {item.month}
-                  </span>
-                ))}
+                </ResponsiveContainer>
+              </div>
+              <div className="flex items-center mt-2">
+                <div className="w-4 h-2 bg-red-400 mr-2"></div>
+                <span className="text-sm text-gray-600">CO2 Emissions (kg)</span>
               </div>
             </div>
-            <div className="flex items-center">
-              <div className="w-3 h-3 bg-green-400 rounded mr-2"></div>
-              <span className="text-sm text-gray-600">CO2 Saved (kg)</span>
+
+            <div className="bg-white p-6 rounded-lg">
+              <h3 className="text-lg font-semibold mb-4 text-gray-800">Green Points Earned</h3>
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={pointsData} barCategoryGap="20%">
+                    <XAxis dataKey="month" axisLine={false} tickLine={false} />
+                    <YAxis axisLine={false} tickLine={false} />
+                    <Bar dataKey="points" fill="#22c55e" radius={[2, 2, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="flex items-center mt-2">
+                <div className="w-4 h-2 bg-green-500 mr-2"></div>
+                <span className="text-sm text-gray-600">Green Points</span>
+              </div>
+
             </div>
           </div>
 
-          {/* Green Points Chart */}
-          <div className="bg-white p-6 rounded-lg shadow-sm">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">
-              Green Points Earned
-            </h3>
-            <div className="flex items-end space-x-2 h-48">
-              {pointsData.map((item, index) => (
-                <div key={index} className="flex-1 flex flex-col items-center">
-                  <div
-                    className="w-full bg-green-500 rounded-t-sm mb-2"
-                    style={{ height: `${item.value * 2}px` }}
-                  ></div>
-                  <span className="text-xs text-gray-600">{item.month}</span>
-                </div>
-              ))}
-            </div>
-            <div className="flex items-center mt-4">
-              <div className="w-3 h-3 bg-green-500 rounded mr-2"></div>
-              <span className="text-sm text-gray-600">Green Points</span>
-            </div>
-          </div>
-        </div>
+          {/* Quote Section */}
+          <div className="bg-green-600 text-white p-6 rounded-lg text-center">
+            <div className="text-4xl mb-4">🌱</div>
+            <blockquote className="text-lg italic mb-2">
+              "Every small action towards sustainability creates ripples of positive change for our planet."
+            </blockquote>
+            <p className="text-sm opacity-90">Thank you for making a difference with every order! 🌿</p>
 
-        {/* Inspirational Quote */}
-        <div className="bg-gradient-to-r from-green-400 to-blue-500 p-8 rounded-lg text-center text-white">
-          <div className="text-4xl mb-4">💬</div>
-          <blockquote className="text-lg mb-4 italic">
-            "Every small action you take towards sustainability creates ripples
-            of positive change. Your commitment to green choices today is
-            building a better tomorrow for generations to come."
-          </blockquote>
-          <div className="flex items-center justify-center">
-            <span className="text-pink-200 mr-2">💚</span>
-            <span className="font-medium">
-              Thank you for making a difference!
-            </span>
           </div>
         </div>
       </div>
