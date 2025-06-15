@@ -3,6 +3,7 @@
 import Image from "next/image";
 import React from "react";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 const dummyOrders = [
   {
@@ -127,6 +128,7 @@ const OrdersPage = () => {
           <p className="text-center text-gray-500 mt-10">You have no orders.</p>
         )}
       </div>
+      <Footer />
     </>
   );
 };

@@ -9,7 +9,7 @@ function CategoryCard({ title, image, link }) {
 
   return (
     <Card 
-      className="group hover:shadow-md transition-all duration-300 cursor-pointer min-w-[160px] max-w-[200px]"
+      className="group hover:shadow-lg hover:bg-gray-200 transition-all duration-300 cursor-pointer min-w-[160px] max-w-[200px]"
       onClick={() => router.push(link)}
     >
       <CardContent className="p-4 flex flex-col items-center">
@@ -21,7 +21,7 @@ function CategoryCard({ title, image, link }) {
             className="object-contain"
           />
         </div>
-        <p className="text-sm font-medium text-center text-gray-900 group-hover:text-blue-600 transition-colors">
+        <p className="text-sm font-medium text-center text-gray-900 group-hover:text-[#fa6103] transition-colors">
           {title}
         </p>
       </CardContent>
