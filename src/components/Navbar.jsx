@@ -5,6 +5,7 @@ import {
   Bars3Icon,
   MagnifyingGlassIcon,
   ShoppingCartIcon,
+  XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { useRouter } from "next/navigation";
 import { SignedIn, SignedOut, UserButton, SignInButton, useUser } from "@clerk/nextjs";
@@ -13,6 +14,7 @@ function Navbar() {
   const router = useRouter();
   const items = [];
   const [searchTerm, setSearchTerm] = useState("");
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -24,7 +26,7 @@ function Navbar() {
   return (
     <div className="sticky top-0 z-50">
       {/* Top nav */}
-      <div className="flex items-center bg-[#131921] px-4 py-1 h-[60px]">
+      <div className="flex items-center bg-[#131921] px-4 py-1 h-[60px] justify-between">
         {/* Logo */}
         <div className="flex items-center sm:flex-grow-0">
           <Image
@@ -37,31 +39,43 @@ function Navbar() {
           />
         </div>
 
-        {/* Delivery Location */}
-        <div className="text-white ml-3 hidden sm:flex flex-col cursor-pointer">
-          <p className="text-xs">Deliver to Jamshedpur 831014</p>
-          <p className="font-bold text-sm">Update Location</p>
+        {/* Delivery Location and Search Bar (hidden on mobile, shown on sm and up) */}
+        <div className="flex-grow flex items-center hidden sm:flex">
+          <div className="text-white ml-3 flex flex-col cursor-pointer">
+            <p className="text-xs">Deliver to Jamshedpur 831014</p>
+            <p className="font-bold text-sm">Update Location</p>
+          </div>
+          <form
+            onSubmit={handleSearch}
+            className="flex items-center h-9 mx-4 rounded-md flex-grow bg-yellow-500"
+          >
+            <input
+              type="text"
+              placeholder="Search"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="bg-white h-full p-2 flex-grow flex-shrink rounded-l-md focus:outline-none px-4 text-black"
+            />
+            <button type="submit">
+              <MagnifyingGlassIcon className="h-10 p-2 text-black" />
+            </button>
+          </form>
         </div>
 
-        {/* Search Bar */}
-        <form
-          onSubmit={handleSearch}
-          className="hidden sm:flex items-center h-9 mx-4 rounded-md flex-grow bg-yellow-500"
-        >
-          <input
-            type="text"
-            placeholder="Search"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="bg-white h-full p-2 flex-grow flex-shrink rounded-l-md focus:outline-none px-4 text-black"
-          />
-          <button type="submit">
-            <MagnifyingGlassIcon className="h-10 p-2 text-black" />
+        {/* Right Nav items (including mobile menu button for small screens) */}
+        <div className="text-white flex items-center text-xs space-x-4 md:space-x-6 whitespace-nowrap">
+          {/* Mobile Menu Button - visible only on md and smaller */}
+          <button 
+            className="md:hidden text-white"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            {isMobileMenuOpen ? (
+              <XMarkIcon className="h-6 w-6" />
+            ) : (
+              <Bars3Icon className="h-6 w-6" />
+            )}
           </button>
-        </form>
 
-        {/* Right Nav */}
-        <div className="text-white flex items-center text-xs space-x-6 ml-4 whitespace-nowrap">
           <SignedIn>
             <div className="cursor-pointer flex items-center space-x-2">
               <UserButton afterSignOutUrl="/home" />
@@ -74,10 +88,6 @@ function Navbar() {
                   <div className="text-center">{user.firstName}</div>
                 </button>
               )}
-
-
-
-
             </div>
           </SignedIn>
 
@@ -89,39 +99,87 @@ function Navbar() {
             </div>
           </SignedOut>
 
-          <div className="cursor-pointer " onClick={() => router.push("/orders")}>
+          <div className="hidden sm:block cursor-pointer" onClick={() => router.push("/orders")}>
             <p>Returns</p>
             <p className="font-extrabold md:text-sm">& Orders</p>
           </div>
 
           <div
-  className="relative flex items-center cursor-pointer"
-  onClick={() => router.push("/cart")}
->
-  {/* Cart Icon Container */}
-  <div className="relative">
-    <ShoppingCartIcon className="h-10 w-10 text-white" />
-
-    {/* Badge aligned inside the basket area */}
-   <span className="absolute top-[4.5px] right-2 h-4 w-4 bg-yellow-400 rounded-full text-black text-[10px] font-bold flex items-center justify-center shadow-sm">
-  {items.length}
-</span>
-
-
-
-
-  </div>
-
-  <p className="hidden md:inline font-extrabold md:text-sm ml-1">
-    Cart
-  </p>
-</div>
-
-
-
-
+            className="relative flex items-center cursor-pointer"
+            onClick={() => router.push("/cart")}
+          >
+            <div className="relative">
+              <ShoppingCartIcon className="h-10 w-10 text-white" />
+              <span className="absolute top-[4.5px] right-2 h-4 w-4 bg-yellow-400 rounded-full text-black text-[10px] font-bold flex items-center justify-center shadow-sm">
+                {items.length}
+              </span>
+            </div>
+            <p className="hidden md:inline font-extrabold md:text-sm ml-1">
+              Cart
+            </p>
+          </div>
         </div>
       </div>
+
+      {/* Mobile Menu Dropdown */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden bg-[#131921] text-white p-4">
+          <form onSubmit={handleSearch} className="flex items-center h-9 rounded-md bg-yellow-500 mb-4">
+            <input
+              type="text"
+              placeholder="Search"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="bg-white h-full p-2 flex-grow rounded-l-md focus:outline-none px-4 text-black"
+            />
+            <button type="submit">
+              <MagnifyingGlassIcon className="h-10 p-2 text-black" />
+            </button>
+          </form>
+          <div className="space-y-4">
+            <div className="flex flex-col space-y-2">
+              <p className="text-sm">Deliver to Jamshedpur 831014</p>
+              <p className="font-bold">Update Location</p>
+            </div>
+            <div className="border-t border-gray-700 pt-4">
+              <p className="font-bold mb-2">Account & Lists</p>
+              <SignedIn>
+                <div className="space-y-2">
+                  <p>Hi, {user?.firstName}</p>
+                  <button
+                    onClick={() => router.push("/profile")}
+                    className="text-sm hover:underline"
+                  >
+                    Your Account
+                  </button>
+                </div>
+              </SignedIn>
+              <SignedOut>
+                <SignInButton mode="modal">
+                  <p className="hover:underline">Sign In</p>
+                </SignInButton>
+              </SignedOut>
+            </div>
+            <div className="border-t border-gray-700 pt-4">
+              <p className="font-bold mb-2">Shopping</p>
+              <div className="space-y-2">
+                <button
+                  onClick={() => router.push("/orders")}
+                  className="block hover:underline"
+                >
+                  Returns & Orders
+                </button>
+                <button
+                  onClick={() => router.push("/cart")}
+                  className="block hover:underline"
+                >
+                  Cart ({items.length})
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Bottom nav */}
       <div className="bg-[#232F3E] text-white text-sm w-full px-6 py-2">
