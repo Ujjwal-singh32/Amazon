@@ -230,8 +230,8 @@ export default function Home() {
                     <button className="bg-green-600 text-white text-sm px-3 py-1 rounded-lg hover:bg-green-700">
                       🌿 View Details
                     </button>
-                    <button className="border border-green-600 text-green-700 text-sm px-3 py-1 rounded-lg hover:bg-green-50">
-                      🔄 Compare
+                     <button className="border border-green-600 text-green-700 text-sm px-3 py-1 rounded-lg hover:bg-green-50">
+                      🛒 Add to Cart
                     </button>
                   </div>
                 </div>
