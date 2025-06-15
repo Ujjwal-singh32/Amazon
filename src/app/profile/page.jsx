@@ -5,7 +5,7 @@ import { LineChart, Line, BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tool
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import { useUser } from "@clerk/nextjs";
-
+import { useRouter } from 'next/navigation';
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
 
 // Custom tooltip component for better styling
@@ -99,8 +99,10 @@ const demoUserData = {
 
 export default function AmazonDashboard() {
   const { user } = useUser();
+  const router = useRouter();
   const [userData, setUserData] = useState(demoUserData);
   const [loading, setLoading] = useState(false);
+
 
   // Commented out the actual data fetching for now
   /*
@@ -268,17 +270,20 @@ export default function AmazonDashboard() {
               <div className="text-xs mt-1 opacity-80">Enough to fill a medium recycling bin</div>
             </div>
 
-            <div className="bg-green-400 text-white p-4 sm:p-6 rounded-lg">
-              <div className="flex items-center mb-2">
-                <span className="mr-2">🎯</span>
-                <span className="text-sm">Green Points</span>
-              </div>
-              <div className="text-xl sm:text-2xl font-bold">{greenStats.greenPoints}</div>
-              <div className="text-xs opacity-90 mb-3">Current Balance</div>
-              <button className="bg-white hover:bg-yellow-300 text-green-800 font-medium px-3 py-1 rounded text-xs transition duration-200 w-full sm:w-auto">
+            <div className="bg-green-400 text-white p-6 rounded-lg">
+            <div className="flex items-center mb-2">
+              <span className="mr-2">🎯</span>
+              <span className="text-sm">Green Points</span>
+
+            </div>
+            <div className="text-2xl font-bold">418</div>
+            <div className="text-xs opacity-90 mb-3">Current Balance</div> {/* Added bottom margin for spacing */}
+
+            <button className="bg-white hover:bg-yellow-300 text-green-800 font-medium px-3 py-1 rounded 
+              text-xs transition duration-200 w-full sm:w-auto" onClick={() => router.push('/rewards')}>
                 Redeem Now
               </button>
-            </div>
+          </div>
           
             <div className="bg-cyan-400 text-white p-4 sm:p-6 rounded-lg">
               <div className="flex items-center mb-2">
