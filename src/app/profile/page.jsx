@@ -10,6 +10,7 @@ import {
   Recycle,
   Award,
 } from "lucide-react";
+import { LineChart, Line, BarChart, Bar, XAxis, YAxis, ResponsiveContainer } from 'recharts';
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
