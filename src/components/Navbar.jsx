@@ -9,10 +9,11 @@ import {
 } from "@heroicons/react/24/outline";
 import { useRouter } from "next/navigation";
 import { SignedIn, SignedOut, UserButton, SignInButton, useUser } from "@clerk/nextjs";
+import { useCart } from "@/context/CartContext";
 
 function Navbar() {
   const router = useRouter();
-  const items = [];
+  const { cartItems } = useCart();
   const [searchTerm, setSearchTerm] = useState("");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -42,24 +43,24 @@ function Navbar() {
         {/* Delivery Location and Search Bar (hidden on mobile, shown on sm and up) */}
         <div className="flex-grow flex items-center hidden sm:flex">
           <div className="text-white ml-3 flex flex-col cursor-pointer">
-            <p className="text-xs">Deliver to Jamshedpur 831014</p>
-            <p className="font-bold text-sm">Update Location</p>
-          </div>
-          <form
-            onSubmit={handleSearch}
+          <p className="text-xs">Deliver to Jamshedpur 831014</p>
+          <p className="font-bold text-sm">Update Location</p>
+        </div>
+        <form
+          onSubmit={handleSearch}
             className="flex items-center h-9 mx-4 rounded-md flex-grow bg-yellow-500"
-          >
-            <input
-              type="text"
-              placeholder="Search"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="bg-white h-full p-2 flex-grow flex-shrink rounded-l-md focus:outline-none px-4 text-black"
-            />
-            <button type="submit">
-              <MagnifyingGlassIcon className="h-10 p-2 text-black" />
-            </button>
-          </form>
+        >
+          <input
+            type="text"
+            placeholder="Search"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="bg-white h-full p-2 flex-grow flex-shrink rounded-l-md focus:outline-none px-4 text-black"
+          />
+          <button type="submit">
+            <MagnifyingGlassIcon className="h-10 p-2 text-black" />
+          </button>
+        </form>
         </div>
 
         {/* Right Nav items (including mobile menu button for small screens) */}
@@ -105,19 +106,19 @@ function Navbar() {
           </div>
 
           <div
-            className="relative flex items-center cursor-pointer"
-            onClick={() => router.push("/cart")}
-          >
-            <div className="relative">
-              <ShoppingCartIcon className="h-10 w-10 text-white" />
-              <span className="absolute top-[4.5px] right-2 h-4 w-4 bg-yellow-400 rounded-full text-black text-[10px] font-bold flex items-center justify-center shadow-sm">
-                {items.length}
-              </span>
-            </div>
-            <p className="hidden md:inline font-extrabold md:text-sm ml-1">
-              Cart
-            </p>
-          </div>
+  className="relative flex items-center cursor-pointer"
+  onClick={() => router.push("/cart")}
+>
+  <div className="relative">
+    <ShoppingCartIcon className="h-10 w-10 text-white" />
+   <span className="absolute top-[4.5px] right-2 h-4 w-4 bg-yellow-400 rounded-full text-black text-[10px] font-bold flex items-center justify-center shadow-sm">
+  {cartItems.length}
+</span>
+  </div>
+  <p className="hidden md:inline font-extrabold md:text-sm ml-1">
+    Cart
+  </p>
+</div>
         </div>
       </div>
 
@@ -173,7 +174,7 @@ function Navbar() {
                   onClick={() => router.push("/cart")}
                   className="block hover:underline"
                 >
-                  Cart ({items.length})
+                  Cart ({cartItems.length})
                 </button>
               </div>
             </div>

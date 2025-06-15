@@ -6,10 +6,24 @@ import { useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { useCart } from "@/context/CartContext";
 
 function ProductCard({ id, title, price, description, category, image, rating }) {
   const router = useRouter();
   const { rate, count } = rating || { rate: 0, count: 0 };
+  const { addToCart } = useCart();
+
+  const handleAddToCart = (e) => {
+    e.stopPropagation();
+    const productImage = Array.isArray(image) ? image[0] : image;
+    addToCart({ id, title, price, description, category, image: productImage, rating });
+  };
+
+  const displayImageSrc = (Array.isArray(image) && image.length > 0 && image[0])
+    ? image[0]
+    : (typeof image === 'string' && image !== '')
+      ? image
+      : '/placeholder.png'; // Fallback placeholder image
 
   return (
     <Card 
@@ -19,8 +33,8 @@ function ProductCard({ id, title, price, description, category, image, rating })
       <CardHeader className="relative p-4 flex-shrink-0">
         <div className="relative h-48 w-full">
           <Image
-            src={image}
-            alt={title}
+            src={displayImageSrc}
+            alt={title || "Product image"}
             fill
             className="object-contain group-hover:scale-105 transition-transform duration-300"
           />
@@ -59,10 +73,7 @@ function ProductCard({ id, title, price, description, category, image, rating })
           <Button 
             variant="outline" 
             className="hover:bg-[#fa6103] hover:text-white transition-colors cursor-pointer"
-            onClick={(e) => {
-              e.stopPropagation();
-              // Add to cart logic here
-            }}
+            onClick={handleAddToCart}
           >
             Add to Cart
           </Button>
