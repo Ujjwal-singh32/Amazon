@@ -7,6 +7,7 @@ import {
   ShoppingCartIcon,
 } from "@heroicons/react/24/outline";
 import { useRouter } from "next/navigation";
+import { SignedIn, SignedOut, UserButton, SignInButton, useUser } from "@clerk/nextjs";
 
 function Navbar() {
   const router = useRouter();
@@ -18,6 +19,7 @@ function Navbar() {
     if (!searchTerm.trim()) return;
     router.push(`/products?query=${encodeURIComponent(searchTerm)}`);
   };
+  const { user } = useUser();
 
   return (
     <div className="sticky top-0 z-50">
@@ -60,10 +62,32 @@ function Navbar() {
 
         {/* Right Nav */}
         <div className="text-white flex items-center text-xs space-x-6 ml-4 whitespace-nowrap">
-          <div className="cursor-pointer" onClick={() => router.push("/profile")}>
-            <p className="hover:underline">Hello, User</p>
-            <p className="font-extrabold md:text-sm">Account & Lists</p>
-          </div>
+          <SignedIn>
+            <div className="cursor-pointer flex items-center space-x-2">
+              <UserButton afterSignOutUrl="/home" />
+              {user && (
+                <button
+                  onClick={() => router.push("/profile")}
+                  className="hidden sm:inline font-extrabold md:text-sm text-white hover:underline"
+                >
+                  <div className="text-center">Hi</div>
+                  <div className="text-center">{user.firstName}</div>
+                </button>
+              )}
+
+
+
+
+            </div>
+          </SignedIn>
+
+          <SignedOut>
+            <div className="cursor-pointer" onClick={() => router.push("/home")}>
+              <SignInButton mode="modal">
+                <p className="hover:underline">Sign In</p>
+              </SignInButton>
+            </div>
+          </SignedOut>
 
           <div className="cursor-pointer " onClick={() => router.push("/orders")}>
             <p>Returns</p>
@@ -71,17 +95,31 @@ function Navbar() {
           </div>
 
           <div
-            className="relative flex items-center cursor-pointer"
-            onClick={() => router.push("/cart")}
-          >
-            <span className="absolute top-0 right-0 md:right-10 h-4 w-4 bg-yellow-400 text-center rounded-full text-black font-bold">
-              {items.length}
-            </span>
-            <ShoppingCartIcon className="h-8" />
-            <p className="hidden md:inline font-extrabold md:text-sm ml-1">
-              Cart
-            </p>
-          </div>
+  className="relative flex items-center cursor-pointer"
+  onClick={() => router.push("/cart")}
+>
+  {/* Cart Icon Container */}
+  <div className="relative">
+    <ShoppingCartIcon className="h-10 w-10 text-white" />
+
+    {/* Badge aligned inside the basket area */}
+   <span className="absolute top-[4.5px] right-2 h-4 w-4 bg-yellow-400 rounded-full text-black text-[10px] font-bold flex items-center justify-center shadow-sm">
+  {items.length}
+</span>
+
+
+
+
+  </div>
+
+  <p className="hidden md:inline font-extrabold md:text-sm ml-1">
+    Cart
+  </p>
+</div>
+
+
+
+
         </div>
       </div>
 

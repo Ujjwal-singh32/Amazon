@@ -151,11 +151,11 @@ export default function Home() {
       <GreenNavbar />
 
       {/* Hero Section */}
-      <section className="bg-green-50 py-0.5 md:py-1 px-4 md:px-6 flex flex-col md:flex-row justify-between items-center">
+       <section className="bg-green-50 py-5 md:py-9 px-4 md:px-10 flex flex-col md:flex-row justify-between items-center">
         <div className="text-left w-full md:w-1/2 flex flex-col items-center justify-center">
           <div className="text-center md:text-left">
             <h1 className="text-2xl md:text-4xl font-bold text-green-700 flex items-center gap-2 justify-center md:justify-start animate-bounce">
-              <FaLeaf className="text-green-600" /> Green Cart
+              <FaLeaf className="text-green-600" /> Greenkart
             </h1>
             <p className="text-md md:text-xl text-green-800 mt-2">
               Where Every Purchase Plants a Better Future.
@@ -172,7 +172,7 @@ export default function Home() {
         <img
           src="/env2.jpeg"
           alt="Green Mission"
-          className="mt-4 md:mt-0 w-5/6 md:w-[55%] h-[120px] md:h-[200px] rounded-lg shadow"
+          className="mt-4 md:mt-0 w-5/6 md:w-[55%] h-[160px] md:h-[240px] rounded-lg shadow"
         />
       </section>
 
@@ -241,7 +241,7 @@ export default function Home() {
         </section>
       ))}
       {/* Footer Section */}
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 }

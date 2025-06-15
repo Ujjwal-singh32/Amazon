@@ -5,7 +5,9 @@ import {
     SignedIn,
     SignedOut,
     UserButton,
-} from '@clerk/nextjs'
+} from '@clerk/nextjs';
+import Image from "next/image";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 
 export default function GreenNavbar() {
     const [menuOpen, setMenuOpen] = useState(false);
@@ -16,8 +18,17 @@ export default function GreenNavbar() {
 
             {/* Left: Logo */}
             <div className="flex items-center space-x-2 text-xl font-bold">
-                <FaLeaf className="text-white" />
-                <span>Amazon Green Kart</span>
+                <Image
+                    onClick={() => router.push("/")}
+                    alt="Logo"
+                    src="https://pngimg.com/uploads/amazon/amazon_PNG11.png"
+                    width={90}
+                    height={30}
+                    className="cursor-pointer object-contain mt-2"
+                />
+
+                <span> Greenkart</span>
+
             </div>
 
             {/* Middle: Search bar */}
@@ -28,10 +39,14 @@ export default function GreenNavbar() {
                     placeholder="Search green products"
                     className="flex-1 p-2 rounded-l-md bg-white text-green-700 placeholder-green-600 font-semibold"
                 />
-                <button className="bg-white p-2 rounded-r-md text-green-600">
-                    🔍
+                <button
+                    type="submit"
+                    className="bg-white hover:bg-green-600 rounded-r-md transition-colors duration-200"
+                >
+                    <MagnifyingGlassIcon className="h-10 p-2 text-black hover:text-white" />
                 </button>
             </div>
+
 
 
             {/* Right: Buttons */}
