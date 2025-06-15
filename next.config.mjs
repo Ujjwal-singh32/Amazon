@@ -1,14 +1,27 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['images.unsplash.com','pngimg.com'], 
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "pngimg.com",
+      },
+      {
+        protocol: "https",
+        hostname: "m.media-amazon.com",
+      },
+      {
+        protocol: "https",
+        hostname: "www.boat-lifestyle.com",
+      },
+    ],
   },
   async redirects() {
     return [
       {
         source: '/',
         destination: '/home',
-        permanent: false, 
+        permanent: false,
       },
     ];
   },
