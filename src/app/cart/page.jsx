@@ -428,7 +428,7 @@ export default function AmazonCart() {
           {/* Order Summary Sidebar */}
           <div className="lg:w-80">
 
-            <div className="bg-white rounded-lg border sticky top-6 max-h-screen overflow-y-auto">
+            <div className="bg-white rounded-lg border sticky top-30 max-h-screen overflow-y-auto">
               <div className="p-6 border-b">
                 <h2 className="text-xl font-medium">Order Summary</h2>
               </div>
