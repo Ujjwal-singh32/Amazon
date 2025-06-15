@@ -6,6 +6,7 @@ import React, { useEffect, useState } from "react";
 import { products } from "@/assets/assets";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { useCart } from "@/context/CartContext";
 
 const SearchPage = () => {
   const searchParams = useSearchParams();
@@ -15,6 +16,7 @@ const SearchPage = () => {
   const [results, setResults] = useState([]);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [sortBy, setSortBy] = useState("");
+  const { addToCart } = useCart();
 
   useEffect(() => {
     if (query) {
@@ -79,8 +81,8 @@ const SearchPage = () => {
                       className="cursor-pointer"
                     >
                       <Image
-                        src={product.image[0]}
-                        alt={product.name}
+                        src={(product.image && product.image.length > 0 && product.image[0]) ? product.image[0] : '/placeholder.png'}
+                        alt={product.name || "Product image"}
                         width={250}
                         height={250}
                         className="w-full h-[250px] object-contain mx-auto"
@@ -99,7 +101,10 @@ const SearchPage = () => {
                       </p>
                       <button
                         className="mt-3 w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 px-4 rounded shadow"
-                        onClick={() => alert("Added to cart")}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          addToCart({ ...product, id: product._id, image: (product.image && product.image.length > 0 && product.image[0]) ? product.image[0] : '/placeholder.png' });
+                        }}
                       >
                         Add to cart
                       </button>

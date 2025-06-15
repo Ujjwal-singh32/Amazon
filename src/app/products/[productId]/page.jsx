@@ -5,18 +5,38 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { products } from "@/assets/assets";
 import Navbar from "@/components/Navbar";
+import { useCart } from "@/context/CartContext";
 
 const ProductDetailsPage = () => {
   const { productId } = useParams();
   const router = useRouter();
   const product = products.find((item) => item._id === productId);
 
-  const [selectedImage, setSelectedImage] = useState(product?.image[0]);
+  const [selectedImage, setSelectedImage] = useState(
+    (product?.image && product.image.length > 0 && product.image[0])
+      ? product.image[0]
+      : '/placeholder.png' // Fallback if product.image[0] is not available
+  );
   const [selectedSize, setSelectedSize] = useState(null);
+  const { addToCart } = useCart();
 
   if (!product) {
     return <div className="p-4">Product not found.</div>;
   }
+
+  const handleAddToCart = () => {
+    const productToAdd = {
+      id: product._id,
+      title: product.name,
+      price: product.price,
+      description: product.description,
+      category: product.category,
+      image: (product.image && product.image.length > 0 && product.image[0]) ? product.image[0] : '/placeholder.png',
+      rating: product.rating || { rate: 0, count: 0 },
+      selectedSize: selectedSize,
+    };
+    addToCart(productToAdd);
+  };
 
   const similarProducts = products
     .filter((p) => p.category === product.category && p._id !== product._id)
@@ -32,8 +52,8 @@ const ProductDetailsPage = () => {
             {product.image.map((img, index) => (
               <Image
                 key={index}
-                src={img}
-                alt={product.name + " thumb"}
+                src={img && img !== '' ? img : '/placeholder.png'}
+                alt={product.name + " thumb" || "Product thumbnail"}
                 width={60}
                 height={60}
                 className={`cursor-pointer border rounded-md ${
@@ -41,7 +61,7 @@ const ProductDetailsPage = () => {
                     ? "border-purple-500"
                     : "border-gray-300"
                 }`}
-                onClick={() => setSelectedImage(img)}
+                onClick={() => setSelectedImage(img && img !== '' ? img : '/placeholder.png')}
               />
             ))}
           </div>
@@ -49,7 +69,7 @@ const ProductDetailsPage = () => {
           <div className="w-full">
             <Image
               src={selectedImage}
-              alt={product.name}
+              alt={product.name || "Product image"}
               width={600}
               height={600}
               className="rounded-lg object-contain w-full max-h-[400px]"
@@ -116,7 +136,10 @@ const ProductDetailsPage = () => {
             </div>
           </div>
 
-          <button className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-6 rounded-md w-full sm:w-auto">
+          <button 
+            className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-6 rounded-md w-full sm:w-auto"
+            onClick={handleAddToCart}
+          >
             Add to Cart
           </button>
         </div>
@@ -133,8 +156,8 @@ const ProductDetailsPage = () => {
                 onClick={() => router.push(`/products/${item._id}`)}
               >
                 <Image
-                  src={item.image[0]}
-                  alt={item.name}
+                  src={(item.image && item.image.length > 0 && item.image[0]) ? item.image[0] : '/placeholder.png'}
+                  alt={item.name || "Similar product image"}
                   width={200}
                   height={200}
                   className="rounded-lg object-cover mx-auto"
@@ -146,7 +169,13 @@ const ProductDetailsPage = () => {
                   ₹{item.price}
                 </p>
               </div>
-              <button className="mt-2 w-full bg-yellow-400 hover:bg-yellow-500 text-black text-sm font-semibold py-2 rounded-full">
+              <button 
+                className="mt-2 w-full bg-yellow-400 hover:bg-yellow-500 text-black text-sm font-semibold py-2 rounded-full"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  addToCart({ ...item, id: item._id, image: (item.image && item.image.length > 0 && item.image[0]) ? item.image[0] : '/placeholder.png' });
+                }}
+              >
                 Add to Cart
               </button>
             </div>
