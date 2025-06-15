@@ -20,9 +20,9 @@ function Navbar() {
   };
 
   return (
-    <div className="sticky top-0 z-50">
+    <div className="sticky top-0">
       {/* Top nav */}
-      <div className="flex items-center bg-[#131921] px-4 py-1 h-[60px]">
+      <div className="flex items-center bg-[#131921] px-4 py-1 h-[60px] sticky top-0">
         {/* Logo */}
         <div className="flex items-center sm:flex-grow-0">
           <Image
