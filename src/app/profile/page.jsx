@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, ResponsiveContainer } from 'recharts';
-
+import { useRouter } from 'next/navigation';
 const carbonData = [
   { month: 'Jan', co2: 3 },
   { month: 'Feb', co2: 7.5 },
@@ -22,6 +22,7 @@ const pointsData = [
 ];
 
 export default function AmazonDashboard() {
+  const router = useRouter();
   return (
     <div className="min-h-screen bg-gray-50">
 
@@ -147,9 +148,10 @@ export default function AmazonDashboard() {
             <div className="text-2xl font-bold">418</div>
             <div className="text-xs opacity-90 mb-3">Current Balance</div> {/* Added bottom margin for spacing */}
 
-            <button className="bg-white hover:bg-yellow-300 text-green-800 font-medium px-3 py-1 rounded text-xs transition duration-200">
-              Redeem Now
-            </button>
+            <button className="bg-white hover:bg-yellow-300 text-green-800 font-medium px-3 py-1 rounded 
+              text-xs transition duration-200 w-full sm:w-auto" onClick={() => router.push('/rewards')}>
+                Redeem Now
+              </button>
           </div>
           
             <div className="bg-cyan-400 text-white p-6 rounded-lg">
