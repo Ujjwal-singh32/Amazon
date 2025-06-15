@@ -26,7 +26,7 @@ export default function AmazonDashboard() {
   return (
     <div className="min-h-screen bg-gray-50">
 
-      <Header/>
+      <Navbar/>
 
       <div className="max-w-7xl mx-auto p-4 sm:p-6">
         <h1 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 text-gray-800">Your Account</h1>
