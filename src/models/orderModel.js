@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 const OrderSchema = new mongoose.Schema({
-  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  user: String, // Clerk Id
   items: [
     {
       productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
@@ -10,7 +10,7 @@ const OrderSchema = new mongoose.Schema({
     },
   ],
   totalAmount: Number,
-  paymentStatus: { type: String, enum: ['pending', 'paid', 'failed', 'returned'], default: 'pending' },
+  paymentStatus: { type: String, enum: ['pending', 'paid', 'failed', 'returned','COD'], default: 'pending' },
   orderStatus: { type: String, enum: ['placed', 'shipped', 'delivered', 'cancelled'], default: 'placed' },
   shippingAddress: {
     street: String,

@@ -1,75 +1,175 @@
 "use client";
-import { useUser } from "@clerk/nextjs";
-import { useEffect, useState } from "react";
 
-const OrderSummaryPage = () => {
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import { useUser } from "@clerk/nextjs";
+
+const PaymentPage = () => {
+  const [loading, setLoading] = useState(false);
+  const [orderPayload, setOrderPayload] = useState(null);
+  const router = useRouter();
   const { user } = useUser();
-  const [order, setOrder] = useState(null);
 
   useEffect(() => {
-    if (user) {
-      const storedOrder = localStorage.getItem(`checkout_${user.id}`);
-      if (storedOrder) {
-        setOrder(JSON.parse(storedOrder));
-      }
+    if (!user) return;
+
+    const data = localStorage.getItem(`checkout_${user.id}`);
+    if (data) {
+      setOrderPayload(JSON.parse(data));
+    } else {
+      alert("No order data found. Please go back and try again.");
+      router.push("/cart");
     }
   }, [user]);
 
-  if (!order) return <div className="p-6 text-gray-700">Loading order summary...</div>;
+  const loadRazorpayScript = () => {
+    return new Promise((resolve) => {
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+
+  const handleRazorpayPayment = async () => {
+    if (!orderPayload) return;
+    setLoading(true);
+
+    const isScriptLoaded = await loadRazorpayScript();
+    if (!isScriptLoaded) {
+      alert("Failed to load Razorpay SDK");
+      setLoading(false);
+      return;
+    }
+
+     try {
+    // 1. Retrieve stored checkout payload
+    const storedOrder = localStorage.getItem(`checkout_${user.id}`);
+    const orderPayload = storedOrder ? JSON.parse(storedOrder) : null;
+
+    if (!orderPayload) return alert("Order info not found");
+
+    // 2. Create Razorpay order
+    const { data } = await axios.post("/api/payment/create-order", {
+      order: orderPayload,
+    });
+
+    const options = {
+      key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+      amount: data.amount,
+      currency: data.currency,
+      name: "GreenCart",
+      description: "Order Payment",
+      order_id: data.orderId,
+      handler: async function (response) {
+        // 3. Verify Payment
+        const verifyRes = await axios.post("/api/payment/verify-payment", {
+          razorpay_order_id: response.razorpay_order_id,
+          razorpay_payment_id: response.razorpay_payment_id,
+          razorpay_signature: response.razorpay_signature,
+          originalOrder: orderPayload,
+        });
+
+        if (verifyRes.data.success) {
+          // 4. Save verified order to localStorage for order-placed page
+          localStorage.setItem("latest_order", JSON.stringify({
+            ...orderPayload,
+            payment_id: response.razorpay_payment_id,
+            order_id: response.razorpay_order_id,
+          }));
+
+          // Optional: cleanup
+          localStorage.removeItem(`checkout_${user.id}`);
+
+          // 5. Navigate to order placed page
+          router.push("/order-placed");
+        } else {
+          alert("Payment Verification Failed!");
+        }
+      },
+      prefill: {
+        name: user.fullName || "Customer",
+        email: user.emailAddresses?.[0]?.emailAddress || "customer@example.com",
+        contact: "9999999999",
+      },
+      theme: {
+        color: "#22c55e",
+      },
+    };
+
+    const razor = new window.Razorpay(options);
+    razor.open();
+  } catch (err) {
+    console.error("Payment Error:", err);
+    alert("Something went wrong");
+  } finally {
+    setLoading(false);
+  }
+  };
+
+  const handleCashOnDelivery = async () => {
+  if (!orderPayload) return;
+  setLoading(true);
+
+  try {
+    const res = await axios.post("/api/payment/cod", {
+      order: orderPayload,
+    });
+
+    if (res.data.success) {
+      localStorage.setItem("latest_order", JSON.stringify(res.data.order));
+      localStorage.removeItem(`checkout_${user.id}`);
+      router.push("/order-placed");
+    } else {
+      alert("COD Order Failed");
+    }
+  } catch (err) {
+    console.error(err);
+    alert("Error processing COD order");
+  } finally {
+    setLoading(false);
+  }
+};
+
+  if (!orderPayload) return null;
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-lg mt-6">
-      <h1 className="text-2xl font-semibold text-gray-800 mb-4">Order Summary</h1>
+    <div
+      className="relative min-h-screen flex items-center justify-center bg-cover bg-center"
+      style={{
+        backgroundImage:
+          "url('https://images.pexels.com/photos/326055/pexels-photo-326055.jpeg?auto=compress&cs=tinysrgb&w=600')",
+      }}
+    >
+      <div className="absolute inset-0 bg-black opacity-40 z-0"></div>
 
-      {/* Order Info */}
-      <div className="mb-6">
-        <div><strong>User ID:</strong> {order.user}</div>
-        <div><strong>Order Status:</strong> {order.orderStatus}</div>
-        <div><strong>Payment Status:</strong> {order.paymentStatus}</div>
-        <div><strong>deliveryOption:</strong> {order.deliveryOption}</div>
-        <div><strong>packagingPoints:</strong> {order.packagingPoints}</div>
-        <div><strong>Placed At:</strong> {new Date(order.placedAt).toLocaleString()}</div>
-      </div>
+      <div className="relative z-10 bg-white/30 backdrop-blur-lg shadow-2xl p-10 rounded-3xl max-w-md w-full text-center border border-white/30">
+        <h2 className="text-3xl font-bold text-white mb-6">Complete Your Payment</h2>
+        <p className="mb-6 text-gray-100 font-medium">
+          Pay securely ₹{orderPayload.totalAmount}
+        </p>
 
-      {/* Items */}
-      <div className="mb-6">
-        <h2 className="text-lg font-medium mb-2">Items Ordered</h2>
-        <div className="space-y-3">
-          {order.items.map((item, index) => (
-            <div
-              key={index}
-              className="flex justify-between items-center border p-3 rounded-md bg-gray-50"
-            >
-              <div>
-                <div><strong>Product ID:</strong> {item.productId}</div>
-                <div><strong>Quantity:</strong> {item.quantity}</div>
-              </div>
-              <div className="text-right">
-                <div><strong>Price:</strong> ₹{item.priceAtPurchase}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+        <button
+          onClick={handleRazorpayPayment}
+          disabled={loading}
+          className={`mb-4 w-full bg-green-600 hover:bg-green-700 text-white font-semibold px-8 py-3 rounded-full transition duration-300 transform hover:scale-105 focus:outline-none ${loading ? "opacity-50 cursor-not-allowed" : "animate-pulse"
+            }`}
+        >
+          {loading ? "Processing..." : `Pay ₹${orderPayload.totalAmount} with Razorpay`}
+        </button>
 
-      {/* Shipping Address */}
-      <div className="mb-6">
-        <h2 className="text-lg font-medium mb-2">Shipping Address</h2>
-        <div className="bg-blue-50 p-4 rounded-lg">
-          <div>{order.shippingAddress.street}</div>
-          <div>
-            {order.shippingAddress.city}, {order.shippingAddress.state}
-          </div>
-          <div>{order.shippingAddress.country} - {order.shippingAddress.pincode}</div>
-        </div>
-      </div>
-
-      {/* Total */}
-      <div className="text-right text-xl font-bold text-orange-600">
-        Total: ₹{order.totalAmount.toFixed(2)}
+        <button
+          onClick={handleCashOnDelivery}
+          disabled={loading}
+          className="w-full bg-white text-green-700 font-semibold px-8 py-3 rounded-full border-2 border-green-700 hover:bg-green-50 transition duration-300 transform hover:scale-105"
+        >
+          {loading ? "Placing Order..." : "Cash on Delivery"}
+        </button>
       </div>
     </div>
   );
 };
 
-export default OrderSummaryPage;
+export default PaymentPage;
