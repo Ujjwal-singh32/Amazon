@@ -5,9 +5,11 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { products } from "@/assets/assets";
 import Navbar from "@/components/Navbar";
-
+import { useCart } from "@/context/cartContext"; // ⬅️ import this
+import { toast, ToastContainer } from "react-toastify";
 const ProductDetailsPage = () => {
   const { productId } = useParams();
+  const { addToCart } = useCart();
   const router = useRouter();
   const product = products.find((item) => item._id === productId);
 
@@ -21,6 +23,27 @@ const ProductDetailsPage = () => {
   const similarProducts = products
     .filter((p) => p.category === product.category && p._id !== product._id)
     .slice(0, 8);
+
+  // ✅ Handle Add to Cart
+  const handleAddToCart = (item, size = null) => {
+    console.log("add to cart clicked");
+
+    if (item._id === product._id && !size) {
+      toast.error("Please Select a Size");
+      return;
+    }
+
+    addToCart({
+      id: item._id,
+      name: item.name,
+      price: item.price,
+      image: item.image[0],
+      size: size,
+      quantity: 1,
+    });
+    toast.success("Added to Cart");
+    router.push("/cart");
+  };
 
   return (
     <>
@@ -116,7 +139,10 @@ const ProductDetailsPage = () => {
             </div>
           </div>
 
-          <button className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-6 rounded-md w-full sm:w-auto">
+          <button
+            className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-6 rounded-md w-full sm:w-auto"
+            onClick={() => handleAddToCart(product, selectedSize)}
+          >
             Add to Cart
           </button>
         </div>
@@ -127,7 +153,10 @@ const ProductDetailsPage = () => {
         <h2 className="text-lg sm:text-xl font-bold mb-4">Similar Products</h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6">
           {similarProducts.map((item) => (
-            <div key={item._id} className="bg-purple-50 p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300">
+            <div
+              key={item._id}
+              className="bg-purple-50 p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300"
+            >
               <div
                 className="cursor-pointer"
                 onClick={() => router.push(`/products/${item._id}`)}
@@ -146,7 +175,10 @@ const ProductDetailsPage = () => {
                   ₹{item.price}
                 </p>
               </div>
-              <button className="mt-2 w-full bg-yellow-400 hover:bg-yellow-500 text-black text-sm font-semibold py-2 rounded-full">
+              <button
+                className="mt-2 w-full bg-yellow-400 hover:bg-yellow-500 text-black text-sm font-semibold py-2 rounded-full"
+                onClick={() => handleAddToCart(product, selectedSize)}
+              >
                 Add to Cart
               </button>
             </div>
@@ -176,7 +208,9 @@ const ProductDetailsPage = () => {
 
         {/* Reviews Section */}
         <div className="md:w-2/3">
-          <h2 className="text-lg sm:text-xl font-bold mb-4">Customer Reviews</h2>
+          <h2 className="text-lg sm:text-xl font-bold mb-4">
+            Customer Reviews
+          </h2>
           <div className="space-y-4">
             {[
               {

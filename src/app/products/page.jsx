@@ -6,12 +6,13 @@ import React, { useEffect, useState } from "react";
 import { products } from "@/assets/assets";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { useCart } from "@/context/cartContext";
 
 const SearchPage = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const query = searchParams.get("query")?.toLowerCase() || "";
-
+  const { addToCart } = useCart();
   const [results, setResults] = useState([]);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [sortBy, setSortBy] = useState("");
@@ -99,7 +100,14 @@ const SearchPage = () => {
                       </p>
                       <button
                         className="mt-3 w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 px-4 rounded shadow"
-                        onClick={() => alert("Added to cart")}
+                        onClick={() =>
+                          addToCart({
+                            id: product._id,
+                            name: product.name,
+                            price: product.price,
+                            image: product.image[0],
+                          })
+                        }
                       >
                         Add to cart
                       </button>

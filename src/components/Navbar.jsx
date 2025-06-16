@@ -8,10 +8,18 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { useRouter } from "next/navigation";
-import { SignedIn, SignedOut, UserButton, SignInButton, useUser } from "@clerk/nextjs";
+import {
+  SignedIn,
+  SignedOut,
+  UserButton,
+  SignInButton,
+  useUser,
+} from "@clerk/nextjs";
+import { useCart } from "@/context/cartContext";
 
 function Navbar() {
   const router = useRouter();
+  const { total } = useCart();
   const items = [];
   const [searchTerm, setSearchTerm] = useState("");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -22,7 +30,7 @@ function Navbar() {
     router.push(`/products?query=${encodeURIComponent(searchTerm)}`);
   };
   const { user } = useUser();
-
+  console.log("user", user);
   return (
     <div className="sticky top-0 z-50">
       {/* Top nav */}
@@ -40,7 +48,7 @@ function Navbar() {
         </div>
 
         {/* Delivery Location and Search Bar (hidden on mobile, shown on sm and up) */}
-        <div className="flex-grow flex items-center hidden sm:flex">
+        <div className="hidden md:flex flex-grow items-center">
           <div className="text-white ml-3 flex flex-col cursor-pointer">
             <p className="text-xs">Deliver to Jamshedpur 831014</p>
             <p className="font-bold text-sm">Update Location</p>
@@ -65,7 +73,7 @@ function Navbar() {
         {/* Right Nav items (including mobile menu button for small screens) */}
         <div className="text-white flex items-center text-xs space-x-4 md:space-x-6 whitespace-nowrap">
           {/* Mobile Menu Button - visible only on md and smaller */}
-          <button 
+          <button
             className="md:hidden text-white"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
@@ -92,14 +100,20 @@ function Navbar() {
           </SignedIn>
 
           <SignedOut>
-            <div className="cursor-pointer" onClick={() => router.push("/home")}>
+            <div
+              className="cursor-pointer"
+              onClick={() => router.push("/home")}
+            >
               <SignInButton mode="modal">
                 <p className="hover:underline">Sign In</p>
               </SignInButton>
             </div>
           </SignedOut>
 
-          <div className="hidden sm:block cursor-pointer" onClick={() => router.push("/orders")}>
+          <div
+            className="hidden sm:block cursor-pointer"
+            onClick={() => router.push("/orders")}
+          >
             <p>Returns</p>
             <p className="font-extrabold md:text-sm">& Orders</p>
           </div>
@@ -111,7 +125,7 @@ function Navbar() {
             <div className="relative">
               <ShoppingCartIcon className="h-10 w-10 text-white" />
               <span className="absolute top-[4.5px] right-2 h-4 w-4 bg-yellow-400 rounded-full text-black text-[10px] font-bold flex items-center justify-center shadow-sm">
-                {items.length}
+                {total}
               </span>
             </div>
             <p className="hidden md:inline font-extrabold md:text-sm ml-1">
@@ -124,7 +138,10 @@ function Navbar() {
       {/* Mobile Menu Dropdown */}
       {isMobileMenuOpen && (
         <div className="md:hidden bg-[#131921] text-white p-4">
-          <form onSubmit={handleSearch} className="flex items-center h-9 rounded-md bg-yellow-500 mb-4">
+          <form
+            onSubmit={handleSearch}
+            className="flex items-center h-9 rounded-md bg-yellow-500 mb-4"
+          >
             <input
               type="text"
               placeholder="Search"
@@ -189,7 +206,9 @@ function Navbar() {
           </p>
           <p className="cursor-pointer">Today's Deals</p>
           <p className="cursor-pointer hidden lg:inline-flex">Registry</p>
-          <p className="cursor-pointer hidden lg:inline-flex">Customer Service</p>
+          <p className="cursor-pointer hidden lg:inline-flex">
+            Customer Service
+          </p>
           <p className="cursor-pointer hidden lg:inline-flex">Gift Cards</p>
           <p className="cursor-pointer hidden lg:inline-flex">Sell</p>
           <p className="cursor-pointer hidden lg:inline-flex">Amazon Pay</p>
