@@ -5,42 +5,45 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { products } from "@/assets/assets";
 import Navbar from "@/components/Navbar";
-import { useCart } from "@/context/CartContext";
-
+import { useCart } from "@/context/cartContext"; // ⬅️ import this
+import { toast, ToastContainer } from "react-toastify";
 const ProductDetailsPage = () => {
   const { productId } = useParams();
+  const { addToCart } = useCart();
   const router = useRouter();
   const product = products.find((item) => item._id === productId);
 
-  const [selectedImage, setSelectedImage] = useState(
-    (product?.image && product.image.length > 0 && product.image[0])
-      ? product.image[0]
-      : '/placeholder.png' // Fallback if product.image[0] is not available
-  );
+  const [selectedImage, setSelectedImage] = useState(product?.image[0]);
   const [selectedSize, setSelectedSize] = useState(null);
-  const { addToCart } = useCart();
 
   if (!product) {
     return <div className="p-4">Product not found.</div>;
   }
 
-  const handleAddToCart = () => {
-    const productToAdd = {
-      id: product._id,
-      title: product.name,
-      price: product.price,
-      description: product.description,
-      category: product.category,
-      image: (product.image && product.image.length > 0 && product.image[0]) ? product.image[0] : '/placeholder.png',
-      rating: product.rating || { rate: 0, count: 0 },
-      selectedSize: selectedSize,
-    };
-    addToCart(productToAdd);
-  };
-
   const similarProducts = products
     .filter((p) => p.category === product.category && p._id !== product._id)
     .slice(0, 8);
+
+  // ✅ Handle Add to Cart
+  const handleAddToCart = (item, size = null) => {
+    console.log("add to cart clicked");
+
+    if (item._id === product._id && !size) {
+      toast.error("Please Select a Size");
+      return;
+    }
+
+    addToCart({
+      id: item._id,
+      name: item.name,
+      price: item.price,
+      image: item.image[0],
+      size: size,
+      quantity: 1,
+    });
+    toast.success("Added to Cart");
+    router.push("/cart");
+  };
 
   return (
     <>
@@ -52,8 +55,8 @@ const ProductDetailsPage = () => {
             {product.image.map((img, index) => (
               <Image
                 key={index}
-                src={img && img !== '' ? img : '/placeholder.png'}
-                alt={product.name + " thumb" || "Product thumbnail"}
+                src={img}
+                alt={product.name + " thumb"}
                 width={60}
                 height={60}
                 className={`cursor-pointer border rounded-md ${
@@ -61,7 +64,7 @@ const ProductDetailsPage = () => {
                     ? "border-purple-500"
                     : "border-gray-300"
                 }`}
-                onClick={() => setSelectedImage(img && img !== '' ? img : '/placeholder.png')}
+                onClick={() => setSelectedImage(img)}
               />
             ))}
           </div>
@@ -69,7 +72,7 @@ const ProductDetailsPage = () => {
           <div className="w-full">
             <Image
               src={selectedImage}
-              alt={product.name || "Product image"}
+              alt={product.name}
               width={600}
               height={600}
               className="rounded-lg object-contain w-full max-h-[400px]"
@@ -136,9 +139,9 @@ const ProductDetailsPage = () => {
             </div>
           </div>
 
-          <button 
+          <button
             className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-6 rounded-md w-full sm:w-auto"
-            onClick={handleAddToCart}
+            onClick={() => handleAddToCart(product, selectedSize)}
           >
             Add to Cart
           </button>
@@ -150,14 +153,17 @@ const ProductDetailsPage = () => {
         <h2 className="text-lg sm:text-xl font-bold mb-4">Similar Products</h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6">
           {similarProducts.map((item) => (
-            <div key={item._id} className="bg-purple-50 p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300">
+            <div
+              key={item._id}
+              className="bg-purple-50 p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300"
+            >
               <div
                 className="cursor-pointer"
                 onClick={() => router.push(`/products/${item._id}`)}
               >
                 <Image
-                  src={(item.image && item.image.length > 0 && item.image[0]) ? item.image[0] : '/placeholder.png'}
-                  alt={item.name || "Similar product image"}
+                  src={item.image[0]}
+                  alt={item.name}
                   width={200}
                   height={200}
                   className="rounded-lg object-cover mx-auto"
@@ -169,12 +175,9 @@ const ProductDetailsPage = () => {
                   ₹{item.price}
                 </p>
               </div>
-              <button 
+              <button
                 className="mt-2 w-full bg-yellow-400 hover:bg-yellow-500 text-black text-sm font-semibold py-2 rounded-full"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  addToCart({ ...item, id: item._id, image: (item.image && item.image.length > 0 && item.image[0]) ? item.image[0] : '/placeholder.png' });
-                }}
+                onClick={() => handleAddToCart(product, selectedSize)}
               >
                 Add to Cart
               </button>
@@ -205,7 +208,9 @@ const ProductDetailsPage = () => {
 
         {/* Reviews Section */}
         <div className="md:w-2/3">
-          <h2 className="text-lg sm:text-xl font-bold mb-4">Customer Reviews</h2>
+          <h2 className="text-lg sm:text-xl font-bold mb-4">
+            Customer Reviews
+          </h2>
           <div className="space-y-4">
             {[
               {
