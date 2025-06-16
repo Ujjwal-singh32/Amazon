@@ -64,17 +64,30 @@ export async function POST(request) {
             uploadedImages.push(result.secure_url);
         }
 
-        const getField = (field) => Array.isArray(field) ? field[0] : field;
+        const getField = (field) =>
+            Array.isArray(field) ? field[0] : field ?? '';
 
+        function collectArrayFields(fields, prefix) {
+            return Object.keys(fields)
+                .filter(key => key.startsWith(prefix + '['))
+                .sort()
+                .map(key => {
+                    const val = fields[key];
+                    return JSON.parse(Array.isArray(val) ? val[0] : val); // ⬅ remove extra wrapping
+                });
+        }
+
+
+        // Then:
         const newProduct = new Product({
             productId: getField(productId),
             name: getField(name),
             description: getField(description),
             isOrganic: getField(isOrganic) === 'true',
-            tags: JSON.parse(getField(tags)),
+            tags: JSON.parse(getField(tags) || '[]'),
             images: uploadedImages,
-            variety: JSON.parse(getField(variety)),
-            details: JSON.parse(getField(details)),
+            variety: collectArrayFields(data.fields, 'variety'),
+            details: collectArrayFields(data.fields, 'details'),
             basePrice: parseFloat(getField(basePrice)),
             sustainableScore: parseFloat(getField(sustainableScore)),
             energyUsed: parseFloat(getField(energyUsed)),
@@ -83,6 +96,7 @@ export async function POST(request) {
             waterSaved: parseFloat(getField(waterSaved)),
             plasticAvoided: parseFloat(getField(plasticAvoided)),
         });
+
 
 
         await newProduct.save();
