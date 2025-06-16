@@ -1,5 +1,7 @@
 "use client";
 
+import Footer from '@/components/Footer';
+import Navbar from '@/components/Navbar';
 import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -116,6 +118,7 @@ export default function AddProductPage() {
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
+      <Navbar />
       <form onSubmit={handleSubmit} className="max-w-4xl mx-auto space-y-6">
         <div className="bg-white rounded-xl shadow-md p-6">
           <h2 className="text-xl font-semibold mb-1">Add New Product</h2>
@@ -180,6 +183,7 @@ export default function AddProductPage() {
           <button type="submit" className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">Publish Product</button>
         </div>
       </form>
+      <Footer/>
     </div>
   );
 }
