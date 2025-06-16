@@ -346,7 +346,7 @@ export default function AmazonCart() {
                     <span>₹{packagingPrice}</span>
                   </div>
                   <div className="flex justify-between text-green-600">
-                    <span>Group order discount:</span>
+                    <span>Discount:</span>
                     <span>- ₹{discount}</span>
                   </div>
                   <hr />
