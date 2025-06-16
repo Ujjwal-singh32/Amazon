@@ -1,10 +1,10 @@
 import mongoose from 'mongoose';
 
 const VarietySchema = new mongoose.Schema({
-  name: String,           // e.g., "1kg Pack", "500g", etc.
-  price: Number,          // price specific to this variety
-  stock: Number,          // inventory count
-  unit: String            // optional: "kg", "litre", etc.
+  name: String,           
+  price: Number,          
+  stock: Number,          
+  unit: String            
 }, { _id: false });
 
 const ProductSchema = new mongoose.Schema({
@@ -12,10 +12,16 @@ const ProductSchema = new mongoose.Schema({
   name: { type: String, required: true },
   description: { type: String, required: true },
   isOrganic: { type: Boolean, default: false },
-  tags: [String],              // e.g., ["vegetable", "leafy", "low-calorie"]
-  images: [String],            // URLs to image assets
-  variety: [VarietySchema],    // multiple weights/sizes with different pricing
-  details: [String],           // array of strings for extra info
+  tags: [String],             
+  images: [String],            
+  variety: [VarietySchema],    
+  details: [
+  {
+    title: { type: String, required: true },
+    value: { type: String, required: true }
+  }
+],
+          // array of strings for extra info
   basePrice: { type: Number, required: true }, // used if no variety is selected
 
   // Sustainability Info
@@ -29,4 +35,6 @@ const ProductSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now }
 });
 
-export default mongoose.models.Product || mongoose.model('Product', ProductSchema);
+const Product = mongoose.models.Product || mongoose.model('Product', ProductSchema);
+export default Product;
+
