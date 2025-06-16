@@ -1,51 +1,84 @@
-'use client';
-
-import React, { createContext, useState, useContext } from 'react';
+"use client";
+import { createContext, useContext, useState, useEffect } from "react";
+import { useUser } from "@clerk/nextjs";
 
 const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
-  const [cartItems, setCartItems] = useState([]);
+    const { user } = useUser();
+    const [cartItems, setCartItems] = useState([]);
 
-  const addToCart = (product) => {
-    setCartItems((prevItems) => {
-      const existingItem = prevItems.find(item => item.id === product.id);
-      if (existingItem) {
-        return prevItems.map(item =>
-          item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
+    const userId = user?.id;
+
+    // Load cart from localStorage when user changes
+    useEffect(() => {
+        if (!userId) return;
+        const stored = localStorage.getItem(`cart-${userId}`);
+        if (stored) setCartItems(JSON.parse(stored));
+        else setCartItems([]);
+    }, [userId]);
+
+    // Save to localStorage whenever cart changes
+    useEffect(() => {
+        if (userId) {
+            localStorage.setItem(`cart-${userId}`, JSON.stringify(cartItems));
+        }
+    }, [cartItems, userId]);
+
+    const addToCart = (product) => {
+        setCartItems((prev) => {
+            const existing = prev.find((item) => item.id === product.id);
+            if (existing) {
+                return prev.map((item) =>
+                    item.id === product.id
+                        ? { ...item, quantity: item.quantity + 1 }
+                        : item
+                );
+            }
+            return [...prev, { ...product, quantity: 1 }];
+        });
+    };
+
+    const removeFromCart = (id) => {
+        setCartItems((prev) => prev.filter((item) => item.id !== id));
+    };
+
+    const clearCart = () => {
+        if (userId) {
+            localStorage.removeItem(`cart-${userId}`);
+        }
+        setCartItems([]);
+    };
+
+    const total = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+    const increaseQuantity = (id) => {
+        setCartItems((prev) =>
+            prev.map((item) =>
+                item.id === id ? { ...item, quantity: item.quantity + 1 } : item
+            )
         );
-      } else {
-        return [...prevItems, { ...product, quantity: 1 }];
-      }
-    });
-  };
+    };
 
-  const removeFromCart = (productId) => {
-    setCartItems((prevItems) => prevItems.filter(item => item.id !== productId));
-  };
-
-  const updateQuantity = (productId, newQuantity) => {
-    setCartItems((prevItems) => {
-      if (newQuantity <= 0) {
-        return prevItems.filter(item => item.id !== productId);
-      }
-      return prevItems.map(item =>
-        item.id === productId ? { ...item, quantity: newQuantity } : item
-      );
-    });
-  };
-
-  const getTotalPrice = () => {
-    return cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
-  };
-
-  return (
-    <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, updateQuantity, getTotalPrice }}>
-      {children}
-    </CartContext.Provider>
-  );
+    const decreaseQuantity = (id) => {
+        setCartItems((prev) =>
+            prev
+                .map((item) =>
+                    item.id === id ? { ...item, quantity: item.quantity - 1 } : item
+                )
+                .filter((item) => item.quantity > 0)
+        );
+    };
+    const getTotalPrice = () => {
+        return cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+    };
+    console.log("total price",  getTotalPrice);
+    return (
+        <CartContext.Provider
+            value={{ cartItems, addToCart, removeFromCart, clearCart, total, increaseQuantity, decreaseQuantity, getTotalPrice }}
+        >
+            {children}
+        </CartContext.Provider>
+    );
 };
 
-export const useCart = () => {
-  return useContext(CartContext);
-}; 
+export const useCart = () => useContext(CartContext);
