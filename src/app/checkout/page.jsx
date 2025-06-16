@@ -100,34 +100,37 @@ export default function AmazonCheckout() {
   };
 
   const handleProceed = () => {
-    if (!user) return alert("Please log in");
+  if (!user) return alert("Please log in");
 
-    const orderPayload = {
-      user: user.id, // Clerk user ID
-      items: cartItems.map((item) => ({
-        productId: item.id,
-        quantity: item.quantity,
-        priceAtPurchase: item.price,
-      })),
-      totalAmount: calculateTotal(),
-      paymentStatus: "pending",
-      orderStatus: "Pending",
-      shippingAddress: {
-        street: addresses[selectedIndex].street,
-        city: addresses[selectedIndex].city,
-        state: addresses[selectedIndex].state,
-        country: addresses[selectedIndex].country,
-        pincode: addresses[selectedIndex].pincode,
-      },
-      deliveryOption: summary.isGroupOrder ? "group" : "individual",
-      placedAt: new Date().toISOString(),
-      packagingPoints: summary.packaging.points
-    };
-
-    const key = `checkout_${user.id}`;
-    localStorage.setItem(key, JSON.stringify(orderPayload));
-    router.push("/rozarpay");
+  const orderPayload = {
+    user: user.id, // Clerk user ID
+    items: cartItems.map((item) => ({
+      productId: item.id,
+      quantity: item.quantity,
+      priceAtPurchase: item.price,
+    })),
+    totalAmount: calculateTotal(),
+    paymentStatus: "pending",
+    orderStatus: "Pending",
+    shippingAddress: {
+      street: addresses[selectedIndex].street,
+      city: addresses[selectedIndex].city,
+      state: addresses[selectedIndex].state,
+      country: addresses[selectedIndex].country,
+      pincode: addresses[selectedIndex].pincode,
+    },
+    deliveryOption: summary.orderType === "group" ? "group" : "individual",
+    placedAt: new Date().toISOString(),
+    packagingPoints: summary.packaging?.points || 0,
   };
+
+  const key = `checkout_${user.id}`;
+  localStorage.setItem(key, JSON.stringify(orderPayload));
+
+  // ✅ Fix the typo in the route
+  router.push("/razorpay");
+};
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
