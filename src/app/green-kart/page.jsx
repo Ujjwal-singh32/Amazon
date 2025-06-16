@@ -5,7 +5,7 @@ import { FaLeaf } from "react-icons/fa";
 import GreenNavbar from "@/components/GreenNavbar";
 import Footer from "@/components/Footer";
 import { useRouter } from "next/navigation";
-import { useCart } from "@/context/CartContext";
+import { useCart } from "@/context/cartContext";
 
 
 const dummyProducts = [
