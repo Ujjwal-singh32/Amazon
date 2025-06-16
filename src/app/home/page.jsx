@@ -191,50 +191,63 @@ export default function HomePage() {
           </div>
         </Card>
 
-        {/* Main Content Grid - New structure for multiple sections (now removed) */}
-        {/* Today's Deals (Product Cards) - Retained for variety */}
-        <section className="bg-white rounded-lg shadow-md mb-8 py-6">
-          <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-gray-800">
-                Today's Deals
-              </h2>
-              <Button
-                variant="link"
-                className="text-blue-600 hover:text-blue-800 text-base"
-              >
-                See all deals
-              </Button>
-            </div>
-            <ProductSlider>
-              {products.map((product) => (
-                <ProductCard key={product.id} {...product} />
-              ))}
-            </ProductSlider>
+        {/* Featured Products */}
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-xl sm:text-2xl font-bold mb-4 px-2">Featured Products</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+            {products.map((product) => (
+              <ProductCard
+                key={product.id}
+                id={product.id}
+                title={product.title}
+                price={product.price}
+                description={product.description}
+                category={product.category}
+                image={product.image}
+                rating={product.rating}
+              />
+            ))}
           </div>
-        </section>
+        </div>
 
-        {/* Top picks for you (Product Cards) */}
-        <section className="bg-white rounded-lg shadow-md mb-8 py-6">
-          <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-gray-800">
-                Top picks for you
-              </h2>
-              <Button
-                variant="link"
-                className="text-blue-600 hover:text-blue-800 text-base"
-              >
-                View more
-              </Button>
-            </div>
+        {/* Product Sliders */}
+        <div className="max-w-7xl mx-auto space-y-8">
+          <div>
+            <h2 className="text-xl sm:text-2xl font-bold mb-4 px-2">Deals of the Day</h2>
             <ProductSlider>
-              {products.map((product) => (
-                <ProductCard key={product.id} {...product} />
+              {products.slice(0, 8).map((product) => (
+                <ProductCard
+                  key={product.id}
+                  id={product.id}
+                  title={product.title}
+                  price={product.price}
+                  description={product.description}
+                  category={product.category}
+                  image={product.image}
+                  rating={product.rating}
+                />
               ))}
             </ProductSlider>
           </div>
-        </section>
+
+          <div>
+            <h2 className="text-xl sm:text-2xl font-bold mb-4 px-2">Best Sellers</h2>
+            <ProductSlider>
+              {products.slice(4, 12).map((product) => (
+                <ProductCard
+                  key={product.id}
+                  id={product.id}
+                  title={product.title}
+                  price={product.price}
+                  description={product.description}
+                  category={product.category}
+                  image={product.image}
+                  rating={product.rating}
+                />
+              ))}
+            </ProductSlider>
+          </div>
+        </div>
 
         {/* Shop by Category */}
         <section className="bg-white rounded-lg shadow-md mb-8 py-6">
@@ -244,7 +257,12 @@ export default function HomePage() {
             </h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
               {categories.map((category) => (
-                <CategoryCard key={category.title} {...category} />
+                <CategoryCard
+                  key={category.title}
+                  title={category.title}
+                  image={category.image}
+                  link={category.link}
+                />
               ))}
             </div>
           </div>
