@@ -33,7 +33,7 @@ export async function POST(request) {
     const newOrder = await Order.create({
       user: originalOrder.user, 
       items: originalOrder.items.map((item) => ({
-        productId: new mongoose.Types.ObjectId(item.productId),
+        productId:(item.productId),
         quantity: item.quantity,
         priceAtPurchase: item.priceAtPurchase,
       })),
