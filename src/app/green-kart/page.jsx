@@ -6,7 +6,7 @@ import GreenNavbar from "@/components/GreenNavbar";
 import Footer from "@/components/Footer";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/context/cartContext";
-
+import { useProduct } from "@/context/ProductContext";
 
 const dummyProducts = [
   {
@@ -148,7 +148,8 @@ const dummyProducts = [
 export default function Home() {
   const router = useRouter();
   const { addToCart } = useCart();
-
+  const {organicProducts} = useProduct();
+  
   const handleAddToCart = (product) => {
     const productToAdd = {
       id: product.id,

@@ -65,29 +65,38 @@ function Navbar() {
                 placeholder="Search"
                 value={searchTerm}
                 onChange={(e) => {
-                  const value = e.target.value.toLowerCase();
+                  const value = e.target.value.toLowerCase().trim();
                   setSearchTerm(value);
 
-                  if (!value.trim()) {
+                  if (!value) {
                     setSuggestions([]);
                     return;
                   }
 
-                  // Get unique tags
-                  const allTags = totalProducts.flatMap((p) => p.tags || []);
+                  // Step 1: Flatten and normalize all tags
+                  const allTags = totalProducts.flatMap((p) => {
+                    if (!p.tags) return [];
+                    return p.tags.flatMap((tag) =>
+                      tag.split(",").map((t) => t.trim().toLowerCase())
+                    );
+                  });
+
+                  // Step 2: Remove duplicates
                   const uniqueTags = [...new Set(allTags)];
 
-                  // Filter matching tags
+                  // Step 3: Match only full words
+                  const fullWordRegex = new RegExp(`\\b${value}\\b`, "i");
+
                   const filteredTags = uniqueTags.filter((tag) =>
-                    tag.toLowerCase().includes(value)
+                    fullWordRegex.test(tag)
                   );
 
+                  // Step 4: Limit to 6 suggestions
                   setSuggestions(filteredTags.slice(0, 6));
                 }}
-
-
                 className="bg-white h-full p-2 flex-grow flex-shrink rounded-l-md focus:outline-none px-4 text-black"
               />
+
               <button type="submit">
                 <MagnifyingGlassIcon className="h-10 p-2 text-black" />
               </button>
