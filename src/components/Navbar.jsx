@@ -59,7 +59,6 @@ function Navbar() {
           <div className="relative flex-grow mx-4">
             <form onSubmit={handleSearch} className="relative flex items-center h-9 mx-4 rounded-md flex-grow bg-yellow-500">
 
-
               <input
                 type="text"
                 placeholder="Search"
@@ -84,11 +83,9 @@ function Navbar() {
                   // Step 2: Remove duplicates
                   const uniqueTags = [...new Set(allTags)];
 
-                  // Step 3: Match only full words
-                  const fullWordRegex = new RegExp(`\\b${value}\\b`, "i");
-
+                  // Step 3: Match partial substrings (more responsive suggestions)
                   const filteredTags = uniqueTags.filter((tag) =>
-                    fullWordRegex.test(tag)
+                    tag.includes(value)
                   );
 
                   // Step 4: Limit to 6 suggestions
@@ -96,6 +93,7 @@ function Navbar() {
                 }}
                 className="bg-white h-full p-2 flex-grow flex-shrink rounded-l-md focus:outline-none px-4 text-black"
               />
+
 
               <button type="submit">
                 <MagnifyingGlassIcon className="h-10 p-2 text-black" />
