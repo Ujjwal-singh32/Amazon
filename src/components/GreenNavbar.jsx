@@ -7,22 +7,32 @@ import {
     SignedIn,
     SignedOut,
     UserButton,
+    useUser,
 } from '@clerk/nextjs';
+import { LeafIcon } from 'lucide-react';
 import Image from "next/image";
-import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { MagnifyingGlassIcon, ShoppingCartIcon, } from "@heroicons/react/24/outline";
 import { useCart } from "@/context/cartContext";
 import { useRouter } from "next/navigation";
+import { useProduct } from "@/context/ProductContext";
 
 export default function GreenNavbar() {
     const [menuOpen, setMenuOpen] = useState(false);
     const [isClient, setIsClient] = useState(false);
-    const { cartItems } = useCart();
+    const { total } = useCart();
     const router = useRouter();
-
+    const [searchTerm, setSearchTerm] = useState("");
+    const [suggestions, setSuggestions] = useState([]);
+    const { user } = useUser();
+    const { organicProducts: totalProducts } = useProduct();
     useEffect(() => {
         setIsClient(true);
     }, []);
-
+    const handleSearch = (e) => {
+        e.preventDefault();
+        if (!searchTerm.trim()) return;
+        router.push(`/green-products?query=${encodeURIComponent(searchTerm)}`);
+    };
     if (!isClient) {
         return (
             <nav className="sticky top-0 z-50 bg-green-600 text-white px-4 py-2 flex items-center justify-between flex-wrap">
@@ -59,22 +69,75 @@ export default function GreenNavbar() {
                     height={30}
                     className="cursor-pointer object-contain mt-2"
                 />
-                <span> Greenkart</span>
+                {/* <span> Greenkart</span> */}
+                <div className="text-white ml-3 flex flex-col cursor-pointer">
+                    <p className="text-xs">Deliver to Jamshedpur 831014</p>
+                    <p className="font-bold text-sm">Update Location</p>
+                </div>
             </div>
 
             {/* Middle: Search bar */}
-            <div className="hidden md:flex flex-1 mx-6">
-                <input
-                    type="text"
-                    placeholder="Search green products"
-                    className="flex-1 p-2 rounded-l-md bg-white text-green-700 placeholder-green-600 font-semibold"
-                />
-                <button
-                    type="submit"
-                    className="bg-white hover:bg-green-600 rounded-r-md transition-colors duration-200"
-                >
-                    <MagnifyingGlassIcon className="h-10 p-2 text-black hover:text-white" />
-                </button>
+            <div className="relative flex-grow mx-4">
+                <form onSubmit={handleSearch} className="relative flex items-center h-9 mx-4 rounded-md flex-grow bg-yellow-500">
+
+                    <input
+                        type="text"
+                        placeholder="Search"
+                        value={searchTerm}
+                        onChange={(e) => {
+                            const value = e.target.value.toLowerCase().trim();
+                            setSearchTerm(value);
+
+                            if (!value) {
+                                setSuggestions([]);
+                                return;
+                            }
+
+                            // Step 1: Flatten and normalize all tags
+                            const allTags = totalProducts.flatMap((p) => {
+                                if (!p.tags) return [];
+                                return p.tags.flatMap((tag) =>
+                                    tag.split(",").map((t) => t.trim().toLowerCase())
+                                );
+                            });
+
+                            // Step 2: Remove duplicates
+                            const uniqueTags = [...new Set(allTags)];
+
+                            // Step 3: Match partial substrings (more responsive suggestions)
+                            const filteredTags = uniqueTags.filter((tag) =>
+                                tag.includes(value)
+                            );
+
+                            // Step 4: Limit to 6 suggestions
+                            setSuggestions(filteredTags.slice(0, 6));
+                        }}
+                        className="bg-white h-full p-2 flex-grow flex-shrink rounded-l-md focus:outline-none px-4 text-black"
+                    />
+
+
+                    <button type="submit">
+                        <MagnifyingGlassIcon className="h-9 p-2 bg-pink-500" />
+                    </button>
+                </form>
+                {suggestions.length > 0 && (
+                    <div className="absolute top-[100%] left-0 right-0 bg-[#232F3E] border-t border-green-400 shadow-lg rounded-b-md z-50">
+                        {suggestions.map((tag, index) => (
+                            <div
+                                key={index}
+                                onClick={() => {
+                                    router.push(`/green-products?tag=${encodeURIComponent(tag)}`);
+                                    setSuggestions([]);
+                                    setSearchTerm("");
+                                }}
+                                className="flex items-center space-x-3 px-4 py-2 hover:bg-green-500 hover:text-black cursor-pointer text-sm text-white"
+                            >
+                                <MagnifyingGlassIcon className="h-4 w-4 text-green-400" />
+                                <span className="font-medium">{tag}</span>
+                            </div>
+                        ))}
+                    </div>
+                )}
             </div>
 
             {/* Right: Buttons */}
@@ -83,23 +146,45 @@ export default function GreenNavbar() {
                     <SignInButton />
                 </SignedOut>
                 <SignedIn>
-                    <UserButton />
+                    <div className="cursor-pointer flex items-center space-x-2">
+                        <UserButton afterSignOutUrl="/home" />
+                        {user && (
+                            <button
+                                onClick={() => router.push("/profile")}
+                                className="hidden sm:inline font-extrabold md:text-sm text-white hover:underline"
+                            >
+                                <div className="text-center">Hi</div>
+                                <div className="text-center">{user.firstName}</div>
+                            </button>
+                        )}
+                    </div>
                 </SignedIn>
-                <div 
-                    className="flex items-center space-x-1 cursor-pointer"
-                    onClick={() => router.push('/cart')}
+                <div
+                    className="hidden sm:block cursor-pointer"
+                    onClick={() => router.push("/orders")}
                 >
-                    <FaShoppingCart />
-                    <span>Cart</span>
-                    {cartItems.length > 0 && (
-                        <span className="bg-yellow-400 text-black rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
-                            {cartItems.length}
-                        </span>
-                    )}
+                    <p>Returns</p>
+                    <p className="font-extrabold md:text-sm">& Orders</p>
                 </div>
-                <a href="/" className="font-semibold hover:underline">
-                    Amazon Home
-                </a>
+                <div
+                    className="relative flex items-center cursor-pointer"
+                    onClick={() => router.push("/cart")}
+                >
+                    <div className="relative">
+                        <ShoppingCartIcon className="h-10 w-10 text-white" />
+                        <span className="absolute top-[4.5px] right-2 h-4 w-4 bg-pink-500 rounded-full text-white text-[10px] font-bold flex items-center justify-center shadow-sm">
+                            {total}
+                        </span>
+                    </div>
+                    {/* <p className="hidden md:inline font-extrabold md:text-sm ml-1">
+              Cart
+            </p> */}
+                </div>
+                <p className="cursor-pointer text-white font-semibold flex items-center gap-1  text-xl"
+                    onClick={() => router.push("/green-kart")}>
+                    <LeafIcon className="h-9 w-7" />
+                    GreenKart
+                </p>
             </div>
 
             {/* Mobile Menu Toggle */}
@@ -125,7 +210,7 @@ export default function GreenNavbar() {
                     <SignedIn>
                         <UserButton />
                     </SignedIn>
-                    <div 
+                    <div
                         className="flex items-center space-x-1 cursor-pointer"
                         onClick={() => router.push('/cart')}
                     >

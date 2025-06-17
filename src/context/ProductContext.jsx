@@ -24,6 +24,7 @@ export const ProductProvider = ({ children }) => {
     fetchProducts();
   }, []);
   const organicProducts = totalProducts.filter(product => product.isOrganic);
+  console.log("organic product" , organicProducts);
   return (
     <ProductContext.Provider value={{ totalProducts, loading, refetch: fetchProducts,organicProducts }}>
       {children}

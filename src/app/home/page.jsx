@@ -149,6 +149,9 @@ export default function HomePage() {
                 category={product.tags[0]}
                 image={product.images[0] || "https://pngimg.com/uploads/amazon/amazon_PNG11.png"}
                 rating={product.rating || "⭐⭐⭐⭐"}
+                isOrganic={product.isOrganic}
+                sustainableScore={product.sustainableScore}
+                greenPoints={product.greenPoints}
               />
             ))}
           </div>
@@ -169,6 +172,9 @@ export default function HomePage() {
                   category={product.tags[0]}
                   image={product.images[0] || "https://pngimg.com/uploads/amazon/amazon_PNG11.png"}
                   rating={product.rating || "⭐⭐⭐⭐"}
+                  isOrganic={product.isOrganic}
+                  sustainableScore={product.sustainableScore}
+                  greenPoints={product.greenPoints}
                 />
               ))}
             </ProductSlider>
@@ -187,6 +193,9 @@ export default function HomePage() {
                   category={product.tags[0]}
                   image={product.images[0] || "https://pngimg.com/uploads/amazon/amazon_PNG11.png"}
                   rating={product.rating || "⭐⭐⭐⭐"}
+                  isOrganic={product.isOrganic}
+                  sustainableScore={product.sustainableScore}
+                  greenPoints={product.greenPoints}
                 />
               ))}
             </ProductSlider>
@@ -263,7 +272,12 @@ export default function HomePage() {
                   description={product.description}
                   category={product.tags[0]}
                   image={product.images[0] || "https://pngimg.com/uploads/amazon/amazon_PNG11.png"}
-                  rating={product.rating || "⭐⭐⭐⭐"} />
+                  rating={product.rating || "⭐⭐⭐⭐"}
+                  isOrganic={product.isOrganic}
+                  sustainableScore={product.sustainableScore}
+                  greenPoints={product.greenPoints}
+                />
+
               ))}
             </ProductSlider>
           </div>

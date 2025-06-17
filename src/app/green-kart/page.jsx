@@ -1,267 +1,211 @@
 "use client";
 
-import React from "react";
+import React, { useMemo, useState } from "react";
 import { FaLeaf } from "react-icons/fa";
 import GreenNavbar from "@/components/GreenNavbar";
 import Footer from "@/components/Footer";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/context/cartContext";
 import { useProduct } from "@/context/ProductContext";
-
-const dummyProducts = [
-  {
-    id: 1,
-    name: "Eco-Friendly Water Bottle",
-    brand: "GreenLife",
-    price: "$24.99",
-    tags: ["Green Leader", "Low Carbon Logistics"],
-    grade: "A",
-    energy: 80,
-    emissions: 60,
-    image: "/product.webp"
-  },
-  {
-    id: 2,
-    name: "Organic Cotton T-Shirt",
-    brand: "EcoWear",
-    price: "$26.99",
-    tags: ["Sustainable Materials"],
-    grade: "B",
-    energy: 65,
-    emissions: 40,
-    image: "/product.webp"
-  },
-  {
-    id: 3,
-    name: "Bamboo Cutlery Set",
-    brand: "EcoEssentials",
-    price: "$19.99",
-    tags: ["Green Leader", "Zero Waste"],
-    grade: "A",
-    energy: 90,
-    emissions: 30,
-    image: "/product.webp"
-  },
-  {
-    id: 4,
-    name: "Reusable Grocery Bags",
-    brand: "EcoSmart",
-    price: "$14.99",
-    tags: ["Reusable", "Eco Friendly"],
-    grade: "A",
-    energy: 70,
-    emissions: 35,
-    image: "/product.webp"
-  },
-  {
-    id: 5,
-    name: "Compostable Plates",
-    brand: "BioWare",
-    price: "$12.99",
-    tags: ["Compostable", "Biodegradable"],
-    grade: "B",
-    energy: 55,
-    emissions: 45,
-    image: "/product.webp"
-  },
-  {
-    id: 6,
-    name: "Solar Powered Light",
-    brand: "SunEco",
-    price: "$34.99",
-    tags: ["Solar", "Energy Efficient"],
-    grade: "A",
-    energy: 95,
-    emissions: 10,
-    image: "/product.webp"
-  },
-  {
-    id: 7,
-    name: "Recycled Notebook",
-    brand: "PaperLoop",
-    price: "$7.99",
-    tags: ["Recycled", "Zero Waste"],
-    grade: "A",
-    energy: 50,
-    emissions: 20,
-    image: "product.webp"
-  },
-  {
-    id: 8,
-    name: "Natural Fiber Doormat",
-    brand: "EcoLiving",
-    price: "$22.50",
-    tags: ["Natural Fiber", "Durable"],
-    grade: "B",
-    energy: 60,
-    emissions: 50,
-    image: "/product.webp"
-  },
-  {
-    id: 9,
-    name: "Organic Herbal Tea",
-    brand: "GreenSip",
-    price: "$10.99",
-    tags: ["Organic", "Healthy Living"],
-    grade: "A",
-    energy: 40,
-    emissions: 15,
-    image: "/product.webp"
-  },
-  {
-    id: 10,
-    name: "Eco-Friendly Phone Case",
-    brand: "GreenTech",
-    price: "$18.99",
-    tags: ["Biodegradable", "Sustainable"],
-    grade: "A",
-    energy: 75,
-    emissions: 30,
-    image: "/product.webp"
-  },
-  {
-    id: 11,
-    name: "Recycled Notebook",
-    brand: "PaperLoop",
-    price: "$7.99",
-    tags: ["Recycled", "Zero Waste"],
-    grade: "A",
-    energy: 50,
-    emissions: 20,
-    image: "product.webp"
-  },
-  {
-    id: 12,
-    name: "Natural Fiber Doormat",
-    brand: "EcoLiving",
-    price: "$22.50",
-    tags: ["Natural Fiber", "Durable"],
-    grade: "B",
-    energy: 60,
-    emissions: 50,
-    image: "/product.webp"
-  }
-
-
-];
-
+import GreenFooter from "@/components/GreenFooter";
 export default function Home() {
   const router = useRouter();
   const { addToCart } = useCart();
-  const {organicProducts} = useProduct();
-  
+  const { organicProducts: products } = useProduct();
+
+  const [visibleCategoryCount, setVisibleCategoryCount] = useState(30);
+
   const handleAddToCart = (product) => {
-    const productToAdd = {
-      id: product.id,
+    addToCart({
+      id: product.productId,
       title: product.name,
-      price: parseFloat(product.price.replace('$', '')),
-      description: `${product.brand} - ${product.tags.join(', ')}`,
-      category: 'Green Products',
-      image: product.image,
-      rating: { rate: 4.5, count: 100 }
-    };
-    addToCart(productToAdd);
+      price: parseFloat(product.basePrice),
+      description: product.description,
+      category: product.category || "Others",
+      image: product.images?.[0] || "/default.jpg",
+      rating: { rate: 4.5, count: 100 },
+    });
   };
+
+  const featuredProducts = useMemo(() => {
+    const shuffled = [...products].sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, 90);
+  }, [products]);
+
+  const categoryCards = useMemo(() => {
+    const map = new Map();
+    products.forEach((p) => {
+      Array.isArray(p.tags) &&
+        p.tags.forEach((tag) => {
+          const t = tag.trim();
+          if (!t || map.has(t)) return;
+          map.set(t, {
+            title: t,
+            image: p.images?.[0] || "https://pngimg.com/uploads/amazon/amazon_PNG11.png",
+            link: `/green-products?tag=${encodeURIComponent(t)}`,
+          });
+        });
+    });
+    return Array.from(map.values());
+  }, [products]);
 
   return (
     <>
       <GreenNavbar />
 
-      {/* Hero Section */}
-       <section className="bg-green-50 py-5 md:py-9 px-4 md:px-10 flex flex-col md:flex-row justify-between items-center">
-        <div className="text-left w-full md:w-1/2 flex flex-col items-center justify-center">
-          <div className="text-center md:text-left">
-            <h1 className="text-2xl md:text-4xl font-bold text-green-700 flex items-center gap-2 justify-center md:justify-start animate-bounce">
-              <FaLeaf className="text-green-600" /> Greenkart
-            </h1>
-            <p className="text-md md:text-xl text-green-800 mt-2">
-              Where Every Purchase Plants a Better Future.
-            </p>
-            <button
-              onClick={() => router.push("/profile")}
-              className="mt-4 bg-green-600 text-white px-5 py-2 rounded-md hover:bg-green-700"
-            >
-              Explore Green Contribution
-            </button>
-
-          </div>
+      {/* Hero */}
+      <section className="bg-green-50 py-8 px-4 md:px-16 flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="max-w-xl text-center md:text-left">
+          <h1 className="text-3xl md:text-5xl font-bold text-green-800 flex items-center gap-2 animate-bounce">
+            <FaLeaf className="text-green-600" /> Greenkart
+          </h1>
+          <p className="mt-4 text-green-700 text-lg">
+            Every green purchase plants a better future.
+          </p>
+          <button
+            onClick={() => router.push("/profile")}
+            className="mt-6 px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition"
+          >
+            Explore Green Contribution
+          </button>
         </div>
         <img
+          loading="lazy"
           src="/env2.jpeg"
           alt="Green Mission"
-          className="mt-4 md:mt-0 w-5/6 md:w-[55%] h-[160px] md:h-[240px] rounded-lg shadow"
+          className="w-full md:w-1/2 h-48 md:h-64 rounded-xl shadow-lg object-cover"
         />
       </section>
 
-
-      {/* Category Sections */}
-      {[
-        { title: "Electronics", range: [0, 4] },
-        { title: "Clothing", range: [4, 8] },
-        { title: "Accessories", range: [8, 12] },
-      ].map((section, idx) => (
-        <section key={idx} className="p-4 bg-green-50">
-          <div className="flex justify-between items-center mb-2">
-            <h2 className="text-xl md:text-2xl font-bold text-green-800">{section.title}</h2>
-            <a href="#" className="text-green-600 hover:underline text-sm md:text-base">See All</a>
-          </div>
-          <div className="grid gap-4 grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-            {dummyProducts.slice(section.range[0], section.range[1]).map((product) => (
-              <div key={product.id} className="bg-white rounded-xl shadow-md overflow-hidden relative">
-                <div className="absolute top-2 right-2 bg-green-600 text-white font-bold px-3 py-1 rounded-full text-sm">
-                  {product.grade}
+      {/* Featured Products */}
+      <section className="py-8 px-4 md:px-16 bg-green-50">
+        <h2 className="text-2xl font-bold text-green-800 mb-4">Featured Organic Products</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+          {featuredProducts.map((product) => {
+            const price = parseFloat(product.basePrice) || 0;
+            const image = product.images?.[0] || "/default.jpg";
+            return (
+              <div
+                key={product.productId}
+                className="bg-white rounded-xl shadow-md hover:shadow-xl transition overflow-hidden"
+              >
+                <div className="relative cursor-pointer" onClick={() => router.push(`/green-products/${product.productId}`)}>
+                  <img
+                    loading="lazy"
+                    src={image}
+                    alt={product.name}
+                    className="w-full h-36 object-contain"
+                  />
+                  <span className="absolute top-2 right-2 bg-green-600 text-white text-xs font-bold px-2 py-1 rounded-full">
+                    {product.sustainableScore >= 90
+                      ? "A"
+                      : product.sustainableScore >= 75
+                        ? "B"
+                        : product.sustainableScore >= 60
+                          ? "C"
+                          : product.sustainableScore >= 45
+                            ? "D"
+                            : "E"}
+                  </span>
                 </div>
-                <img src={product.image} alt={product.name} className="w-full h-36 object-cover" />
-                <div className="p-3">
-                  <h2 className="text-base font-semibold text-green-700">{product.name}</h2>
-                  <p className="text-xs text-gray-600">{product.brand}</p>
-                  <p className="text-right font-bold text-green-600 text-sm">{product.price}</p>
-                  <div className="flex flex-wrap gap-2 my-1">
-                    {product.tags.map((tag, index) => (
-                      <span
-                        key={index}
-                        className="bg-green-100 text-green-700 text-[10px] px-2 py-0.5 rounded-full"
-                      >
-                        {tag}
-                      </span>
-                    ))}
+                <div className="p-4 space-y-2">
+                  <h3 className="text-green-800 font-semibold truncate">{product.name}</h3>
+                  <p className="text-gray-500 text-xs">Eco Brand</p>
+                  <p className="text-green-700 font-bold">₹{price.toFixed(2)}</p>
+
+                  <div className="mt-2 space-y-2">
+                    <div className="flex justify-between text-xs text-gray-600">
+                      <span>Green Points</span>
+                      <span>{product.greenPoints || 0}</span>
+                    </div>
+                    <div className="w-full bg-green-100 rounded h-2">
+                      <div
+                        className="bg-green-500 h-2 rounded"
+                        style={{ width: `${product.greenPoints || 0}%` }}
+                      />
+                    </div>
+                    <div className="flex justify-between text-xs text-gray-600 mt-1">
+                      <span>Sustainable Score</span>
+                      <span>{product.sustainableScore || 0}</span>
+                    </div>
+                    <div className="w-full bg-green-100 rounded h-2">
+                      <div
+                        className="bg-green-700 h-2 rounded"
+                        style={{ width: `${product.sustainableScore || 0}%` }}
+                      />
+                    </div>
                   </div>
-                  <div className="text-xs font-semibold mt-1 flex items-center gap-1 text-black">
-                    Sustainability Score <span className="text-green-600">❔</span>
-                  </div>
-                  <div className="mt-0.5 text-[10px] text-gray-600">Energy Use</div>
-                  <div className="bg-gray-200 rounded-full h-1.5">
-                    <div
-                      className="bg-green-600 h-1.5 rounded-full"
-                      style={{ width: `${product.energy}%` }}
-                    ></div>
-                  </div>
-                  <div className="mt-0.5 text-[10px] text-gray-600">Emissions</div>
-                  <div className="bg-gray-200 rounded-full h-1.5">
-                    <div
-                      className="bg-green-500 h-1.5 rounded-full"
-                      style={{ width: `${product.emissions}%` }}
-                    ></div>
-                  </div>
-                  <div className="mt-3 flex justify-between">
-                    <button className="bg-green-600 text-white text-sm px-3 py-1 rounded-lg hover:bg-green-700">
-                      🌿 View Details
-                    </button>
-                    <button 
-                      onClick={() => handleAddToCart(product)}
-                      className="border border-green-600 text-green-700 text-sm px-3 py-1 rounded-lg hover:bg-green-50"
+
+                  <div className="mt-4 flex flex-col sm:flex-row gap-2">
+                    <button
+                      onClick={() => router.push(`/green-products/${product.productId}`)}
+                      className="flex-1 bg-green-600 text-white text-sm py-1 rounded-md hover:bg-green-700 transition"
                     >
-                      🛒 Add to Cart
+                      🌿 Details
+                    </button>
+                    <button
+                      onClick={() => handleAddToCart(product)}
+                      className="flex-1 border border-pink-600 text-black text-sm py-1 rounded-md hover:bg-pink-700 hover:text-white transition cursor-pointer"
+                    >
+                      🛒 Add
                     </button>
                   </div>
                 </div>
               </div>
-            ))}
+            );
+          })}
+        </div>
+      </section>
+
+      {/* Shop by Category */}
+      <section className="py-8 px-4 md:px-16 bg-white">
+        <h2 className="text-3xl font-bold text-green-700 mb-6">Shop by Category</h2>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+          {categoryCards.slice(0, visibleCategoryCount).map((cat, idx) => (
+            <div
+              key={idx}
+              onClick={() => router.push(cat.link)}
+              className="cursor-pointer bg-green-50 hover:bg-green-100 rounded-xl shadow p-4 flex flex-col items-center transition"
+            >
+              <img
+                loading="lazy"
+                src={cat.image}
+                alt={cat.title}
+                className="w-full h-32 object-cover rounded-md"
+              />
+              <h3 className="mt-3 text-green-800 font-semibold text-center">{cat.title}</h3>
+            </div>
+          ))}
+        </div>
+        {categoryCards.length > 12 && (
+          <div className="flex justify-center mt-6 gap-4 flex-wrap">
+            {visibleCategoryCount < categoryCards.length && (
+              <button
+                onClick={() =>
+                  setVisibleCategoryCount((prev) =>
+                    Math.min(prev + 12, categoryCards.length)
+                  )
+                }
+                className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded"
+              >
+                View More
+              </button>
+            )}
+            {visibleCategoryCount > 12 && (
+              <button
+                onClick={() =>
+                  setVisibleCategoryCount((prev) => Math.max(prev - 12, 12))
+                }
+                className="bg-gray-600 hover:bg-gray-700 text-white font-semibold px-6 py-2 rounded"
+              >
+                View Less
+              </button>
+            )}
           </div>
-        </section>
-      ))}
-      {/* Footer Section */}
-      <Footer />
+        )}
+      </section>
+
+      <GreenFooter />
     </>
   );
 }
