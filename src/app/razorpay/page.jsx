@@ -4,13 +4,14 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
-
+import { useProduct } from "@/context/ProductContext";
+import { useCart } from "@/context/cartContext";
 const PaymentPage = () => {
   const [loading, setLoading] = useState(false);
   const [orderPayload, setOrderPayload] = useState(null);
   const router = useRouter();
   const { user } = useUser();
-
+  const { clearCart } = useCart();
   useEffect(() => {
     if (!user) return;
 
@@ -44,94 +45,94 @@ const PaymentPage = () => {
       return;
     }
 
-     try {
-    // 1. Retrieve stored checkout payload
-    const storedOrder = localStorage.getItem(`checkout_${user.id}`);
-    const orderPayload = storedOrder ? JSON.parse(storedOrder) : null;
+    try {
+      // 1. Retrieve stored checkout payload
+      const storedOrder = localStorage.getItem(`checkout_${user.id}`);
+      const orderPayload = storedOrder ? JSON.parse(storedOrder) : null;
 
-    if (!orderPayload) return alert("Order info not found");
+      if (!orderPayload) return alert("Order info not found");
 
-    // 2. Create Razorpay order
-    const { data } = await axios.post("/api/payment/create-order", {
-      order: orderPayload,
-    });
+      // 2. Create Razorpay order
+      const { data } = await axios.post("/api/payment/create-order", {
+        order: orderPayload,
+      });
 
-    const options = {
-      key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-      amount: data.amount,
-      currency: data.currency,
-      name: "GreenCart",
-      description: "Order Payment",
-      order_id: data.orderId,
-      handler: async function (response) {
-        // 3. Verify Payment
-        const verifyRes = await axios.post("/api/payment/verify-payment", {
-          razorpay_order_id: response.razorpay_order_id,
-          razorpay_payment_id: response.razorpay_payment_id,
-          razorpay_signature: response.razorpay_signature,
-          originalOrder: orderPayload,
-        });
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+        amount: data.amount,
+        currency: data.currency,
+        name: "GreenCart",
+        description: "Order Payment",
+        order_id: data.orderId,
+        handler: async function (response) {
+          // 3. Verify Payment
+          const verifyRes = await axios.post("/api/payment/verify-payment", {
+            razorpay_order_id: response.razorpay_order_id,
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_signature: response.razorpay_signature,
+            originalOrder: orderPayload,
+          });
 
-        if (verifyRes.data.success) {
-          // 4. Save verified order to localStorage for order-placed page
-          localStorage.setItem("latest_order", JSON.stringify({
-            ...orderPayload,
-            payment_id: response.razorpay_payment_id,
-            order_id: response.razorpay_order_id,
-          }));
+          if (verifyRes.data.success) {
+            // 4. Save verified order to localStorage for order-placed page
+            localStorage.setItem("latest_order", JSON.stringify({
+              ...orderPayload,
+              payment_id: response.razorpay_payment_id,
+              order_id: response.razorpay_order_id,
+            }));
+            clearCart();
+            // Optional: cleanup
+            localStorage.removeItem(`checkout_${user.id}`);
 
-          // Optional: cleanup
-          localStorage.removeItem(`checkout_${user.id}`);
+            // 5. Navigate to order placed page
+            router.push("/order-placed");
+          } else {
+            alert("Payment Verification Failed!");
+          }
+        },
+        prefill: {
+          name: user.fullName || "Customer",
+          email: user.emailAddresses?.[0]?.emailAddress || "customer@example.com",
+          contact: "9999999999",
+        },
+        theme: {
+          color: "#22c55e",
+        },
+      };
 
-          // 5. Navigate to order placed page
-          router.push("/order-placed");
-        } else {
-          alert("Payment Verification Failed!");
-        }
-      },
-      prefill: {
-        name: user.fullName || "Customer",
-        email: user.emailAddresses?.[0]?.emailAddress || "customer@example.com",
-        contact: "9999999999",
-      },
-      theme: {
-        color: "#22c55e",
-      },
-    };
-
-    const razor = new window.Razorpay(options);
-    razor.open();
-  } catch (err) {
-    console.error("Payment Error:", err);
-    alert("Something went wrong");
-  } finally {
-    setLoading(false);
-  }
+      const razor = new window.Razorpay(options);
+      razor.open();
+    } catch (err) {
+      console.error("Payment Error:", err);
+      alert("Something went wrong");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleCashOnDelivery = async () => {
-  if (!orderPayload) return;
-  setLoading(true);
+    if (!orderPayload) return;
+    setLoading(true);
 
-  try {
-    const res = await axios.post("/api/payment/cod", {
-      order: orderPayload,
-    });
+    try {
+      const res = await axios.post("/api/payment/cod", {
+        order: orderPayload,
+      });
 
-    if (res.data.success) {
-      localStorage.setItem("latest_order", JSON.stringify(res.data.order));
-      localStorage.removeItem(`checkout_${user.id}`);
-      router.push("/order-placed");
-    } else {
-      alert("COD Order Failed");
+      if (res.data.success) {
+        localStorage.setItem("latest_order", JSON.stringify(res.data.order));
+        localStorage.removeItem(`checkout_${user.id}`);
+        router.push("/order-placed");
+      } else {
+        alert("COD Order Failed");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error processing COD order");
+    } finally {
+      setLoading(false);
     }
-  } catch (err) {
-    console.error(err);
-    alert("Error processing COD order");
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   if (!orderPayload) return null;
 
