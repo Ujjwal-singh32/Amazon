@@ -16,12 +16,15 @@ import {
   useUser,
 } from "@clerk/nextjs";
 import { useCart } from "@/context/cartContext";
+import { useProduct } from "@/context/ProductContext";
 
 function Navbar() {
   const router = useRouter();
   const { total } = useCart();
   const items = [];
+  const { totalProducts, loading } = useProduct();
   const [searchTerm, setSearchTerm] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleSearch = (e) => {
@@ -53,21 +56,61 @@ function Navbar() {
             <p className="text-xs">Deliver to Jamshedpur 831014</p>
             <p className="font-bold text-sm">Update Location</p>
           </div>
-          <form
-            onSubmit={handleSearch}
-            className="flex items-center h-9 mx-4 rounded-md flex-grow bg-yellow-500"
-          >
-            <input
-              type="text"
-              placeholder="Search"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="bg-white h-full p-2 flex-grow flex-shrink rounded-l-md focus:outline-none px-4 text-black"
-            />
-            <button type="submit">
-              <MagnifyingGlassIcon className="h-10 p-2 text-black" />
-            </button>
-          </form>
+          <div className="relative flex-grow mx-4">
+            <form onSubmit={handleSearch} className="relative flex items-center h-9 mx-4 rounded-md flex-grow bg-yellow-500">
+
+
+              <input
+                type="text"
+                placeholder="Search"
+                value={searchTerm}
+                onChange={(e) => {
+                  const value = e.target.value.toLowerCase();
+                  setSearchTerm(value);
+
+                  if (!value.trim()) {
+                    setSuggestions([]);
+                    return;
+                  }
+
+                  // Get unique tags
+                  const allTags = totalProducts.flatMap((p) => p.tags || []);
+                  const uniqueTags = [...new Set(allTags)];
+
+                  // Filter matching tags
+                  const filteredTags = uniqueTags.filter((tag) =>
+                    tag.toLowerCase().includes(value)
+                  );
+
+                  setSuggestions(filteredTags.slice(0, 6));
+                }}
+
+
+                className="bg-white h-full p-2 flex-grow flex-shrink rounded-l-md focus:outline-none px-4 text-black"
+              />
+              <button type="submit">
+                <MagnifyingGlassIcon className="h-10 p-2 text-black" />
+              </button>
+            </form>
+            {suggestions.length > 0 && (
+              <div className="absolute top-[100%] left-0 right-0 bg-[#232F3E] border-t border-yellow-400 shadow-lg rounded-b-md z-50">
+                {suggestions.map((tag, index) => (
+                  <div
+                    key={index}
+                    onClick={() => {
+                      router.push(`/products?tag=${encodeURIComponent(tag)}`);
+                      setSuggestions([]);
+                      setSearchTerm("");
+                    }}
+                    className="flex items-center space-x-3 px-4 py-2 hover:bg-yellow-500 hover:text-black cursor-pointer text-sm text-white"
+                  >
+                    <MagnifyingGlassIcon className="h-4 w-4 text-yellow-400" />
+                    <span className="font-medium">{tag}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Right Nav items (including mobile menu button for small screens) */}

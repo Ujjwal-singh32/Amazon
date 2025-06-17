@@ -1,43 +1,93 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { products } from "@/assets/assets";
 import Navbar from "@/components/Navbar";
 import { useCart } from "@/context/cartContext"; // ⬅️ import this
 import { toast, ToastContainer } from "react-toastify";
+import { useProduct } from "@/context/ProductContext";
+import Footer from "@/components/Footer";
 const ProductDetailsPage = () => {
   const { productId } = useParams();
   const { addToCart } = useCart();
   const router = useRouter();
-  const product = products.find((item) => item._id === productId);
-
-  const [selectedImage, setSelectedImage] = useState(product?.image[0]);
+  const { totalProducts } = useProduct();
+  const [product, setProduct] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [selectedSize, setSelectedSize] = useState(null);
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const res = await fetch("/api/products/detailsById", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ productId }),
+        });
 
-  if (!product) {
-    return <div className="p-4">Product not found.</div>;
-  }
+        const data = await res.json();
 
-  const similarProducts = products
-    .filter((p) => p.category === product.category && p._id !== product._id)
-    .slice(0, 8);
+        if (data.success) {
+          setProduct(data.product);
+          setSelectedImage(data.product.images[0]);
+        } else {
+          toast.error(data.error || "Failed to fetch product");
+        }
+      } catch (error) {
+        toast.error("Error loading product");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProduct();
+  }, [productId]);
+
+  if (loading) return <div className="p-4">Loading...</div>;
+  if (!product) return <div className="p-4">Product not found.</div>;
+
+  const similarProducts = totalProducts.filter((p) => {
+    if (p.productId === product.productId) return false;
+
+
+    // Normalize tags
+    const productTags = (product.tags || []).map(tag => tag?.toLowerCase().trim()).filter(Boolean);
+    const pTags = (p.tags || []).map(tag => tag?.toLowerCase().trim()).filter(Boolean);
+
+    const tagMatch = pTags.some(tag => productTags.includes(tag));
+
+    // Normalize name words
+    const productNameWords = (product.name || "")
+      .toLowerCase()
+      .split(/\s+/)
+      .filter(Boolean);
+    const pNameWords = (p.name || "")
+      .toLowerCase()
+      .split(/\s+/)
+      .filter(Boolean);
+
+    const nameWordMatch = pNameWords.some(word => productNameWords.includes(word));
+
+    return tagMatch || nameWordMatch;
+  }).slice(0, 8);// show max 8
+
 
   // ✅ Handle Add to Cart
   const handleAddToCart = (item, size = null) => {
     console.log("add to cart clicked");
 
-    if (item._id === product._id && !size) {
-      toast.error("Please Select a Size");
-      return;
-    }
+    // if (item._id === product._id && !size) {
+    //   toast.error("Please Select a Size");
+    //   return;
+    // }
 
     addToCart({
-      id: item._id,
+      id: item.productId,
       name: item.name,
-      price: item.price,
-      image: item.image[0],
+      price: item.basePrice,
+      image: item.images[0],
       size: size,
       quantity: 1,
     });
@@ -52,18 +102,18 @@ const ProductDetailsPage = () => {
         {/* Left Section - Images */}
         <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-1/2">
           <div className="flex sm:flex-col gap-2 overflow-x-auto sm:overflow-visible">
-            {product.image.map((img, index) => (
+
+            {Array.isArray(product.images) && product.images.map((img, index) => (
               <Image
                 key={index}
-                src={img}
+                src={img || "https://pngimg.com/uploads/amazon/amazon_PNG11.png"}
                 alt={product.name + " thumb"}
                 width={60}
                 height={60}
-                className={`cursor-pointer border rounded-md ${
-                  selectedImage === img
-                    ? "border-purple-500"
-                    : "border-gray-300"
-                }`}
+                className={`cursor-pointer border rounded-md ${selectedImage === img
+                  ? "border-purple-500"
+                  : "border-gray-300"
+                  }`}
                 onClick={() => setSelectedImage(img)}
               />
             ))}
@@ -71,7 +121,7 @@ const ProductDetailsPage = () => {
 
           <div className="w-full">
             <Image
-              src={selectedImage}
+              src={selectedImage || "https://pngimg.com/uploads/amazon/amazon_PNG11.png"}
               alt={product.name}
               width={600}
               height={600}
@@ -90,27 +140,26 @@ const ProductDetailsPage = () => {
           </p>
           <p className="text-gray-700 text-sm mb-4">{product.description}</p>
           <p className="text-purple-700 font-bold text-lg sm:text-xl mb-4">
-            ₹{product.price}
+            ₹{product.basePrice}
           </p>
 
-          <div className="mb-4">
+          {/* <div className="mb-4">
             <p className="font-semibold mb-1">Available Sizes:</p>
             <div className="flex flex-wrap gap-2">
               {product.sizes.map((size, idx) => (
                 <span
                   key={idx}
                   onClick={() => setSelectedSize(size)}
-                  className={`px-3 py-1 border rounded-full text-sm cursor-pointer ${
-                    selectedSize === size
-                      ? "border-purple-500 bg-purple-100"
-                      : "border-gray-300"
-                  }`}
+                  className={`px-3 py-1 border rounded-full text-sm cursor-pointer ${selectedSize === size
+                    ? "border-purple-500 bg-purple-100"
+                    : "border-gray-300"
+                    }`}
                 >
                   {size}
                 </span>
               ))}
             </div>
-          </div>
+          </div> */}
 
           {/* Offer Section */}
           <div className="bg-gray-100 p-4 rounded-md mb-4 text-sm">
@@ -141,7 +190,7 @@ const ProductDetailsPage = () => {
 
           <button
             className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-6 rounded-md w-full sm:w-auto"
-            onClick={() => handleAddToCart(product, selectedSize)}
+            onClick={() => handleAddToCart(product)}
           >
             Add to Cart
           </button>
@@ -154,15 +203,15 @@ const ProductDetailsPage = () => {
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6">
           {similarProducts.map((item) => (
             <div
-              key={item._id}
+              key={item.productId}
               className="bg-purple-50 p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300"
             >
               <div
                 className="cursor-pointer"
-                onClick={() => router.push(`/products/${item._id}`)}
+                onClick={() => router.push(`/products/${item.productId}`)}
               >
                 <Image
-                  src={item.image[0]}
+                  src={item.images[0] || "https://pngimg.com/uploads/amazon/amazon_PNG11.png"}
                   alt={item.name}
                   width={200}
                   height={200}
@@ -172,12 +221,12 @@ const ProductDetailsPage = () => {
                   {item.name}
                 </p>
                 <p className="text-center text-purple-700 font-bold">
-                  ₹{item.price}
+                  ₹{item.basePrice}
                 </p>
               </div>
               <button
                 className="mt-2 w-full bg-yellow-400 hover:bg-yellow-500 text-black text-sm font-semibold py-2 rounded-full"
-                onClick={() => handleAddToCart(product, selectedSize)}
+                onClick={() => handleAddToCart(item)}
               >
                 Add to Cart
               </button>
@@ -240,6 +289,7 @@ const ProductDetailsPage = () => {
           </div>
         </div>
       </div>
+      <Footer/>
     </>
   );
 };

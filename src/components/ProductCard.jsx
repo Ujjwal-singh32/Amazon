@@ -7,10 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { useCart } from "@/context/cartContext";
 import { toast } from 'react-toastify';
-
 function ProductCard({ id, title, price, description, category, image, rating }) {
   const router = useRouter();
-  const { rate, count } = rating || { rate: 0, count: 0 };
+  const { rate, count } = {
+    rate: (Math.random() * 2 + 3).toFixed(1), 
+    count: Math.floor(Math.random() * 50000 + 20),
+  };
   const { addToCart } = useCart();
   const handleAddToCart = (e) => {
     e.stopPropagation();
@@ -20,7 +22,7 @@ function ProductCard({ id, title, price, description, category, image, rating })
       title,
       price,
       image,
-      quantity: 1, // this will be updated in context if already exists
+      quantity: 1,
     });
     toast.success("Added to Cart")
   };
@@ -66,7 +68,7 @@ function ProductCard({ id, title, price, description, category, image, rating })
 
         <div className="flex items-center justify-between mt-6 flex-shrink-0">
           <p className="text-lg font-bold text-[#fa6103]">
-            ${price.toFixed(2)}
+            ₹{price.toFixed(2)}
           </p>
           <Button
             variant="outline"

@@ -7,24 +7,39 @@ import { products } from "@/assets/assets";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useCart } from "@/context/cartContext";
+import { useProduct } from "@/context/ProductContext";
 
 const SearchPage = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const { totalProducts, loading } = useProduct();
   const query = searchParams.get("query")?.toLowerCase() || "";
+  const tag = searchParams.get("tag")?.toLowerCase() || "";
+
   const { addToCart } = useCart();
   const [results, setResults] = useState([]);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [sortBy, setSortBy] = useState("");
-
+  console.log("products checking", totalProducts);
   useEffect(() => {
-    if (query) {
-      const filtered = products.filter((product) =>
+    if (loading) return;
+
+    let filtered = [];
+
+    if (tag) {
+      filtered = totalProducts.filter((product) =>
+        product.tags?.map(t => t.toLowerCase()).includes(tag)
+      );
+    } else if (query) {
+      filtered = totalProducts.filter((product) =>
         product.name.toLowerCase().includes(query)
       );
-      setResults(filtered);
+    } else {
+      filtered = totalProducts; // show all if nothing is queried
     }
-  }, [query]);
+    console.log("filtered products" , filtered);
+    setResults(filtered);
+  }, [query, tag, totalProducts, loading]);
 
   const sortResults = (items) => {
     let sorted = [...items];
@@ -47,8 +62,11 @@ const SearchPage = () => {
       <Navbar />
       <div className="p-4 max-w-7xl mx-auto">
         <h1 className="text-2xl font-bold mb-6 text-center">
-          Search Results for: <span className="text-purple-600">"{query}"</span>
+          {query && <>Search Results for: <span className="text-purple-600">"{query}"</span></>}
+          {tag && <>Showing Products Tagged: <span className="text-purple-600">"{tag}"</span></>}
+          {!query && !tag && "All Products"}
         </h1>
+
 
         {/* Mobile Filter Button */}
         <div className="lg:hidden text-right mb-4">
@@ -76,11 +94,11 @@ const SearchPage = () => {
                     className="bg-white shadow-md rounded-lg p-4 hover:shadow-lg transition duration-300"
                   >
                     <div
-                      onClick={() => router.push(`/products/${product._id}`)}
+                      onClick={() => router.push(`/products/${product.productId}`)}
                       className="cursor-pointer"
                     >
                       <Image
-                        src={product.image[0]}
+                       src={product.images?.[0] || "/fallback.jpg"}
                         alt={product.name}
                         width={250}
                         height={250}
@@ -96,7 +114,7 @@ const SearchPage = () => {
                         {product.description}
                       </p>
                       <p className="text-black font-bold text-lg mt-2">
-                        ₹{product.price}
+                        ₹{product.basePrice}
                       </p>
                       <button
                         className="mt-3 w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 px-4 rounded shadow"
@@ -105,7 +123,7 @@ const SearchPage = () => {
                             id: product._id,
                             name: product.name,
                             price: product.price,
-                            image: product.image[0],
+                            image: product.images?.[0],
                           })
                         }
                       >
