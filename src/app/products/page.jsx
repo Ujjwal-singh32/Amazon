@@ -26,20 +26,39 @@ const SearchPage = () => {
 
     let filtered = [];
 
-    if (tag) {
-      filtered = totalProducts.filter((product) =>
-        product.tags?.map(t => t.toLowerCase()).includes(tag)
-      );
-    } else if (query) {
-      filtered = totalProducts.filter((product) =>
-        product.name.toLowerCase().includes(query)
-      );
+    if (query) {
+      const cleanedQuery = query.toLowerCase().trim();
+
+      filtered = totalProducts.filter((product) => {
+        // Flatten and normalize tags
+        const tags = (product.tags || [])
+          .flatMap((tag) => tag.split(","))
+          .map((t) => t.trim().toLowerCase());
+
+        // Match full word in tags or partial name
+        const tagMatch = tags.includes(cleanedQuery);
+        const nameMatch = product.name.toLowerCase().includes(cleanedQuery);
+
+        return tagMatch || nameMatch;
+      });
+    } else if (tag) {
+      const cleanedTag = tag.toLowerCase().trim();
+
+      filtered = totalProducts.filter((product) => {
+        const tags = (product.tags || [])
+          .flatMap((tag) => tag.split(","))
+          .map((t) => t.trim().toLowerCase());
+
+        return tags.includes(cleanedTag);
+      });
     } else {
-      filtered = totalProducts; // show all if nothing is queried
+      filtered = totalProducts;
     }
-    console.log("filtered products" , filtered);
+
+    console.log("filtered products", filtered);
     setResults(filtered);
   }, [query, tag, totalProducts, loading]);
+
 
   const sortResults = (items) => {
     let sorted = [...items];
@@ -98,7 +117,7 @@ const SearchPage = () => {
                       className="cursor-pointer"
                     >
                       <Image
-                       src={product.images?.[0] || "/fallback.jpg"}
+                        src={product.images?.[0] || "/fallback.jpg"}
                         alt={product.name}
                         width={250}
                         height={250}

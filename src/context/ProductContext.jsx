@@ -23,9 +23,9 @@ export const ProductProvider = ({ children }) => {
   useEffect(() => {
     fetchProducts();
   }, []);
-
+  const organicProducts = totalProducts.filter(product => product.isOrganic);
   return (
-    <ProductContext.Provider value={{ totalProducts, loading, refetch: fetchProducts }}>
+    <ProductContext.Provider value={{ totalProducts, loading, refetch: fetchProducts,organicProducts }}>
       {children}
     </ProductContext.Provider>
   );

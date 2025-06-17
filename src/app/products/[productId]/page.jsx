@@ -48,30 +48,54 @@ const ProductDetailsPage = () => {
   if (loading) return <div className="p-4">Loading...</div>;
   if (!product) return <div className="p-4">Product not found.</div>;
 
-  const similarProducts = totalProducts.filter((p) => {
-    if (p.productId === product.productId) return false;
 
 
-    // Normalize tags
-    const productTags = (product.tags || []).map(tag => tag?.toLowerCase().trim()).filter(Boolean);
-    const pTags = (p.tags || []).map(tag => tag?.toLowerCase().trim()).filter(Boolean);
+  const productTags = (product.tags || [])
+    .flatMap(tag => tag.split(","))
+    .map(tag => tag.toLowerCase().trim())
+    .filter(Boolean);
 
-    const tagMatch = pTags.some(tag => productTags.includes(tag));
+  // Utility to shuffle an array
+  const shuffleArray = (arr) => {
+    return [...arr].sort(() => Math.random() - 0.5);
+  };
 
-    // Normalize name words
-    const productNameWords = (product.name || "")
-      .toLowerCase()
-      .split(/\s+/)
-      .filter(Boolean);
-    const pNameWords = (p.name || "")
-      .toLowerCase()
-      .split(/\s+/)
-      .filter(Boolean);
+  // Step 1: Get products with matchCount
+  const matchedProducts = totalProducts
+    .filter((p) => p.productId !== product.productId) // Exclude the same product
+    .map((p) => {
+      const pTags = (p.tags || [])
+        .flatMap(tag => tag.split(","))
+        .map(tag => tag.toLowerCase().trim())
+        .filter(Boolean);
 
-    const nameWordMatch = pNameWords.some(word => productNameWords.includes(word));
+      const matchCount = pTags.reduce((count, tag) =>
+        productTags.includes(tag) ? count + 1 : count,
+        0
+      );
 
-    return tagMatch || nameWordMatch;
-  }).slice(0, 8);// show max 8
+      return { ...p, matchCount };
+    })
+    .filter(p => p.matchCount > 0);
+
+  // Step 2: Group by matchCount
+  const grouped = {};
+  matchedProducts.forEach(p => {
+    if (!grouped[p.matchCount]) grouped[p.matchCount] = [];
+    grouped[p.matchCount].push(p);
+  });
+
+  // Step 3: Shuffle each group
+  Object.keys(grouped).forEach(key => {
+    grouped[key] = shuffleArray(grouped[key]);
+  });
+
+  // Step 4: Sort keys by descending matchCount and flatten
+  const similarProducts = Object.keys(grouped)
+    .sort((a, b) => b - a)
+    .flatMap(key => grouped[key])
+    .slice(0, 20); // Top N similar
+
 
 
   // ✅ Handle Add to Cart
@@ -289,7 +313,7 @@ const ProductDetailsPage = () => {
           </div>
         </div>
       </div>
-      <Footer/>
+      <Footer />
     </>
   );
 };
