@@ -276,11 +276,11 @@ export default function AmazonCart() {
                         </p>
                         <div className="flex items-center gap-2 mb-4">
                           <span className="text-2xl font-bold text-red-600">
-                            ₹{(item.price * item.quantity).toFixed(2)}
+                            ₹{(parseFloat(item.price) * item.quantity).toFixed(2)}
                           </span>
                           {item.originalPrice && (
                             <span className="text-lg text-gray-500 line-through">
-                              ₹{item.originalPrice.toFixed(2)}
+                              ₹{parseFloat(item.originalPrice).toFixed(2)}
                             </span>
                           )}
                         </div>

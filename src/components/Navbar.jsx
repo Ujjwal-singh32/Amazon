@@ -7,6 +7,7 @@ import {
   ShoppingCartIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
+import { LeafIcon } from 'lucide-react';
 import { useRouter } from "next/navigation";
 import {
   SignedIn,
@@ -52,10 +53,12 @@ function Navbar() {
 
         {/* Delivery Location and Search Bar (hidden on mobile, shown on sm and up) */}
         <div className="hidden md:flex flex-grow items-center">
-          <div className="text-white ml-3 flex flex-col cursor-pointer">
-            <p className="text-xs">Deliver to Jamshedpur 831014</p>
+          <div className="text-white ml-8 flex flex-col cursor-pointer">
+            <p className="text-xs">Deliver to Jamshedpur</p>
             <p className="font-bold text-sm">Update Location</p>
           </div>
+
+
           <div className="relative flex-grow mx-4">
             <form onSubmit={handleSearch} className="relative flex items-center h-9 mx-4 rounded-md flex-grow bg-yellow-500">
 
@@ -99,6 +102,7 @@ function Navbar() {
                 <MagnifyingGlassIcon className="h-10 p-2 text-black" />
               </button>
             </form>
+
             {suggestions.length > 0 && (
               <div className="absolute top-[100%] left-0 right-0 bg-[#232F3E] border-t border-yellow-400 shadow-lg rounded-b-md z-50">
                 {suggestions.map((tag, index) => (
@@ -118,6 +122,7 @@ function Navbar() {
               </div>
             )}
           </div>
+
         </div>
 
         {/* Right Nav items (including mobile menu button for small screens) */}
@@ -133,6 +138,11 @@ function Navbar() {
               <Bars3Icon className="h-6 w-6" />
             )}
           </button>
+          <p className="cursor-pointer text-green-400 font-semibold flex items-center gap-1  text-xl"
+            onClick={() => router.push("/green-kart")}>
+            <LeafIcon className="h-9 w-7" />
+            GreenKart
+          </p>
 
           <SignedIn>
             <div className="cursor-pointer flex items-center space-x-2">
@@ -178,9 +188,9 @@ function Navbar() {
                 {total}
               </span>
             </div>
-            <p className="hidden md:inline font-extrabold md:text-sm ml-1">
+            {/* <p className="hidden md:inline font-extrabold md:text-sm ml-1">
               Cart
-            </p>
+            </p> */}
           </div>
         </div>
       </div>

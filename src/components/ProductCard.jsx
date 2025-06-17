@@ -7,16 +7,28 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { useCart } from "@/context/cartContext";
 import { toast } from 'react-toastify';
-function ProductCard({ id, title, price, description, category, image, rating }) {
+
+function ProductCard({
+  id,
+  title,
+  price,
+  description,
+  category,
+  image,
+  rating,
+  isOrganic = false,
+  sustainableScore = 0,
+  greenPoints = 0,
+}) {
   const router = useRouter();
   const { rate, count } = {
-    rate: (Math.random() * 2 + 3).toFixed(1), 
+    rate: (Math.random() * 2 + 3).toFixed(1),
     count: Math.floor(Math.random() * 50000 + 20),
   };
   const { addToCart } = useCart();
+
   const handleAddToCart = (e) => {
     e.stopPropagation();
-
     addToCart({
       id,
       title,
@@ -24,11 +36,23 @@ function ProductCard({ id, title, price, description, category, image, rating })
       image,
       quantity: 1,
     });
-    toast.success("Added to Cart")
+    toast.success("Added to Cart");
   };
+
+  const getSustainabilityGrade = (score) => {
+    if (score >= 90) return "A";
+    if (score >= 75) return "B";
+    if (score >= 60) return "C";
+    if (score >= 45) return "D";
+    return "E";
+  };
+
+  const grade = getSustainabilityGrade(sustainableScore);
+
   return (
     <Card
-      className="group hover:shadow-lg hover:bg-gray-200 transition-all duration-300 cursor-pointer min-w-[220px] max-w-[280px] min-h-[450px] flex flex-col"
+      className={`group cursor-pointer min-w-[220px] max-w-[280px] min-h-[480px] flex flex-col transition-shadow shadow-md ${isOrganic ? "bg-green-50 border border-green-200" : ""
+        }`}
       onClick={() => router.push(`/products/${id}`)}
     >
       <CardHeader className="relative p-4 flex-shrink-0">
@@ -39,12 +63,17 @@ function ProductCard({ id, title, price, description, category, image, rating })
             fill
             className="object-contain group-hover:scale-105 transition-transform duration-300"
           />
+          {isOrganic && (
+            <span className="absolute top-0 right-0 bg-green-600 text-white text-xs px-2 py-1 rounded shadow-md z-10">
+              {grade}
+            </span>
+          )}
         </div>
       </CardHeader>
 
-      <CardContent className="p-4 flex flex-col min-h-[180px]">
+      <CardContent className="p-4 flex flex-col min-h-[180px] gap-2">
         <div className="h-[56px] flex-shrink-0">
-          <h4 className="font-semibold text-lg line-clamp-2 text-gray-900 group-hover:text-[#fa6103] transition-colors">
+          <h4 className="font-semibold text-lg line-clamp-2 text-gray-900 group-hover:text-[#0f03faba] transition-colors">
             {title}
           </h4>
         </div>
@@ -53,26 +82,54 @@ function ProductCard({ id, title, price, description, category, image, rating })
           {[...Array(5)].map((_, i) => (
             <StarIcon
               key={i}
-              className={`h-4 w-4 ${i < Math.floor(rate) ? 'text-yellow-400' : 'text-gray-200'
+              className={`h-4 w-4 ${i < Math.floor(rate) ? "text-yellow-400" : "text-gray-200"
                 }`}
             />
           ))}
           <span className="text-xs text-gray-500 ml-1">({count})</span>
         </div>
 
-        <div>
-          <p className="text-sm text-gray-700 line-clamp-2">
-            {description}
-          </p>
-        </div>
+        <p className="text-sm text-gray-700 line-clamp-2">{description}</p>
 
-        <div className="flex items-center justify-between mt-6 flex-shrink-0">
-          <p className="text-lg font-bold text-[#fa6103]">
-            ₹{price.toFixed(2)}
-          </p>
+        {isOrganic ? (
+          <div className="mt-2 flex flex-col gap-2 text-sm">
+            {/* Sustainable Score */}
+            <div>
+              <p className="text-green-800 font-medium mb-1">
+                Sustainable Score: {sustainableScore}
+              </p>
+              <div className="w-full h-2 bg-green-200 rounded-full">
+                <div
+                  className="h-2 bg-green-500 rounded-full"
+                  style={{ width: `${Math.min(sustainableScore, 100)}%` }}
+                ></div>
+              </div>
+            </div>
+
+            {/* Green Points */}
+            <div>
+              <p className="text-green-800 font-medium mb-1">
+                Green Points: {greenPoints}
+              </p>
+              <div className="w-full h-2 bg-green-200 rounded-full">
+                <div
+                  className="h-2 bg-lime-500 rounded-full"
+                  style={{ width: `${Math.min(greenPoints / 10, 100)}%` }}
+                ></div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="mt-3 text-red-600 text-xs italic bg-red-50 px-3 py-2 rounded-md shadow-sm border border-red-200 hover:bg-red-100 transition">
+            ⚠️ This product may not follow sustainable practices. Consider greener alternatives.
+          </div>
+        )}
+
+        <div className="flex items-center justify-between mt-4 flex-shrink-0">
+          <p className="text-lg font-bold">₹{price.toFixed(2)}</p>
           <Button
-            variant="outline"
-            className="hover:bg-[#fa6103] hover:text-white transition-colors cursor-pointer"
+            variant=" "
+            className="bg-yellow-500 hover:bg-yellow-600 transition"
             onClick={handleAddToCart}
           >
             Add to Cart
@@ -83,4 +140,4 @@ function ProductCard({ id, title, price, description, category, image, rating })
   );
 }
 
-export default ProductCard; 
+export default ProductCard;
