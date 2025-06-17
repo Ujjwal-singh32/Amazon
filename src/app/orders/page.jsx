@@ -7,12 +7,13 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import axios from "axios";
 import { useUser } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 
 const OrdersPage = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const { user } = useUser();
-
+  const router = useRouter();
   useEffect(() => {
     if (!user?.id) return;
 
@@ -31,7 +32,7 @@ const OrdersPage = () => {
         setLoading(false);
       });
   }, [user]);
-  
+
   return (
     <>
       <Navbar />
@@ -60,9 +61,10 @@ const OrdersPage = () => {
                   <p className="text-sm text-gray-600">
                     <span className="font-semibold">SHIP TO:</span>{" "}
                     <span className="text-blue-700 hover:underline cursor-pointer">
-                      {order.shippingAddress?.name || "Customer"}
+                      {order.userInfo?.name || "Customer"}
                     </span>
                   </p>
+
                 </div>
                 <div className="space-y-1 text-right text-sm text-gray-600">
                   <p>
@@ -95,7 +97,8 @@ const OrdersPage = () => {
                 <div className="flex-1">
                   {order.items.map((item, idx) => (
                     <div key={idx} className="mb-4">
-                      <h2 className="text-blue-700 font-medium text-sm mb-1 hover:underline cursor-pointer">
+                      <h2 className="text-blue-700 font-medium text-sm mb-1 hover:underline cursor-pointer"
+                        onClick={() => router.push(`/products/${item.product?.productId}`)}>
                         {item.product?.name || "Product Name"}
                       </h2>
                       <p className="text-sm text-gray-600">
