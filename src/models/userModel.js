@@ -25,13 +25,13 @@ const UserSchema = new mongoose.Schema({
 
     // GreenKart Metrics
     greenStats: {
-        emissionsSavedKg: { type: Number, default: 0 },         // e.g. 1.4
-        plasticsAvoidedKg: { type: Number, default: 0 },        // e.g. 3.5
-        greenPoints: { type: Number, default: 0 },              // e.g. 418
-        waterSavedLiters: { type: Number, default: 0 },         // e.g. 125
-        ecoPackages: { type: Number, default: 0 },              // e.g. 12
-        groupedOrders: { type: Number, default: 0 },            // e.g. 3
-        forestAreaSavedSqM: { type: Number, default: 0 },       // e.g. 0.3
+        emissionsSavedKg: { type: Number, default: 0 },         
+        plasticsAvoidedKg: { type: Number, default: 0 },        
+        greenPoints: { type: Number, default: 0 },              
+        waterSavedLiters: { type: Number, default: 0 },         
+        ecoPackages: { type: Number, default: 0 },             
+        groupedOrders: { type: Number, default: 0 },            
+        forestAreaSavedSqM: { type: Number, default: 0 },      
         monthlyCarbonData: [
             {
                 month: String,     // e.g. "Jan"

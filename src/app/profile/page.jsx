@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from 'next/navigation';
+import axios from 'axios';
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
 
 // Custom tooltip component for better styling
@@ -21,109 +22,38 @@ const CustomTooltip = ({ active, payload, label }) => {
   return null;
 };
 
-// Demo data for testing
-const demoUserData = {
-  userId: "demo123",
-  name: "John Smith",
-  email: "john.smith@example.com",
-  phone: "+1 (555) 123-4567",
-  address: [{
-    street: "123 Green Street",
-    city: "Eco City",
-    state: "Green State",
-    country: "USA",
-    pincode: "12345"
-  }],
-  isPrimeMember: true,
-  memberSince: "2023-01-15",
-  ordersPlaced: 47,
-  isTrustedReviewer: true,
-  greenStats: {
-    emissionsSavedKg: 12.4,
-    plasticsAvoidedKg: 8.5,
-    greenPoints: 418,
-    waterSavedLiters: 125,
-    ecoPackages: 12,
-    groupedOrders: 3,
-    forestAreaSavedSqM: 0.3,
-    monthlyCarbonData: [
-      { month: 'Jan', co2: 3.2 },
-      { month: 'Feb', co2: 2.8 },
-      { month: 'Mar', co2: 4.1 },
-      { month: 'Apr', co2: 3.5 },
-      { month: 'May', co2: 2.9 },
-      { month: 'Jun', co2: 3.8 }
-    ],
-    monthlyPointsData: [
-      { month: 'Jan', points: 45 },
-      { month: 'Feb', points: 38 },
-      { month: 'Mar', points: 78 },
-      { month: 'Apr', points: 55 },
-      { month: 'May', points: 115 },
-      { month: 'Jun', points: 92 }
-    ],
-    monthlyEmissionsData: [
-      { month: 'Jan', emissions: 2.1 },
-      { month: 'Feb', emissions: 2.5 },
-      { month: 'Mar', emissions: 1.8 },
-      { month: 'Apr', emissions: 2.3 },
-      { month: 'May', emissions: 2.0 },
-      { month: 'Jun', emissions: 1.7 }
-    ],
-    monthlyPlasticsData: [
-      { month: 'Jan', plastics: 1.2 },
-      { month: 'Feb', plastics: 1.5 },
-      { month: 'Mar', plastics: 1.8 },
-      { month: 'Apr', plastics: 1.4 },
-      { month: 'May', plastics: 1.6 },
-      { month: 'Jun', plastics: 1.3 }
-    ],
-    monthlyWaterData: [
-      { month: 'Jan', water: 15 },
-      { month: 'Feb', water: 18 },
-      { month: 'Mar', water: 22 },
-      { month: 'Apr', water: 20 },
-      { month: 'May', water: 25 },
-      { month: 'Jun', water: 25 }
-    ],
-    monthlyGroupedOrdersData: [
-      { month: 'Jan', orders: 2 },
-      { month: 'Feb', orders: 3 },
-      { month: 'Mar', orders: 1 },
-      { month: 'Apr', orders: 4 },
-      { month: 'May', orders: 2 },
-      { month: 'Jun', orders: 3 }
-    ]
-  }
-};
+
 
 export default function AmazonDashboard() {
   const { user } = useUser();
   const router = useRouter();
-  const [userData, setUserData] = useState(demoUserData);
-  const [loading, setLoading] = useState(false);
+  const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-
-  // Commented out the actual data fetching for now
-  /*
+  
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await fetch(`/api/users/${user?.id}`);
-        const data = await response.json();
-        setUserData(data);
-      } catch (error) {
-        console.error('Error fetching user data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  if (!user?.id) return;
 
-    if (user?.id) {
-      fetchUserData();
-    }
-  }, [user?.id]);
-  */
+  axios
+    .get("/api/users", {
+      headers: {
+        "x-user-id": user.id,
+      },
+    })
+    .then((res) => {
+      console.log("User:", res.data.user);
+      setUserData(res.data.user);
+      setLoading(false); 
+    })
+    .catch((err) => {
+      console.error("Error fetching user:", err);
+      setLoading(false); 
+    });
+}, [user]);
+
+
+  
+  
 
   if (loading) {
     return (
