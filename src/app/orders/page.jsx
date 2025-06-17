@@ -14,24 +14,24 @@ const OrdersPage = () => {
   const { user } = useUser();
 
   useEffect(() => {
-  if (!user?.id) return;
+    if (!user?.id) return;
 
-  axios
-    .get("/api/orders", {
-      headers: {
-        "x-user-id": user.id,
-      },
-    })
-    .then((res) => {
-      setOrders(res.data.orders);
-      setLoading(false); 
-    })
-    .catch((err) => {
-      console.error("Fetch orders failed", err);
-      setLoading(false); 
-    });
-}, [user]);
-
+    axios
+      .get("/api/orders", {
+        headers: {
+          "x-user-id": user.id,
+        },
+      })
+      .then((res) => {
+        setOrders(res.data.orders);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Fetch orders failed", err);
+        setLoading(false);
+      });
+  }, [user]);
+  
   return (
     <>
       <Navbar />
@@ -83,7 +83,7 @@ const OrdersPage = () => {
                 {order.items.map((item, idx) => (
                   <div className="w-full md:w-32" key={idx}>
                     <Image
-                      src={item.product?.image || "/placeholder.jpg"}
+                      src={item.product?.images[0] || "/placeholder.jpg"}
                       alt={item.product?.name || "Product"}
                       width={150}
                       height={150}

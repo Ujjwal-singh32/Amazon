@@ -4,7 +4,8 @@ import React from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import dynamic from "next/dynamic";
-import { useState  , useEffect} from "react";
+import { useState, useEffect } from "react";
+import { useProduct } from "@/context/ProductContext";
 const ImageCarousel = dynamic(() => import("@/components/ImageCarousel"), {
   ssr: false,
 });
@@ -20,151 +21,94 @@ const ProductSlider = dynamic(() => import("@/components/ProductSlider"), {
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
-// Sample data for categories
-const categories = [
-  {
-    title: "Electronics",
-    image: "/P1.jpg",
-    link: "/products?category=electronics",
-  },
-  {
-    title: "Fashion",
-    image: "/P2.jpg",
-    link: "/products?category=fashion",
-  },
-  {
-    title: "Home & Kitchen",
-    image: "/P3.jpg",
-    link: "/products?category=home",
-  },
-  {
-    title: "Beauty",
-    image: "/P1.jpg",
-    link: "/products?category=beauty",
-  },
-  {
-    title: "Books",
-    image: "/P2.jpg",
-    link: "/products?category=books",
-  },
-  {
-    title: "Sports",
-    image: "/P3.jpg",
-    link: "/products?category=sports",
-  },
-  // Added more for demoing wider grid
-  {
-    title: "Health & Personal Care",
-    image: "/P1.jpg",
-    link: "/products?category=health",
-  },
-  {
-    title: "Toys & Games",
-    image: "/P2.jpg",
-    link: "/products?category=toys",
-  },
-  {
-    title: "Automotive",
-    image: "/P3.jpg",
-    link: "/products?category=automotive",
-  },
-  {
-    title: "Pet Supplies",
-    image: "/P1.jpg",
-    link: "/products?category=pets",
-  },
-];
-
-// Sample data for products
-const products = [
-  {
-    id: 1,
-    title: "Wireless Noise Cancelling Headphones",
-    price: 199.99,
-    description:
-      "Premium wireless headphones with active noise cancellation and 30-hour battery life.",
-    category: "Electronics",
-    image: "/P1.jpg",
-    rating: { rate: 4.5, count: 120 },
-  },
-  {
-    id: 2,
-    title: "Smart Watch Series 5",
-    price: 299.99,
-    description:
-      "Advanced smartwatch with health monitoring and fitness tracking features.",
-    category: "Electronics",
-    image: "/P2.jpg",
-    rating: { rate: 4.8, count: 89 },
-  },
-  {
-    id: 3,
-    title: "Professional Blender",
-    price: 79.99,
-    description: "High-powered blender perfect for smoothies, soups, and more.",
-    category: "Home & Kitchen",
-    image: "/P3.jpg",
-    rating: { rate: 4.3, count: 156 },
-  },
-  {
-    id: 4,
-    title: "Yoga Mat Premium",
-    price: 29.99,
-    description:
-      "Non-slip yoga mat with perfect thickness for comfort and stability.",
-    category: "Sports",
-    image: "/P1.jpg",
-    rating: { rate: 4.6, count: 203 },
-  },
-  // Added more for demoing wider grid
-  {
-    id: 5,
-    title: "4K Smart LED TV",
-    price: 499.99,
-    description: "Stunning 4K resolution with smart features and sleek design.",
-    category: "Electronics",
-    image: "/P2.jpg",
-    rating: { rate: 4.7, count: 95 },
-  },
-  {
-    id: 6,
-    title: "Espresso Machine",
-    price: 149.99,
-    description: "Brew barista-quality espresso at home with ease.",
-    category: "Home & Kitchen",
-    image: "/P3.jpg",
-    rating: { rate: 4.2, count: 78 },
-  },
-  {
-    id: 7,
-    title: "Gaming Mouse",
-    price: 49.99,
-    description: "High-precision gaming mouse with customizable RGB lighting.",
-    category: "Electronics",
-    image: "/P1.jpg",
-    rating: { rate: 4.9, count: 300 },
-  },
-  {
-    id: 8,
-    title: "Air Fryer 5.8 QT",
-    price: 89.99,
-    description:
-      "Healthy cooking with little to no oil, perfect for crispy results.",
-    category: "Home & Kitchen",
-    image: "/P2.jpg",
-    rating: { rate: 4.4, count: 180 },
-  },
-];
-
+const shuffleArray = (array) => {
+  return array
+    .map((value) => ({ value, sort: Math.random() }))
+    .sort((a, b) => a.sort - b.sort)
+    .map(({ value }) => value);
+};
 export default function HomePage() {
   const [isClient, setIsClient] = useState(false);
+  const [allCategories, setAllCategories] = useState([]);
+  const [displayCategories, setDisplayCategories] = useState([]);
+  const [visibleCategoryCount, setVisibleCategoryCount] = useState(18); // initial
+  const { totalProducts, loading } = useProduct();
+  console.log("totalpr", totalProducts);
+  const [featuredProducts, setFeaturedProducts] = useState([]);
+  const [dealsProducts, setDealsProducts] = useState([]);
+  const [bestSellers, setBestSellers] = useState([]);
+  const [recommendedProducts, setRecommendedProducts] = useState([]);
+  const [loadingSections, setLoadingSections] = useState(true);
 
   // Guard any DOM-dependent logic until after hydration
   useEffect(() => {
     setIsClient(true);
-  }, []);
 
-  if (!isClient) return null;
+    if (!totalProducts || totalProducts.length === 0) {
+      console.warn("⚠️ totalProducts is empty or undefined");
+      return;
+    }
+
+    const shuffled = shuffleArray(totalProducts);
+    const maxFeatured = 20;
+    const maxDeals = 16;
+    const maxBestSellers = 16;
+    const maxRecommended = 16;
+
+    const featured = shuffled.slice(0, maxFeatured);
+    const deals = shuffled.slice(maxFeatured, maxFeatured + maxDeals);
+    const best = shuffled.slice(maxFeatured + maxDeals, maxFeatured + maxDeals + maxBestSellers);
+    const recommended = shuffled.slice(
+      maxFeatured + maxDeals + maxBestSellers,
+      maxFeatured + maxDeals + maxBestSellers + maxRecommended
+    );
+    const categoryMap = new Map();
+
+    for (const product of totalProducts) {
+      if (!Array.isArray(product.tags)) continue;
+
+      for (const tag of product.tags) {
+        if (!tag.trim()) continue;
+        if (!categoryMap.has(tag)) {
+          categoryMap.set(tag, {
+            title: tag,
+            image: product.images?.[0] || "https://pngimg.com/uploads/amazon/amazon_PNG11.png",
+            link: `/products?tag=${encodeURIComponent(tag)}`
+          });
+        }
+      }
+    }
+
+
+    const categoryArray = Array.from(categoryMap.values());
+    console.log("category ", categoryArray);
+    setAllCategories(categoryArray);
+    setDisplayCategories(categoryArray.slice(0, 18));
+
+    setFeaturedProducts(featured);
+    setDealsProducts(deals);
+    setBestSellers(best);
+    setRecommendedProducts(recommended);
+
+    console.log("Sections loaded");
+    setLoadingSections(false); // Done loading
+  }, [totalProducts]);
+
+
+  if (!isClient || loadingSections) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-500"></div>
+        {/* Or use a skeleton loader if you have one */}
+      </div>
+    );
+  }
+  const visibleCategories = allCategories.slice(0, visibleCategoryCount);
+  const isExpanded = visibleCategoryCount >= Math.min(allCategories.length, 18 + 12); // or a safer dynamic check
+  // Fixing this to recompute accurately every time
+  const canExpand = visibleCategoryCount < allCategories.length;
+  const canCollapse = visibleCategoryCount > 18;
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white">
       <Navbar />
@@ -195,16 +139,16 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto">
           <h2 className="text-xl sm:text-2xl font-bold mb-4 px-2">Featured Products</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-            {products.map((product) => (
+            {featuredProducts.map((product) => (
               <ProductCard
-                key={product.id}
-                id={product.id}
-                title={product.title}
-                price={product.price}
+                key={product.productId}
+                id={product.productId}
+                title={product.name}
+                price={product.basePrice}
                 description={product.description}
-                category={product.category}
-                image={product.image}
-                rating={product.rating}
+                category={product.tags[0]}
+                image={product.images[0] || "https://pngimg.com/uploads/amazon/amazon_PNG11.png"}
+                rating={product.rating || "⭐⭐⭐⭐"}
               />
             ))}
           </div>
@@ -215,16 +159,16 @@ export default function HomePage() {
           <div>
             <h2 className="text-xl sm:text-2xl font-bold mb-4 px-2">Deals of the Day</h2>
             <ProductSlider>
-              {products.slice(0, 8).map((product) => (
+              {dealsProducts.slice(0, 8).map((product) => (
                 <ProductCard
-                  key={product.id}
-                  id={product.id}
-                  title={product.title}
-                  price={product.price}
+                  key={product.productId}
+                  id={product.productId}
+                  title={product.name}
+                  price={product.basePrice}
                   description={product.description}
-                  category={product.category}
-                  image={product.image}
-                  rating={product.rating}
+                  category={product.tags[0]}
+                  image={product.images[0] || "https://pngimg.com/uploads/amazon/amazon_PNG11.png"}
+                  rating={product.rating || "⭐⭐⭐⭐"}
                 />
               ))}
             </ProductSlider>
@@ -233,16 +177,16 @@ export default function HomePage() {
           <div>
             <h2 className="text-xl sm:text-2xl font-bold mb-4 px-2">Best Sellers</h2>
             <ProductSlider>
-              {products.slice(4, 12).map((product) => (
+              {bestSellers.slice(4, 12).map((product) => (
                 <ProductCard
-                  key={product.id}
-                  id={product.id}
-                  title={product.title}
-                  price={product.price}
+                  key={product.productId}
+                  id={product.productId}
+                  title={product.name}
+                  price={product.basePrice}
                   description={product.description}
-                  category={product.category}
-                  image={product.image}
-                  rating={product.rating}
+                  category={product.tags[0]}
+                  image={product.images[0] || "https://pngimg.com/uploads/amazon/amazon_PNG11.png"}
+                  rating={product.rating || "⭐⭐⭐⭐"}
                 />
               ))}
             </ProductSlider>
@@ -252,11 +196,10 @@ export default function HomePage() {
         {/* Shop by Category */}
         <section className="bg-white rounded-lg shadow-md mb-8 py-6">
           <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6">
-              Shop by Category
-            </h2>
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">Shop by Category</h2>
+
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
-              {categories.map((category) => (
+              {visibleCategories.map((category) => (
                 <CategoryCard
                   key={category.title}
                   title={category.title}
@@ -265,6 +208,35 @@ export default function HomePage() {
                 />
               ))}
             </div>
+
+            {allCategories.length > 18 && (
+              <div className="flex justify-center mt-6 gap-4">
+                {visibleCategoryCount < allCategories.length && (
+                  <Button
+                    onClick={() =>
+                      setVisibleCategoryCount((prev) =>
+                        Math.min(prev + 12, allCategories.length)
+                      )
+                    }
+                    className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded"
+                  >
+                    View More
+                  </Button>
+                )}
+                {visibleCategoryCount > 18 && (
+                  <Button
+                    onClick={() =>
+                      setVisibleCategoryCount((prev) =>
+                        Math.max(prev - 12, 18)
+                      )
+                    }
+                    className="bg-gray-600 hover:bg-gray-700 text-white font-semibold px-6 py-2 rounded"
+                  >
+                    View Less
+                  </Button>
+                )}
+              </div>
+            )}
           </div>
         </section>
 
@@ -283,32 +255,21 @@ export default function HomePage() {
               </Button>
             </div>
             <ProductSlider>
-              {products.map((product) => (
-                <ProductCard key={product.id} {...product} />
+              {recommendedProducts.map((product) => (
+                <ProductCard key={product.productId}
+                  id={product.productId}
+                  title={product.name}
+                  price={product.basePrice}
+                  description={product.description}
+                  category={product.tags[0]}
+                  image={product.images[0] || "https://pngimg.com/uploads/amazon/amazon_PNG11.png"}
+                  rating={product.rating || "⭐⭐⭐⭐"} />
               ))}
             </ProductSlider>
           </div>
         </section>
 
-        {/* Best Sellers (Product Cards) */}
-        <section className="bg-white rounded-lg shadow-md py-6">
-          <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-gray-800">Best Sellers</h2>
-              <Button
-                variant="link"
-                className="text-blue-600 hover:text-blue-800 text-base"
-              >
-                Explore all
-              </Button>
-            </div>
-            <ProductSlider>
-              {products.map((product) => (
-                <ProductCard key={product.id} {...product} />
-              ))}
-            </ProductSlider>
-          </div>
-        </section>
+
       </main>
       <Footer />
     </div>

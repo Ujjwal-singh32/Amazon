@@ -2,6 +2,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { CartProvider } from "@/context/cartContext";
+import { ProductProvider } from "@/context/ProductContext";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -27,10 +28,12 @@ export default function RootLayout({ children }) {
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ClerkProvider>
-          <CartProvider>
-            {children}
-            <ToastContainer position="top-right" autoClose={3000} />
-          </CartProvider>
+          <ProductProvider>
+            <CartProvider>
+              {children}
+              <ToastContainer position="top-right" autoClose={3000} />
+            </CartProvider>
+          </ProductProvider>
         </ClerkProvider>
       </body>
     </html>

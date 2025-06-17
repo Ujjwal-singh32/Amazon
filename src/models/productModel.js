@@ -8,7 +8,7 @@ const VarietySchema = new mongoose.Schema({
 }, { _id: false });
 
 const ProductSchema = new mongoose.Schema({
-  productId: { type: String, required: true, unique: true }, 
+  productId: { type: String, required: true }, 
   name: { type: String, required: true },
   description: { type: String, required: true },
   isOrganic: { type: Boolean, default: false },

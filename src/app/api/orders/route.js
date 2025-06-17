@@ -15,9 +15,9 @@ export async function GET(req) {
   try {
     const orders = await Order.find({ user: userId })
       .sort({ placedAt: -1 })
-      .populate("items.productId");
+      .populate(items.productId);
       
-
+    
     const formatted = orders.map(order => ({
       ...order._doc,
       items: order.items.map(item => ({
@@ -25,7 +25,7 @@ export async function GET(req) {
         product: item.productId,
       }))
     }));
-
+    console.log("orders" , formatted);
     return NextResponse.json({ orders: formatted });
   } catch (err) {
     console.error("Error fetching orders:", err);
