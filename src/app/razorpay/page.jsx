@@ -4,14 +4,13 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
-import { useProduct } from "@/context/ProductContext";
-import { useCart } from "@/context/cartContext";
+
 const PaymentPage = () => {
   const [loading, setLoading] = useState(false);
   const [orderPayload, setOrderPayload] = useState(null);
   const router = useRouter();
   const { user } = useUser();
-  const { clearCart } = useCart();
+
   useEffect(() => {
     if (!user) return;
 
@@ -80,7 +79,7 @@ const PaymentPage = () => {
               payment_id: response.razorpay_payment_id,
               order_id: response.razorpay_order_id,
             }));
-            clearCart();
+
             // Optional: cleanup
             localStorage.removeItem(`checkout_${user.id}`);
 
@@ -141,15 +140,17 @@ const PaymentPage = () => {
       className="relative min-h-screen flex items-center justify-center bg-cover bg-center"
       style={{
         backgroundImage:
-          "url('https://images.pexels.com/photos/326055/pexels-photo-326055.jpeg?auto=compress&cs=tinysrgb&w=600')",
+          "url('https://images.mein-mmo.de/medien/2022/12/Titelbild-Amazonkiste.jpg')",
       }}
+
     >
       <div className="absolute inset-0 bg-black opacity-40 z-0"></div>
 
       <div className="relative z-10 bg-white/30 backdrop-blur-lg shadow-2xl p-10 rounded-3xl max-w-md w-full text-center border border-white/30">
         <h2 className="text-3xl font-bold text-white mb-6">Complete Your Payment</h2>
         <p className="mb-6 text-gray-100 font-medium">
-          Pay securely ₹{orderPayload.totalAmount}
+          Pay securely ₹{orderPayload.totalAmount.toFixed(2)}
+
         </p>
 
         <button
@@ -158,7 +159,8 @@ const PaymentPage = () => {
           className={`mb-4 w-full bg-green-600 hover:bg-green-700 text-white font-semibold px-8 py-3 rounded-full transition duration-300 transform hover:scale-105 focus:outline-none ${loading ? "opacity-50 cursor-not-allowed" : "animate-pulse"
             }`}
         >
-          {loading ? "Processing..." : `Pay ₹${orderPayload.totalAmount} with Razorpay`}
+          {loading ? "Processing..." : `Pay ₹${orderPayload.totalAmount.toFixed(2)} with Razorpay`}
+
         </button>
 
         <button
