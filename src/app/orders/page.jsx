@@ -7,11 +7,17 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import axios from "axios";
 import { useUser } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 
 const OrdersPage = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const { user } = useUser();
+  const router = useRouter();
+
+  const handleTrackOrder = (orderId) => {
+    router.push(`/track?orderId=${orderId}`);
+  };
 
   useEffect(() => {
     if (!user?.id) return;
@@ -106,9 +112,13 @@ const OrdersPage = () => {
                           : `Status: ${order.orderStatus}`}
                       </p>
                       <div className="flex flex-wrap gap-2 mt-2">
-                        <button className="border border-gray-400 px-4 py-2 text-sm rounded font-medium">
+                        <button
+                          onClick={() => handleTrackOrder(order._id)}
+                          className="border border-gray-400 px-4 py-2 text-sm rounded font-medium"
+                        >
                           📦 Track Order
                         </button>
+
                         <button className="bg-yellow-400 hover:bg-yellow-500 px-4 py-2 text-sm rounded font-semibold">
                           🛠️ Get Product Support
                         </button>

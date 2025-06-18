@@ -1,51 +1,239 @@
-// pages/track-order.js
 "use client";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Head from 'next/head';
+import { useSearchParams } from 'next/navigation';
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 export default function OrderTracking() {
   const [showReschedule, setShowReschedule] = useState(false);
   const [showInstructions, setShowInstructions] = useState(false);
+  const [orderData, setOrderData] = useState(null);
+  const [mapHtml, setMapHtml] = useState('');
+  const [htmlContent, setHtmlContent] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
+  const searchParams = useSearchParams();
+  const orderId = searchParams.get('orderId');
 
-  const deliverySteps = [
-    {
-      id: 'confirmed',
-      title: 'Order confirmed',
-      date: 'Dec 15, 2024 - 3:15 PM',
-      description: 'Your order has been confirmed and is being prepared',
-      completed: true
-    },
-    {
-      id: 'shipped',
-      title: 'Package shipped',
-      date: 'Dec 16, 2024 - 2:30 PM',
-      description: 'Departed from fulfillment center',
-      completed: true
-    },
-    {
-      id: 'transit',
-      title: 'In transit',
-      date: 'Dec 17, 2024 - 11:45 PM',
-      description: 'Package is traveling to the next facility',
-      completed: true
-    },
-    {
-      id: 'facility',
-      title: 'Package arrived at delivery facility',
-      date: 'Dec 18, 2024 - 5:15 AM',
-      description: 'Brooklyn, NY facility',
-      completed: true
-    },
-    {
-      id: 'delivery',
-      title: 'Out for delivery',
-      date: 'Dec 18, 2024 - 7:30 AM',
-      description: 'Your package is on the delivery truck',
-      completed: true,
-      current: true
+  // Fetch order details, map, and HTML file from database
+ 
+ useEffect(() => {
+    const fetchOrderData = async () => {
+      if (!orderId) {
+        setError('Order ID not provided');
+        setLoading(false);
+        return;
+      }
+
+      console.log('Fetching order with ID:', orderId);
+
+      try {
+        // Fetch order details from MongoDB
+        const orderResponse = await fetch('/api/getOrder', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ orderId }),
+        });
+
+        if (!orderResponse.ok) {
+          const errorData = await orderResponse.json();
+          throw new Error(errorData.error || 'Failed to fetch order data');
+        }
+
+        const orderResult = await orderResponse.json();
+        console.log('Order data received:', orderResult);
+        setOrderData(orderResult.order);
+        setMapHtml(orderResult.mapHtml || '');
+
+        // Fetch HTML file from GridFS (fs.files)
+        const htmlResponse = await fetch('/api/getHtmlFile', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ orderId }),
+        });
+
+        if (htmlResponse.ok) {
+          const htmlResult = await htmlResponse.json();
+          console.log('HTML content received:', htmlResult.htmlContent ? 'Yes' : 'No');
+          setHtmlContent(htmlResult.htmlContent || '');
+        } else {
+          console.log('No HTML file found for this order');
+        }
+
+      } catch (err) {
+        console.error('Error fetching order:', err);
+        setError(err.message || 'Failed to load order details');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOrderData();
+  }, [orderId]);
+
+
+
+
+  // Define delivery steps based on order status
+  const getDeliverySteps = (orderStatus) => {
+    const allSteps = [
+      {
+        id: 'confirmed',
+        title: 'Order confirmed',
+        date: orderData?.placedAt ? new Date(orderData.placedAt).toLocaleString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: true
+        }) : 'N/A',
+        description: 'Your order has been confirmed and is being prepared',
+        completed: true
+      },
+      {
+        id: 'shipped',
+        title: 'Package shipped',
+        date: orderData?.placedAt ? new Date(new Date(orderData.placedAt).getTime() + 24*60*60*1000).toLocaleString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: true
+        }) : 'N/A',
+        description: 'Departed from fulfillment center',
+        completed: orderStatus !== 'placed'
+      },
+      {
+        id: 'transit',
+        title: 'In transit',
+        date: orderData?.placedAt ? new Date(new Date(orderData.placedAt).getTime() + 48*60*60*1000).toLocaleString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: true
+        }) : 'N/A',
+        description: 'Package is traveling to the next facility',
+        completed: orderStatus === 'delivered',
+        current: orderStatus === 'placed'
+      },
+      {
+        id: 'facility',
+        title: 'Package arrived at delivery facility',
+        date: orderData?.placedAt ? new Date(new Date(orderData.placedAt).getTime() + 72*60*60*1000).toLocaleString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: true
+        }) : 'N/A',
+        description: 'Local delivery facility',
+        completed: orderStatus === 'delivered'
+      },
+      {
+        id: 'delivery',
+        title: 'Out for delivery',
+        date: orderData?.placedAt ? new Date(new Date(orderData.placedAt).getTime() + 96*60*60*1000).toLocaleString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: true
+        }) : 'N/A',
+        description: 'Your package is on the delivery truck',
+        completed: orderStatus === 'delivered'
+      },
+      {
+        id: 'delivered',
+        title: 'Delivered',
+        date: orderStatus === 'delivered' && orderData?.placedAt ? new Date(new Date(orderData.placedAt).getTime() + 120*60*60*1000).toLocaleString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: true
+        }) : 'N/A',
+        description: 'Package has been delivered successfully',
+        completed: orderStatus === 'delivered'
+      }
+    ];
+
+    // Filter steps based on order status
+    if (orderStatus === 'placed') {
+      return allSteps.slice(0, 3); // Show only up to "in transit"
+    } else if (orderStatus === 'delivered') {
+      return allSteps; // Show all steps including delivered
+    } else {
+      return allSteps.slice(0, 5); // Default case, show up to "out for delivery"
     }
-  ];
+  };
+
+  const getStatusBadge = (status) => {
+    switch (status) {
+      case 'placed':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'delivered':
+        return 'bg-green-100 text-green-800';
+      default:
+        return 'bg-blue-100 text-blue-800';
+    }
+  };
+
+  const getStatusText = (status) => {
+    switch (status) {
+      case 'placed':
+        return 'In Transit';
+      case 'delivered':
+        return 'Delivered';
+      default:
+        return 'Processing';
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading order details...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !orderData) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Navbar/>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-gray-900 mb-4">Order Not Found</h1>
+            <p className="text-gray-600 mb-8">{error || 'The order you are looking for does not exist.'}</p>
+            <button 
+              onClick={() => window.history.back()}
+              className="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors"
+            >
+              Go Back
+            </button>
+          </div>
+        </div>
+        <Footer/>
+      </div>
+    );
+  }
+
+  const deliverySteps = getDeliverySteps(orderData.orderStatus);
 
   return (
     <>
@@ -81,11 +269,17 @@ export default function OrderTracking() {
                 <div className="flex flex-col sm:flex-row sm:gap-8 gap-2">
                   <div>
                     <span className="text-gray-600">Order placed </span>
-                    <span className="font-medium">24 May 2025</span>
+                    <span className="font-medium">
+                      {orderData.placedAt ? new Date(orderData.placedAt).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                      }) : 'N/A'}
+                    </span>
                   </div>
                   <div>
                     <span className="text-gray-600">Order number </span>
-                    <span className="font-medium">8324-1298531</span>
+                    <span className="font-medium">{orderId}</span>
                   </div>
                 </div>
               </div>
@@ -103,47 +297,34 @@ export default function OrderTracking() {
               <div>
                 <h3 className="font-medium text-gray-900 mb-3">Ship to</h3>
                 <div className="text-gray-700 space-y-1">
-                  <p>Jane Smith</p>
-                  <p>Hostel E</p>
-                  <p>NIT Jamshedpur</p>
-                  <p>Jamshedpur, Jharkhand 831014</p>
-                  <p>India</p>
+                  {orderData.shippingAddress ? (
+                    <>
+                      <p>{orderData.shippingAddress.address1 || orderData.shippingAddress.street || 'N/A'}</p>
+                      <p>{orderData.shippingAddress.address2 || ''}</p>
+                      <p>{orderData.shippingAddress.city || 'N/A'}, {orderData.shippingAddress.state || 'N/A'} {orderData.shippingAddress.zipCode || orderData.shippingAddress.pincode || 'N/A'}</p>
+                      <p>{orderData.shippingAddress.country || 'India'}</p>
+                    </>
+                  ) : (
+                    <p>Address information not available</p>
+                  )}
                 </div>
               </div>
 
               {/* Payment Methods */}
               <div>
                 <h3 className="font-medium text-gray-900 mb-3">Payment Methods</h3>
-                <p className="text-gray-700">Pay on Delivery</p>
+                <p className="text-gray-700">
+                  {orderData.paymentStatus === 'COD' ? 'Pay on Delivery' : orderData.paymentStatus || 'N/A'}
+                </p>
               </div>
 
               {/* Order Summary */}
               <div>
                 <h3 className="font-medium text-gray-900 mb-3">Order Summary</h3>
                 <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Item(s) Subtotal:</span>
-                    <span className="text-gray-900">₹397.00</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Shipping:</span>
-                    <span className="text-gray-900">₹120.00</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Cash/Pay on Delivery fee:</span>
-                    <span className="text-gray-900">₹10.00</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Total:</span>
-                    <span className="text-gray-900">₹527.00</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Promotion Applied:</span>
-                    <span className="text-gray-900">-₹120.00</span>
-                  </div>
                   <div className="flex justify-between font-bold text-base pt-2 border-t border-gray-200">
                     <span className="text-gray-900">Grand Total:</span>
-                    <span className="text-gray-900">₹407.00</span>
+                    <span className="text-gray-900">₹{((orderData.totalAmount || 0)).toFixed(2)}</span>
                   </div>
                 </div>
               </div>
@@ -154,25 +335,92 @@ export default function OrderTracking() {
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-xl font-bold text-gray-900">Delivery Status</h2>
-              <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
-                Out for Delivery
+              <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusBadge(orderData.orderStatus)}`}>
+                {getStatusText(orderData.orderStatus)}
               </span>
             </div>
 
             <div className="mb-6">
               <div className="flex items-center mb-2">
-                <div className="bg-green-500 rounded-full p-1 mr-3">
+                <div className={`rounded-full p-1 mr-3 ${orderData.orderStatus === 'delivered' ? 'bg-green-500' : 'bg-blue-500'}`}>
                   <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                   </svg>
                 </div>
                 <div>
-                  <p className="font-semibold text-gray-900">Expected delivery: Today by 9:00 PM</p>
-                  <p className="text-gray-600 text-sm">Your package is out for delivery and will arrive today</p>
+                  <p className="font-semibold text-gray-900">
+                    {orderData.orderStatus === 'delivered' 
+                      ? 'Package Delivered' 
+                      : orderData.orderStatus === 'placed' 
+                      ? 'Expected delivery: 3-5 business days' 
+                      : 'Expected delivery: Today by 9:00 PM'
+                    }
+                  </p>
+                  <p className="text-gray-600 text-sm">
+                    {orderData.orderStatus === 'delivered' 
+                      ? 'Your package has been successfully delivered' 
+                      : orderData.orderStatus === 'placed' 
+                      ? 'Your package is being prepared for shipment' 
+                      : 'Your package is out for delivery and will arrive today'
+                    }
+                  </p>
                 </div>
               </div>
             </div>
 
+            {/* Discount Display Section */}
+            {orderData.deliveryOption === 'group' && orderData.discount > 0 && (
+            <div className="bg-green-100 border border-green-300 text-green-900 p-4 rounded-md mb-6 shadow-sm">
+              <h3 className="font-semibold text-lg mb-1">🎉 Congrats!</h3>
+              <p>
+                You have saved <span className="font-bold text-green-700">₹{orderData.discount}</span> on this group order.
+                It will be added to your wallet upon successful delivery of your order.
+              </p>
+            </div>
+         )}    
+
+          {/* Map Section */}
+          {mapHtml && (
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+              <h2 className="text-xl font-bold text-gray-900 mb-4">Delivery Map</h2>
+              <div className="w-full h-96 rounded-lg overflow-hidden border border-gray-200">
+                <iframe
+                  srcDoc={mapHtml}
+                  className="w-full h-full"
+                  title="Delivery Map"
+                  style={{ border: 'none' }}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* HTML Content Section from GridFS - ABOVE CONTACT SUPPORT */}
+          {htmlContent && (
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+              <h2 className="text-xl font-bold text-gray-900 mb-4">Additional Information</h2>
+              <div className="w-full rounded-lg overflow-hidden border border-gray-200">
+                <iframe
+                  srcDoc={htmlContent}
+                  className="w-full min-h-96"
+                  title="Additional Content"
+                  style={{ border: 'none' }}
+                  onLoad={(e) => {
+                    // Auto-resize iframe based on content
+                    try {
+                      const iframe = e.target;
+                      const doc = iframe.contentDocument || iframe.contentWindow.document;
+                      if (doc && doc.body) {
+                        const height = doc.body.scrollHeight;
+                        iframe.style.height = Math.max(height, 400) + 'px';
+                      }
+                    } catch (error) {
+                      console.log('Could not auto-resize iframe:', error);
+                    }
+                  }}
+                />
+              </div>
+            </div>
+          )}
             {/* Delivery Timeline */}
             <div className="space-y-4">
               {deliverySteps.map((step, index) => (
@@ -180,7 +428,7 @@ export default function OrderTracking() {
                   <div className="flex-shrink-0 mr-4">
                     <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
                       step.current 
-                        ? 'bg-green-500 text-white' 
+                        ? 'bg-blue-500 text-white' 
                         : step.completed 
                         ? 'bg-green-100 text-green-600' 
                         : 'bg-gray-200 text-gray-400'
@@ -201,37 +449,6 @@ export default function OrderTracking() {
                   </div>
                 </div>
               ))}
-            </div>
-          </div>
-
-          {/* Package Details */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Package Details</h2>
-            
-            <div className="flex items-start space-x-4 mb-6">
-              <div className="w-16 h-16 bg-gray-200 rounded-lg flex-shrink-0">
-                <img 
-                  src="https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcRwAZiF-6ljntLRhaz0H3ljDjwG4pVpcBdhumtKO2MpTeGbXtVA9PNahxIIBN2LyljmW4H6NjalK_oI0yYnkv_jGK5XiBBT2LNufKccpfJ3IxGkze9fJqtdgqJabOt1HRnhBkUkRbE&usqp=CAc" 
-                  alt="Sony Headphones" 
-                  className="w-full h-full object-cover rounded-lg"
-                />
-              </div>
-              <div className="flex-1">
-                <h3 className="font-medium text-gray-900">Sony WH-1000XM4 Wireless Noise Canceling Headphones</h3>
-                <p className="text-sm text-gray-600 mt-1">Color: Black | Quantity: 1</p>
-                <p className="font-bold text-lg mt-2">$89.99</p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <h4 className="font-medium text-gray-900 mb-2">Tracking Number</h4>
-                <p className="text-gray-700 font-mono">1Z999AA1234567890</p>
-              </div>
-              <div>
-                <h4 className="font-medium text-gray-900 mb-2">Carrier</h4>
-                <p className="text-gray-700">UPS Ground</p>
-              </div>
             </div>
           </div>
 
@@ -277,7 +494,7 @@ export default function OrderTracking() {
             </div>
           </div>
 
-          {/* Help Section */}
+          {/* Help Section - CONTACT SUPPORT SECTION */}
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
               <div>

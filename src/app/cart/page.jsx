@@ -182,7 +182,7 @@ export default function AmazonCart() {
                     Delivery: 3-5 business days
                   </p>
                   <p className="text-gray-900 font-medium ml-7 mb-3">
-                    Estimated Shipping: ₹{(shipping - shipping / 4).toFixed(2)} - ₹{(shipping - shipping / 2).toFixed(2)}
+                    Shipping charges remain the same, but when grouped, shared delivery reduces costs — the savings are credited to your wallet.
                   </p>
                   <div className="ml-7 flex items-center text-blue-600 text-sm">
                     <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center mr-2">
