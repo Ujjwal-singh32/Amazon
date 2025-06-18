@@ -91,39 +91,37 @@ function ProductCard({
 
         <p className="text-sm text-gray-700 line-clamp-2">{description}</p>
 
-        {isOrganic ? (
-          <div className="mt-2 flex flex-col gap-2 text-sm">
-            {/* Sustainable Score */}
-            <div>
-              <p className="text-green-800 font-medium mb-1">
-                Sustainable Score: {sustainableScore}
-              </p>
-              <div className="w-full h-2 bg-green-200 rounded-full">
-                <div
-                  className="h-2 bg-green-500 rounded-full"
-                  style={{ width: `${Math.min(sustainableScore, 100)}%` }}
-                ></div>
-              </div>
-            </div>
+        <div className="mt-2 flex flex-col gap-2 text-sm">
+          {/* Sustainable Score */}
 
-            {/* Green Points */}
-            <div>
-              <p className="text-green-800 font-medium mb-1">
-                Green Points: {greenPoints}
-              </p>
-              <div className="w-full h-2 bg-green-200 rounded-full">
-                <div
-                  className="h-2 bg-lime-500 rounded-full"
-                  style={{ width: `${Math.min(greenPoints / 10, 100)}%` }}
-                ></div>
-              </div>
+
+          {/* Green Points */}
+          <div>
+            <p className={`font-medium mb-1 ${isOrganic ? "text-green-800" : "text-red-500"}`}>
+              🌱 Green Points: {isOrganic ? greenPoints : 0}
+            </p>
+            <div className="w-full h-2 bg-green-200 rounded-full">
+              <div
+                className={`h-2 rounded-full ${isOrganic ? "bg-green-500" : "bg-gray-300"}`}
+                style={{ width: `${isOrganic ? Math.min(greenPoints / 10, 100) : 0}%` }}
+              ></div>
             </div>
           </div>
-        ) : (
-          <div className="mt-3 text-red-600 text-xs italic bg-red-50 px-3 py-2 rounded-md shadow-sm border border-red-200 hover:bg-red-100 transition">
-            ⚠️ This product may not follow sustainable practices. Consider greener alternatives.
+
+          <div>
+            <p className={`font-medium mb-1 ${isOrganic ? "text-green-800" : "text-red-500"}`}>
+              ♻️ Sustainable Score: {isOrganic ? sustainableScore : 0}
+            </p>
+            <div className="w-full h-2 bg-green-200 rounded-full">
+              <div
+                className={`h-2 rounded-full ${isOrganic ? "bg-green-500" : "bg-gray-300"}`}
+                style={{ width: `${isOrganic ? Math.min(sustainableScore, 100) : 0}%` }}
+              ></div>
+
+            </div>
           </div>
-        )}
+        </div>
+
 
         <div className="flex items-center justify-between mt-4 flex-shrink-0">
           <p className="text-lg font-bold">₹{price.toFixed(2)}</p>

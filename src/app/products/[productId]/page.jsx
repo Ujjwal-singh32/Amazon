@@ -239,7 +239,7 @@ const ProductDetailsPage = () => {
                 </li>
                 <li className="flex items-start gap-2">
                   <span>💰</span>
-                  <span>5% Cashback on Rakshaa Pay</span>
+                  <span>5% Cashback on Amazon Pay</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span>📦</span>
@@ -318,40 +318,32 @@ const ProductDetailsPage = () => {
                     <p className="text-center text-purple-700 font-bold">₹{item.basePrice}</p>
 
                     {/* Show only for Organic Products */}
-                    {isOrganic ? (
-                      <div className="mt-2 space-y-1 text-xs">
-                        {/* Green Points */}
-                        <div className="flex justify-between text-gray-700">
-                          <span>Green Points</span>
-                          <span>{greenPoints}</span>
-                        </div>
-                        <div className="w-full bg-green-100 rounded-full h-2">
-                          <div
-                            className="bg-green-500 h-2 rounded-full"
-                            style={{ width: `${greenPoints > 100 ? 95 : greenPoints}%` }}
-                          ></div>
-                        </div>
+                    <div className="mt-2 space-y-1 text-xs">
+                      {/* Green Points */}
+                      <div className={`flex justify-between ${isOrganic ? "text-gray-700" : "text-red-500"}`}>
+                        <span>🌱 Green Points</span>
+                        <span>{isOrganic ? greenPoints : 0}</span>
+                      </div>
+                      <div className="w-full bg-green-100 rounded-full h-2">
+                        <div
+                          className={`${isOrganic ? "bg-green-500" : "bg-gray-300"} h-2 rounded-full`}
+                          style={{ width: `${isOrganic ? (greenPoints > 100 ? 95 : greenPoints) : 0}%` }}
+                        ></div>
+                      </div>
 
-                        {/* Sustainable Score */}
-                        <div className="flex justify-between text-gray-700 mt-1">
-                          <span>Sustainable Score</span>
-                          <span>{score}</span>
-                        </div>
-                        <div className="w-full bg-green-100 rounded-full h-2">
-                          <div
-                            className="bg-green-700 h-2 rounded-full"
-                            style={{ width: `${score}%` }}
-                          ></div>
-                        </div>
+                      {/* Sustainable Score */}
+                      <div className={`flex justify-between mt-1 ${isOrganic ? "text-gray-700" : "text-red-500"}`}>
+                        <span>♻️ Sustainable Score</span>
+                        <span>{isOrganic ? score : 0}</span>
                       </div>
-                    ) : (<>
-                      <div className="mt-2 text-center text-s text-red-500 italic flex items-center justify-center gap-1">
-                        ⚠️ Not eco-certified – may impact the environment
+                      <div className="w-full bg-green-100 rounded-full h-2">
+                        <div
+                          className={`${isOrganic ? "bg-green-700" : "bg-gray-300"} h-2 rounded-full`}
+                          style={{ width: `${isOrganic ? score : 0}%` }}
+                        ></div>
                       </div>
-                      <div className="text-center text-xs text-green-600 mt-1 italic flex items-center justify-center gap-1">
-                        🌿 Choose green alternatives for a healthier planet
-                      </div>
-                    </>)}
+                    </div>
+
                   </div>
 
                   {/* Add to Cart Button */}

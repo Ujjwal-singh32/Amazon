@@ -120,7 +120,6 @@ const ProductDetailsPage = () => {
             quantity: 1,
         });
         toast.success("Added to Cart");
-        router.push("/cart");
     };
     const computeGrade = (score) => {
         if (score >= 90) return "A";
@@ -240,7 +239,7 @@ const ProductDetailsPage = () => {
                                 </li>
                                 <li className="flex items-start gap-2">
                                     <span>💰</span>
-                                    <span>5% Cashback on Rakshaa Pay</span>
+                                    <span>5% Cashback on Amazon Pay</span>
                                 </li>
                                 <li className="flex items-start gap-2">
                                     <span>📦</span>
