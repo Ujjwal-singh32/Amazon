@@ -8,6 +8,7 @@ import { useCart } from "@/context/cartContext";
 import Image from 'next/image';
 import { useUser } from "@clerk/nextjs";
 import axios from "axios";
+import { FaWallet } from "react-icons/fa";
 
 export default function AmazonCheckout() {
   const router = useRouter();
@@ -27,6 +28,11 @@ export default function AmazonCheckout() {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isChanging, setIsChanging] = useState(false);
   const [showAddForm, setShowAddForm] = useState(false);
+
+  // Dummy wallet points for demo (replace with real data as needed)
+  const walletPoints = 12;
+  const [useWallet, setUseWallet] = useState(false);
+  const [walletUsed, setWalletUsed] = useState(0);
 
   useEffect(() => {
     const data = localStorage.getItem("checkoutSummary");
@@ -77,7 +83,8 @@ export default function AmazonCheckout() {
 
   const calculateTotal = () => {
     if (!summary) return 0;
-    return getTotalPrice() + (summary.shipping || 0) + (summary.packaging?.price || 0) - (summary.discount || 0);
+    const base = getTotalPrice() + (summary.shipping || 0) + (summary.packaging?.price || 0) - (summary.discount || 0);
+    return Math.max(0, base - (useWallet ? walletUsed : 0));
   };
 
   const handleProceed = async () => {
@@ -240,6 +247,27 @@ export default function AmazonCheckout() {
                 </div>
               </div>
             </div>
+
+            {/* Amazon Pay Balance */}
+            <div className="bg-yellow-50 p-6 rounded-lg shadow-sm border border-yellow-200 flex items-center gap-4 mt-6">
+              <FaWallet className="text-yellow-500 text-2xl" />
+              <div className="flex-1">
+                <div className="font-semibold text-yellow-800">Amazon Pay Balance</div>
+                <div className="text-sm text-yellow-700">Available: <span className="font-bold">{walletPoints} Points</span></div>
+              </div>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={useWallet}
+                  onChange={e => {
+                    setUseWallet(e.target.checked);
+                    setWalletUsed(e.target.checked ? Math.min(walletPoints, getTotalPrice() + (summary.shipping || 0) + (summary.packaging?.price || 0) - (summary.discount || 0)) : 0);
+                  }}
+                  className="accent-yellow-500 w-5 h-5"
+                />
+                <span className="text-sm font-medium text-yellow-900">Use Amazon Pay</span>
+              </label>
+            </div>
           </div>
 
           {/* Order Summary Card */}
@@ -264,6 +292,9 @@ export default function AmazonCheckout() {
                   <div className="flex justify-between">Shipping: <span>₹{summary.shipping.toFixed(2)}</span></div>
                   <div className="flex justify-between">Packaging: <span>₹{summary.packaging.price.toFixed(2)}</span></div>
                   <div className="flex justify-between text-green-700">Discount: <span>- ₹{summary.discount.toFixed(2)}</span></div>
+                  {useWallet && walletUsed > 0 && (
+                    <div className="flex justify-between text-blue-700 font-medium">Amazon Pay Used: <span>- ₹{walletUsed.toFixed(2)}</span></div>
+                  )}
                   <div className="border-t pt-2 font-bold flex justify-between text-lg text-red-600">
                     <span>Total:</span>
                     <span>₹{calculateTotal().toFixed(2)}</span>
