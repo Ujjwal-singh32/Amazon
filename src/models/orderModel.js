@@ -22,7 +22,7 @@ const OrderSchema = new mongoose.Schema({
   deliveryOption: {
     type: String,
     enum: ['individual', 'group'],
-    default: 'individual', // optional: default can be set
+    default: 'individual', 
   },
   packagingPoints: {
     type: Number,

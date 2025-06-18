@@ -22,38 +22,49 @@ const CustomTooltip = ({ active, payload, label }) => {
   return null;
 };
 
-
-
 export default function AmazonDashboard() {
   const { user } = useUser();
   const router = useRouter();
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  
-  useEffect(() => {
+
+useEffect(() => {
   if (!user?.id) return;
 
-  axios
-    .get("/api/users", {
-      headers: {
-        "x-user-id": user.id,
-      },
-    })
-    .then((res) => {
-      console.log("User:", res.data.user);
-      setUserData(res.data.user);
-      setLoading(false); 
-    })
-    .catch((err) => {
-      console.error("Error fetching user:", err);
-      setLoading(false); 
-    });
+  const upsertUserAndFetch = async () => {
+    setLoading(true);
+    try {
+      // 1. Call upsert endpoint (create or update based on existence)
+      await axios.post("/api/users/create", {
+        userId: user.id,
+        name: user.fullName,
+        email: user.emailAddresses[0]?.emailAddress,
+        phone: user.phoneNumbers[0]?.phoneNumber || "",
+      });
+
+      // 2. Fetch latest user data
+      const res = await axios.get("/api/users", {
+        headers: { "x-user-id": user.id },
+      });
+
+      if (res.data?.user) {
+        setUserData(res.data.user);
+      } else {
+        console.warn("No user data returned after upsert.");
+      }
+    } catch (error) {
+      console.error("Error during upsert or fetch:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  upsertUserAndFetch();
 }, [user]);
 
 
-  
-  
+
 
   if (loading) {
     return (
@@ -64,13 +75,6 @@ export default function AmazonDashboard() {
   }
 
   const greenStats = userData?.greenStats || {
-    emissionsSavedKg: 0,
-    plasticsAvoidedKg: 0,
-    greenPoints: 0,
-    waterSavedLiters: 0,
-    ecoPackages: 0,
-    groupedOrders: 0,
-    forestAreaSavedSqM: 0,
     monthlyCarbonData: [],
     monthlyPointsData: [],
     monthlyEmissionsData: [],
@@ -78,21 +82,31 @@ export default function AmazonDashboard() {
     monthlyWaterData: [],
     monthlyGroupedOrdersData: []
   };
+  console.log("Green Stats:", greenStats);
+  // Compute derived totals
+  const emissionsSavedKg = greenStats.monthlyEmissionsData.reduce((sum, item) => sum + (item.value || 0), 0);
+  const plasticsAvoidedKg = greenStats.monthlyPlasticsData.reduce((sum, item) => sum + (item.value || 0), 0);
+  const greenPoints = greenStats.monthlyPointsData.reduce((sum, item) => sum + (item.value || 0), 0);
+  const waterSavedLiters = greenStats.monthlyWaterData.reduce((sum, item) => sum + (item.value || 0), 0);
+  const groupedOrders = greenStats.monthlyGroupedOrdersData.reduce((sum, item) => sum + (item.value || 0), 0);
+  const forestAreaSavedSqM = greenStats.monthlyCarbonData.reduce((sum, item) => sum + (item.value || 0), 0) * 0.5;
+  const ecoPackages = 0; 
 
   const impactData = [
-    { name: 'Emissions Saved', value: greenStats.emissionsSavedKg },
-    { name: 'Plastics Avoided', value: greenStats.plasticsAvoidedKg },
-    { name: 'Water Saved', value: greenStats.waterSavedLiters },
-    { name: 'Forest Area Saved', value: greenStats.forestAreaSavedSqM }
+    { name: 'Emissions Saved', value: emissionsSavedKg },
+    { name: 'Plastics Avoided', value: plasticsAvoidedKg },
+    { name: 'Water Saved', value: waterSavedLiters },
+    { name: 'Forest Area Saved', value: forestAreaSavedSqM }
   ];
+
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navbar/>
+      <Navbar />
 
       <div className="max-w-7xl mx-auto p-4 sm:p-6">
         <h1 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 text-gray-800">Your Account</h1>
-        
+
         {/* User Profile Section */}
         <div className="bg-white rounded-lg p-4 sm:p-6 mb-4 sm:mb-6 shadow-sm">
           <div className="flex flex-col sm:flex-row items-center sm:items-start mb-6">
@@ -124,7 +138,7 @@ export default function AmazonDashboard() {
               </div>
               <p className="text-gray-800 text-sm sm:text-base break-all">{userData?.email || user?.primaryEmailAddress?.emailAddress}</p>
             </div>
-            
+
             <div className="bg-green-50 p-4 rounded-lg">
               <div className="flex items-center mb-2">
                 <span className="text-green-600 mr-2">📞</span>
@@ -139,7 +153,7 @@ export default function AmazonDashboard() {
                 <span className="font-medium text-gray-700">Address</span>
               </div>
               <p className="text-gray-800 text-sm sm:text-base">
-                {userData?.address?.[0] ? 
+                {userData?.address?.[0] ?
                   `${userData.address[0].street}, ${userData.address[0].city}, ${userData.address[0].state} ${userData.address[0].pincode}` :
                   'No address provided'}
               </p>
@@ -185,7 +199,7 @@ export default function AmazonDashboard() {
                 <span className="mr-2">☁️</span>
                 <span className="text-sm">Emissions Saved</span>
               </div>
-              <div className="text-xl sm:text-2xl font-bold">{greenStats.emissionsSavedKg.toFixed(1)} kg CO2</div>
+              <div className="text-xl sm:text-2xl font-bold">{emissionsSavedKg.toFixed(1)} kg CO2</div>
               <div className="text-xs opacity-90">saved this month</div>
               <div className="text-xs mt-1 opacity-80">Equivalent to planting a small tree</div>
             </div>
@@ -195,45 +209,45 @@ export default function AmazonDashboard() {
                 <span className="mr-2">♻️</span>
                 <span className="text-sm">Plastics Avoided</span>
               </div>
-              <div className="text-xl sm:text-2xl font-bold">{greenStats.plasticsAvoidedKg.toFixed(1)} kg</div>
+              <div className="text-xl sm:text-2xl font-bold">{plasticsAvoidedKg.toFixed(1)} kg</div>
               <div className="text-xs opacity-90">plastic waste prevented</div>
               <div className="text-xs mt-1 opacity-80">Enough to fill a medium recycling bin</div>
             </div>
 
             <div className="bg-green-400 text-white p-6 rounded-lg">
-            <div className="flex items-center mb-2">
-              <span className="mr-2">🎯</span>
-              <span className="text-sm">Green Points</span>
-
-            </div>
-            <div className="text-2xl font-bold">418</div>
-            <div className="text-xs opacity-90 mb-3">Current Balance</div> {/* Added bottom margin for spacing */}
-
-            <button className="bg-white hover:bg-yellow-300 text-green-800 font-medium px-3 py-1 rounded 
-              text-xs transition duration-200 w-full sm:w-auto" onClick={() => router.push('/rewards')}>
+              <div className="flex items-center mb-2">
+                <span className="mr-2">🎯</span>
+                <span className="text-sm">Green Points</span>
+              </div>
+              <div className="text-2xl font-bold">{greenPoints}</div>
+              <div className="text-xs opacity-90 mb-3">Current Balance</div>
+              <button
+                className="bg-white hover:bg-yellow-300 text-green-800 font-medium px-3 py-1 rounded text-xs transition duration-200 w-full sm:w-auto"
+                onClick={() => router.push('/rewards')}
+              >
                 Redeem Now
               </button>
-          </div>
-          
+            </div>
+
             <div className="bg-cyan-400 text-white p-4 sm:p-6 rounded-lg">
               <div className="flex items-center mb-2">
                 <span className="mr-2">💧</span>
                 <span className="text-sm">Water Saved</span>
               </div>
-              <div className="text-xl sm:text-2xl font-bold">{greenStats.waterSavedLiters} L</div>
+              <div className="text-xl sm:text-2xl font-bold">{waterSavedLiters.toFixed(1)} L</div>
               <div className="text-xs opacity-90">this month</div>
               <div className="text-xs mt-1 opacity-80">Equivalent to 2.5 bathtubs</div>
             </div>
           </div>
 
-          {/* Second Row Stats - Responsive */}
+          {/* Second Row */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6 sm:mb-8">
             <div className="bg-orange-400 text-white p-4 sm:p-6 rounded-lg">
               <div className="flex items-center mb-2">
                 <span className="mr-2">📦</span>
                 <span className="text-sm">Eco Packages</span>
               </div>
-              <div className="text-xl sm:text-2xl font-bold">{greenStats.ecoPackages}</div>
+              <div className="text-xl sm:text-2xl font-bold">{ecoPackages}</div>
               <div className="text-xs opacity-90">Sustainable Deliveries</div>
             </div>
 
@@ -242,7 +256,7 @@ export default function AmazonDashboard() {
                 <span className="mr-2">🚴</span>
                 <span className="text-sm">Grouped Orders</span>
               </div>
-              <div className="text-xl sm:text-2xl font-bold">{greenStats.groupedOrders}</div>
+              <div className="text-xl sm:text-2xl font-bold">{groupedOrders}</div>
               <div className="text-xs opacity-90">Eco-Friendly and Cost-Effective Delivery</div>
             </div>
 
@@ -251,10 +265,11 @@ export default function AmazonDashboard() {
                 <span className="mr-2">🌲</span>
                 <span className="text-sm">Forest Impact</span>
               </div>
-              <div className="text-xl sm:text-2xl font-bold">{greenStats.forestAreaSavedSqM.toFixed(1)} m²</div>
+              <div className="text-xl sm:text-2xl font-bold">{forestAreaSavedSqM.toFixed(1)} m²</div>
               <div className="text-xs opacity-90">forest area protected</div>
             </div>
           </div>
+
 
           {/* Enhanced Graphs Section with Vibrant Colors */}
           <div className="space-y-8">
@@ -268,23 +283,23 @@ export default function AmazonDashboard() {
                 </h3>
                 <div className="h-[300px]">
                   <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={greenStats.monthlyCarbonData}>
+                    <AreaChart data={greenStats.monthlyEmissionsData}>
                       <defs>
                         <linearGradient id="emissionsGradient" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.8}/>
-                          <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0}/>
+                          <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.8} />
+                          <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0} />
                         </linearGradient>
                       </defs>
                       <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                      <XAxis dataKey="month" stroke="#666" />
+                      <XAxis dataKey="value" stroke="#666" />
                       <YAxis stroke="#666" />
                       <Tooltip content={<CustomTooltip />} />
                       <Legend />
-                      <Area 
-                        type="monotone" 
-                        dataKey="co2" 
-                        stroke="#8B5CF6" 
-                        fillOpacity={1} 
+                      <Area
+                        type="monotone"
+                        dataKey="value"
+                        stroke="#8B5CF6"
+                        fillOpacity={1}
                         fill="url(#emissionsGradient)"
                         strokeWidth={2}
                       />
@@ -301,14 +316,14 @@ export default function AmazonDashboard() {
                 </h3>
                 <div className="h-[300px]">
                   <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={greenStats.monthlyCarbonData}>
+                    <BarChart data={greenStats.monthlyPlasticsData}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                       <XAxis dataKey="month" stroke="#666" />
                       <YAxis stroke="#666" />
                       <Tooltip content={<CustomTooltip />} />
                       <Legend />
-                      <Bar 
-                        dataKey="co2" 
+                      <Bar
+                        dataKey="value"
                         fill="#10B981"
                         radius={[4, 4, 0, 0]}
                         maxBarSize={60}
@@ -329,22 +344,22 @@ export default function AmazonDashboard() {
                 </h3>
                 <div className="h-[300px]">
                   <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={greenStats.monthlyPointsData}>
+                    <LineChart data={greenStats.monthlyWaterData}>
                       <defs>
                         <linearGradient id="waterGradient" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#0EA5E9" stopOpacity={0.8}/>
-                          <stop offset="95%" stopColor="#0EA5E9" stopOpacity={0}/>
+                          <stop offset="5%" stopColor="#0EA5E9" stopOpacity={0.8} />
+                          <stop offset="95%" stopColor="#0EA5E9" stopOpacity={0} />
                         </linearGradient>
                       </defs>
                       <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                      <XAxis dataKey="month" stroke="#666" />
+                      <XAxis dataKey="value" stroke="#666" />
                       <YAxis stroke="#666" />
                       <Tooltip content={<CustomTooltip />} />
                       <Legend />
-                      <Line 
-                        type="monotone" 
-                        dataKey="points" 
-                        stroke="#0EA5E9" 
+                      <Line
+                        type="monotone"
+                        dataKey="value"
+                        stroke="#0EA5E9"
                         strokeWidth={2}
                         dot={{ fill: '#0EA5E9', strokeWidth: 2, r: 4 }}
                         activeDot={{ r: 6, fill: '#0EA5E9' }}
@@ -362,14 +377,14 @@ export default function AmazonDashboard() {
                 </h3>
                 <div className="h-[300px]">
                   <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={greenStats.monthlyPointsData}>
+                    <BarChart data={greenStats.monthlyGroupedOrdersData}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                      <XAxis dataKey="month" stroke="#666" />
+                      <XAxis dataKey="value" stroke="#666" />
                       <YAxis stroke="#666" />
                       <Tooltip content={<CustomTooltip />} />
                       <Legend />
-                      <Bar 
-                        dataKey="points" 
+                      <Bar
+                        dataKey="value"
                         fill="#F59E0B"
                         radius={[4, 4, 0, 0]}
                         maxBarSize={60}
@@ -418,7 +433,7 @@ export default function AmazonDashboard() {
           </div>
         </div>
       </div>
-      <Footer/>
+      <Footer />
     </div>
   );
 }

@@ -7,13 +7,12 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import axios from "axios";
 import { useUser } from "@clerk/nextjs";
-import { useRouter } from "next/navigation";
 
 const OrdersPage = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const { user } = useUser();
-  const router = useRouter();
+
   useEffect(() => {
     if (!user?.id) return;
 
@@ -49,6 +48,7 @@ const OrdersPage = () => {
               key={order._id}
               className="border border-gray-300 rounded-lg p-4 mb-6 shadow-sm hover:shadow-md transition duration-200 bg-white"
             >
+              {/* Order Header */}
               <div className="flex justify-between flex-wrap md:flex-nowrap mb-4">
                 <div className="space-y-1">
                   <p className="text-sm text-gray-600">
@@ -64,7 +64,6 @@ const OrdersPage = () => {
                       {order.userInfo?.name || "Customer"}
                     </span>
                   </p>
-
                 </div>
                 <div className="space-y-1 text-right text-sm text-gray-600">
                   <p>
@@ -81,47 +80,43 @@ const OrdersPage = () => {
                 </div>
               </div>
 
-              <div className="flex flex-col md:flex-row items-start gap-4 border-t pt-4">
+              {/* Order Items List */}
+              <div className="border-t pt-4 flex flex-col gap-6">
                 {order.items.map((item, idx) => (
-                  <div className="w-full md:w-32" key={idx}>
-                    <Image
-                      src={item.product?.images[0] || "/placeholder.jpg"}
-                      alt={item.product?.name || "Product"}
-                      width={150}
-                      height={150}
-                      className="w-full h-auto object-contain"
-                    />
-                  </div>
-                ))}
-
-                <div className="flex-1">
-                  {order.items.map((item, idx) => (
-                    <div key={idx} className="mb-4">
-                      <h2 className="text-blue-700 font-medium text-sm mb-1 hover:underline cursor-pointer"
-                        onClick={() => router.push(`/products/${item.product?.productId}`)}>
+                  <div key={idx} className="flex gap-4 items-start">
+                    <div className="w-24 h-24 flex-shrink-0">
+                      <Image
+                        src={item.product?.images[0] || "/placeholder.jpg"}
+                        alt={item.product?.name || "Product"}
+                        width={96}
+                        height={96}
+                        className="w-full h-full object-contain rounded border"
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <h2 className="text-blue-700 font-medium text-sm mb-1 hover:underline cursor-pointer">
                         {item.product?.name || "Product Name"}
                       </h2>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-sm text-gray-600 mb-1">
                         ₹{item.priceAtPurchase} x {item.quantity}
                       </p>
+                      <p className="text-sm text-gray-600">
+                        {order.orderStatus === "delivered"
+                          ? `Delivered on ${new Date(order.placedAt).toLocaleDateString()}`
+                          : `Status: ${order.orderStatus}`}
+                      </p>
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        <button className="border border-gray-400 px-4 py-2 text-sm rounded font-medium">
+                          📦 Track Order
+                        </button>
+                        <button className="bg-yellow-400 hover:bg-yellow-500 px-4 py-2 text-sm rounded font-semibold">
+                          🛠️ Get Product Support
+                        </button>
+                      </div>
+
                     </div>
-                  ))}
-
-                  <p className="text-sm text-gray-600 mb-2">
-                    {order.orderStatus === "delivered"
-                      ? `Delivered on ${new Date(order.placedAt).toLocaleDateString()}`
-                      : `Status: ${order.orderStatus}`}
-                  </p>
-
-                  <div className="flex flex-wrap gap-2 mt-2">
-                    <button className="border border-gray-400 px-4 py-2 text-sm rounded font-medium">
-                      View your item
-                    </button>
-                    <button className="bg-yellow-400 hover:bg-yellow-500 px-4 py-2 text-sm rounded font-semibold">
-                      Get product support
-                    </button>
                   </div>
-                </div>
+                ))}
               </div>
             </div>
           ))
