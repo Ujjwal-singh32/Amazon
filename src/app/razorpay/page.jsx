@@ -4,13 +4,13 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
-
+import { useCart } from "@/context/cartContext";
 const PaymentPage = () => {
   const [loading, setLoading] = useState(false);
   const [orderPayload, setOrderPayload] = useState(null);
   const router = useRouter();
   const { user } = useUser();
-
+  const { clearCart } = useCart()
   useEffect(() => {
     if (!user) return;
 
@@ -82,7 +82,7 @@ const PaymentPage = () => {
 
             // Optional: cleanup
             localStorage.removeItem(`checkout_${user.id}`);
-
+            clearCart();
             // 5. Navigate to order placed page
             router.push("/order-placed");
           } else {
@@ -121,6 +121,7 @@ const PaymentPage = () => {
       if (res.data.success) {
         localStorage.setItem("latest_order", JSON.stringify(res.data.order));
         localStorage.removeItem(`checkout_${user.id}`);
+        clearCart();
         router.push("/order-placed");
       } else {
         alert("COD Order Failed");

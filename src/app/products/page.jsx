@@ -189,7 +189,7 @@ const SearchPage = () => {
                           addToCart({
                             id: product._id,
                             name: product.name,
-                            price: product.price,
+                            price: product.basePrice,
                             image: product.images?.[0],
                           })
                         }
