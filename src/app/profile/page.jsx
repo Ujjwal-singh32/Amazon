@@ -291,7 +291,7 @@ useEffect(() => {
                         </linearGradient>
                       </defs>
                       <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                      <XAxis dataKey="value" stroke="#666" />
+                      <XAxis dataKey="month" stroke="#666" />
                       <YAxis stroke="#666" />
                       <Tooltip content={<CustomTooltip />} />
                       <Legend />
@@ -352,7 +352,7 @@ useEffect(() => {
                         </linearGradient>
                       </defs>
                       <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                      <XAxis dataKey="value" stroke="#666" />
+                      <XAxis dataKey="month" stroke="#666" />
                       <YAxis stroke="#666" />
                       <Tooltip content={<CustomTooltip />} />
                       <Legend />
@@ -379,7 +379,7 @@ useEffect(() => {
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={greenStats.monthlyGroupedOrdersData}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                      <XAxis dataKey="value" stroke="#666" />
+                      <XAxis dataKey="month" stroke="#666" />
                       <YAxis stroke="#666" />
                       <Tooltip content={<CustomTooltip />} />
                       <Legend />
