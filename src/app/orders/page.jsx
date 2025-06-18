@@ -131,7 +131,7 @@ const OrdersPage = () => {
                         </p>
                         <div className="flex flex-wrap gap-2 mt-2">
                           <button
-                            onClick={() => router.push("/track")}
+                            onClick={() => router.push(`/track?orderId=${order._id}`)}
                             className="border border-gray-400 px-4 py-2 text-sm rounded font-medium"
                           >
                             📦 Track Order
