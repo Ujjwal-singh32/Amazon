@@ -130,30 +130,30 @@ const SearchPage = () => {
                       <p className="text-black font-bold text-lg mt-2">₹{product.basePrice}</p>
 
                       {/* Green Points + Sustainable Score */}
-                      {product.isOrganic && (
-                        <div className="mt-2 space-y-2">
-                          <div className="flex justify-between text-xs text-gray-600">
-                            <span>Green Points</span>
-                            <span>{product.greenPoints || 0}</span>
-                          </div>
-                          <div className="w-full bg-green-100 rounded h-2">
-                            <div
-                              className="bg-green-500 h-2 rounded"
-                              style={{ width: `${product.greenPoints || 0}%` }}
-                            />
-                          </div>
-                          <div className="flex justify-between text-xs text-gray-600 mt-1">
-                            <span>Sustainable Score</span>
-                            <span>{product.sustainableScore || 0}</span>
-                          </div>
-                          <div className="w-full bg-green-100 rounded h-2">
-                            <div
-                              className="bg-green-700 h-2 rounded"
-                              style={{ width: `${product.sustainableScore || 0}%` }}
-                            />
-                          </div>
+
+                      <div className="mt-2 space-y-2">
+                        <div className="flex justify-between text-xs text-gray-600">
+                          <span className={`${product.isOrganic ? "text-green-800" : "text-red-500"}`}> 🌱 Green Points</span>
+                          <span>{product.isOrganic ? product.greenPoints || 0 : 0}</span>
                         </div>
-                      )}
+                        <div className="w-full bg-green-100 rounded h-2 ">
+                          <div
+                            className={`${product.isOrganic ? "bg-green-500" : "bg-gray-300"} h-2 rounded`}
+                            style={{ width: `${product.isOrganic ? product.greenPoints || 0 : 0}%` }}
+                          />
+                        </div>
+                        <div className="flex justify-between text-xs text-gray-600 mt-1">
+                          <span className={`${product.isOrganic ? "text-green-800" : "text-red-500"}`}> ♻️ Sustainable Score</span>
+                          <span>{product.isOrganic ? product.sustainableScore || 0 : 0}</span>
+                        </div>
+                        <div className="w-full bg-green-100 rounded h-2">
+                          <div
+                            className={`${product.isOrganic ? "bg-green-700" : "bg-red-500"} h-2 rounded`}
+                            style={{ width: `${product.isOrganic ? product.sustainableScore || 0 : 0}%` }}
+                          />
+                        </div>
+                      </div>
+
 
                       <button
                         className="mt-3 w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 px-4 rounded shadow"
