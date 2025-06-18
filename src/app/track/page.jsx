@@ -211,7 +211,7 @@ export default function OrderTracking() {
             <div className="flex items-start space-x-4 mb-6">
               <div className="w-16 h-16 bg-gray-200 rounded-lg flex-shrink-0">
                 <img 
-                  src="/api/placeholder/64/64" 
+                  src="https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcRwAZiF-6ljntLRhaz0H3ljDjwG4pVpcBdhumtKO2MpTeGbXtVA9PNahxIIBN2LyljmW4H6NjalK_oI0yYnkv_jGK5XiBBT2LNufKccpfJ3IxGkze9fJqtdgqJabOt1HRnhBkUkRbE&usqp=CAc" 
                   alt="Sony Headphones" 
                   className="w-full h-full object-cover rounded-lg"
                 />
