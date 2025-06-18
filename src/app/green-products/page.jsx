@@ -82,7 +82,7 @@ const SearchPage = () => {
                     </div>
 
                     <div className="flex flex-col lg:flex-row gap-6">
-                        <aside className="hidden lg:block w-full lg:w-1/4 bg-white p-4 rounded shadow-md h-fit">
+                        <aside className="hidden lg:block w-full lg:w-1/4 bg-white p-4 rounded shadow-md sticky top-28 max-h-[calc(100vh-7rem)] overflow-auto">
                             <Filters sortBy={sortBy} setSortBy={setSortBy} />
                         </aside>
 
@@ -206,50 +206,54 @@ const SearchPage = () => {
 
 const Filters = ({ sortBy, setSortBy }) => (
     <>
-        <div className="sticky top-10">
-            <div className="mb-6">
-                <h3 className="font-semibold mb-2">Sort By</h3>
-                <select
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value)}
-                    className="w-full border rounded px-3 py-2 text-sm"
-                >
-                    <option value="">Select</option>
-                    <option value="price-low">Price: Low to High</option>
-                    <option value="price-high">Price: High to Low</option>
-                    <option value="name-asc">Name: A-Z</option>
-                    <option value="name-desc">Name: Z-A</option>
-                </select>
-            </div>
+        <div className="mb-6">
+            <h3 className="font-semibold mb-2">Sort By</h3>
+            <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="w-full border rounded px-3 py-2 text-sm"
+            >
+                <option value="">Select</option>
+                <option value="price-low">Price: Low to High</option>
+                <option value="price-high">Price: High to Low</option>
+                <option value="name-asc">Name: A-Z</option>
+                <option value="name-desc">Name: Z-A</option>
+            </select>
+        </div>
 
-            <div className="mb-6">
-                <h3 className="font-semibold mb-2">Delivery Day</h3>
-                <div className="space-y-1 text-sm">
-                    <label className="block"><input type="checkbox" className="mr-2" />Get It Today</label>
-                    <label className="block"><input type="checkbox" className="mr-2" />Get It by Tomorrow</label>
-                    <label className="block"><input type="checkbox" className="mr-2" />Get It in 2 Days</label>
-                </div>
+        <div className="mb-6">
+            <h3 className="font-semibold mb-2">Delivery Day</h3>
+            <div className="space-y-1 text-sm">
+                <label className="block"><input type="checkbox" className="mr-2" />Get It Today</label>
+                <label className="block"><input type="checkbox" className="mr-2" />Get It by Tomorrow</label>
+                <label className="block"><input type="checkbox" className="mr-2" />Get It in 2 Days</label>
             </div>
+        </div>
 
-            <div className="mb-6">
-                <h3 className="font-semibold mb-2">Brands</h3>
-                <div className="space-y-1 text-sm">
-                    {["Allen Solly", "Lymio", "LEOTUDE", "Van Heusen"].map((brand) => (
-                        <label className="block" key={brand}>
-                            <input type="checkbox" className="mr-2" />
-                            {brand}
-                        </label>
-                    ))}
-                </div>
+        <div className="mb-6">
+            <h3 className="font-semibold mb-2">Brands</h3>
+            <div className="space-y-1 text-sm">
+                {["EcoWave", "Greenify", "PureLeaf", "UrbanRoot", "Freshora", "Plantica"].map((brand) => (
+                    <label className="block" key={brand}>
+                        <input type="checkbox" className="mr-2" />
+                        {brand}
+                    </label>
+                ))}
             </div>
+        </div>
 
-            <div>
-                <h3 className="font-semibold mb-2">Men's Size</h3>
-                <div className="flex flex-wrap gap-2 text-sm">
-                    {["2XS", "XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL"].map((size) => (
-                        <span key={size} className="border px-2 py-1 rounded-md cursor-pointer">{size}</span>
-                    ))}
-                </div>
+        <div className="mb-6">
+            <h3 className="font-semibold mb-2">Type</h3>
+            <div className="space-y-1 text-sm">
+                <label className="block"><input type="checkbox" className="mr-2" />Organic</label>
+                <label className="block"><input type="checkbox" className="mr-2" />Inorganic</label>
+            </div>
+        </div>
+
+        <div>
+            <h3 className="font-semibold mb-2">Availability</h3>
+            <div className="space-y-1 text-sm">
+                <label className="block"><input type="checkbox" className="mr-2" />Include Out of Stock</label>
             </div>
         </div>
     </>

@@ -1,408 +1,261 @@
 "use client";
 
-import { useEffect } from 'react';
-import Footer from "@/components/Footer";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { useUser } from "@clerk/nextjs";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
-export default function Home() {
-  const handleRedeem = (name, points) => {
-    alert(`Redeeming ${name} for ${points}!`);
+export default function RewardsPage() {
+  const { user } = useUser();
+  const [greenPoints, setGreenPoints] = useState(0);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!user?.id) return;
+
+    axios
+      .get("/api/users/points", {
+        headers: { "x-user-id": user.id },
+      })
+      .then((res) => {
+        setGreenPoints(res.data.points || 0);
+      })
+      .catch((err) => {
+        console.error("Failed to fetch green points:", err);
+      });
+  }, [user]);
+
+  const handleRedeem = async (reward) => {
+    if (greenPoints < reward.points) {
+      alert("Not enough points to redeem this reward.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await axios.post("/api/rewards/redeem", {
+        userId: user.id,
+        product: {
+          name: reward.name,
+          image: reward.image,
+          greenPoints: reward.points,
+        },
+      });
+
+      setGreenPoints((prev) => prev - reward.points);
+      alert(`Redeemed ${reward.name} successfully!`);
+    } catch (err) {
+      console.error("Redeem failed", err);
+      alert("Something went wrong while redeeming.");
+    } finally {
+      setLoading(false);
+    }
   };
 
+  const rewards = [
+    {
+      name: "Bamboo Cutlery Set",
+      points: 25,
+      price: "₹349",
+      image: "/rwimages/i1.jpg",
+    },
+    {
+      name: "Stainless Steel Insulated Water Bottle",
+      points: 700,
+      price: "₹1,499",
+      image: "/rwimages/i2.jpg",
+    },
+    {
+      name: "Beeswax Food Wraps",
+      points: 350,
+      price: "₹599",
+      image: "/rwimages/i3.jpg",
+    },
+    {
+      name: "Organic Cotton Tote Bag",
+      points: 300,
+      price: "₹499",
+      image: "/rwimages/i4.jpg",
+    },
+    {
+      name: "Biodegradable Phone Case",
+      points: 600,
+      price: "₹899",
+      image: "/rwimages/i5.jpg",
+    },
+    {
+      name: "Natural Loofah Sponge",
+      points: 180,
+      price: "₹149",
+      image: "/rwimages/i6.jpg",
+    },
+    {
+      name: "Solar Power Bank",
+      points: 200,
+      price: "₹2,199",
+      image: "/rwimages/i7.jpg",
+    },
+    {
+      name: "Reusable Silicone Food Storage Bags",
+      points: 400,
+      price: "₹799",
+      image: "/rwimages/i8.jpg",
+    },
+    {
+      name: "Eco Laundry Detergent Sheets",
+      points: 350,
+      price: "₹499",
+      image: "/rwimages/i9.jpg",
+    },
+    {
+      name: "Compost Bin for Kitchen Counter",
+      points: 800,
+      price: "₹1,299",
+      image: "/rwimages/i10.jpg",
+    },
+    {
+      name: "Reusable Facial Rounds",
+      points: 220,
+      price: "₹299",
+      image: "/rwimages/i11.jpg",
+    },
+    {
+      name: "Soy Wax Candle in Recycled Jar",
+      points: 200,
+      price: "₹349",
+      image: "/rwimages/i12.jpg",
+    },
+    {
+      name: "Recycled Paper Pencils or Pens",
+      points: 120,
+      price: "₹99",
+      image: "/rwimages/i13.jpg",
+    },
+    {
+      name: "Eco-Friendly Yoga Mat",
+      points: 950,
+      price: "₹1,899",
+      image: "/rwimages/i14.jpg",
+    },
+    {
+      name: "Fair-Trade Coffee or Tea Sampler",
+      points: 500,
+      price: "₹799",
+      image: "/rwimages/i15.jpg",
+    },
+    {
+      name: "Shampoo & Conditioner Bars",
+      points: 300,
+      price: "₹399",
+      image: "/rwimages/i16.jpg",
+    },
+    {
+      name: "Recycled Fabric Travel Pouch",
+      points: 350,
+      price: "₹599",
+      image: "/rwimages/i17.jpg",
+    },
+    {
+      name: "Bamboo Plant Grow Kit",
+      points: 600,
+      price: "₹999",
+      image: "/rwimages/i18.jpg",
+    },
+    {
+      name: "Collapsible Reusable Coffee Cup",
+      points: 320,
+      price: "₹399",
+      image: "/rwimages/i19.jpg",
+    },
+    {
+      name: "Wheat Straw Lunch Box",
+      points: 550,
+      price: "₹899",
+      image: "/rwimages/i20.jpg",
+    },
+  ];
+
   return (
-    <>
-      {/* Full-width Navbar */}
-      <div className="navbarWrapper">
-        <Navbar/>
-      </div>
-
-      {/* Main Content Container */}
-      <div className="container">
-        <div className="pointsSection">
-          <h2 className="sectionTitle">Redeem Your Green Points</h2>
-          <div className="pointsDisplay">
-            <div className="pointsIcon">🌱</div>
-            <span className="pointsNumber">2,450 Points</span>
-          </div>
-        </div>
-
-        <div className="productsGrid">
-          {[
-            {
-              name: "Bamboo Water Bottle",
-              points: "500 Points",
-              price: "₹899",
-              image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=300&h=200&fit=crop",
-            },
-            {
-              name: "Organic Cotton Tote Bag",
-              points: "300 Points",
-              price: "₹599",
-              image: "https://apisap.fabindia.com/medias/20243357-01.jpg?context=bWFzdGVyfGltYWdlc3wxMzUxOTF8aW1hZ2UvanBlZ3xhR00yTDJneE15ODVPREkzTnpNM056Y3pOamN6TkM4eU1ESTBNek0xTjE4d01TNXFjR2N8NGRlOWJhMDkzMWNiMWYyODdhOWRlM2JlOWUwNDQwNzIwZTg4MDUyNGE4MjljZjlmODI3MDJhYjg3YWMwMDk4Mw",
-            },
-            {
-              name: "Solar Power Bank",
-              points: "1,200 Points",
-              price: "₹2,499",
-              image: "https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=300&h=200&fit=crop",
-            },
-            {
-              name: "Bamboo Cutlery Set",
-              points: "400 Points",
-              price: "₹799",
-              image: "https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=300&h=200&fit=crop",
-            },
-            {
-              name: "Seed Paper Notebook",
-              points: "250 Points",
-              price: "₹449",
-              image: "https://images.unsplash.com/photo-1544816155-12df9643f363?w=300&h=200&fit=crop",
-            },
-            {
-              name: "Beeswax Food Wraps",
-              points: "350 Points",
-              price: "₹699",
-              image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&h=200&fit=crop",
-            },
-            {
-              name: "Plant-based Phone Case",
-              points: "600 Points",
-              price: "₹1,199",
-              image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=300&h=200&fit=crop",
-            },
-            {
-              name: "Herb Growing Kit",
-              points: "800 Points",
-              price: "₹1,599",
-              image: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=300&h=200&fit=crop",
-            },
-          ].map((product, index) => (
-            <div className="productCard" key={index}>
-              <img src={product.image} alt={product.name} className="productImage" />
-              <div className="productName">{product.name}</div>
-              <div className="productPoints">{product.points}</div>
-              <div className="productPrice">{product.price}</div>
-              <button
-                className="redeemBtn"
-                onClick={() => handleRedeem(product.name, product.points)}
-              >
-                Redeem Now
-              </button>
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-white flex flex-col">
+      <Navbar />
+      <main className="flex-1 max-w-7xl mx-auto w-full px-2 py-8">
+        <section className="mb-8">
+          <div className="flex flex-col sm:flex-row items-center justify-between bg-gradient-to-r from-green-400 to-green-600 rounded-xl shadow-lg p-4 mb-8 border border-green-200 gap-4">
+            <h2 className="text-xl sm:text-2xl font-bold text-white mb-2 sm:mb-0 tracking-tight drop-shadow-lg">
+              Redeem Your Green Points
+            </h2>
+            <div className="flex items-center gap-2 bg-white bg-opacity-90 px-6 py-2 rounded-full shadow border border-green-100">
+              <span className="text-2xl">🌱</span>
+              <span className="text-lg font-bold text-green-700 tracking-wide">
+                {greenPoints} Points
+              </span>
             </div>
-          ))}
-        </div>
+          </div>
+        </section>
 
-        {/* Quote Section */}
-        <div className="quoteSection">
-          <div className="quoteIcon">❝</div>
-          <p className="quote">
-            Every act of kindness towards our planet deserves recognition, and every green choice you make today plants the seeds for a sustainable tomorrow.
-          </p>
-          <div className="quoteIconBottom">❞</div>
-        </div>
-      </div>
+        <section className="mb-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+            {rewards.map((product, index) => (
+              <Card
+                key={index}
+                className="h-full flex flex-col justify-between border-2 border-green-100 bg-white/90 transition-all duration-300"
+              >
+                <CardHeader className="flex flex-col items-center p-4 pb-0">
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    className="w-full h-40 object-cover rounded-xl shadow-md border border-green-100 transition"
+                  />
+                </CardHeader>
+                <CardContent className="flex flex-col items-center gap-2 py-4 flex-1">
+                  <CardTitle className="text-base font-bold text-green-900 text-center min-h-[48px] flex items-center justify-center">
+                    {product.name}
+                  </CardTitle>
+                  <Badge
+                    variant="secondary"
+                    className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold tracking-wide shadow"
+                  >
+                    {product.points} Points
+                  </Badge>
+                  <span className="text-gray-400 line-through text-sm">
+                    {product.price}
+                  </span>
+                </CardContent>
+                <CardFooter className="flex justify-center pb-4 mt-auto">
+                  <Button
+                    disabled={loading || greenPoints < product.points}
+                    className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold py-2 rounded-full shadow-md transition cursor-pointer hover:scale-105"
+                    onClick={() => handleRedeem(product)}
+                  >
+                    Redeem Now
+                  </Button>
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
+        </section>
 
-      {/* Full-width Footer */}
-      <div className="footerWrapper">
-        <Footer/>
-      </div>
-
-      <style jsx global>{`
-        /* Global Reset and Full Page Coverage */
-        * {
-          margin: 0;
-          padding: 0;
-          box-sizing: border-box;
-        }
-
-        html {
-          height: 100%;
-          width: 100%;
-          overflow-x: hidden;
-        }
-
-        body {
-          height: 100%;
-          width: 100%;
-          margin: 0;
-          padding: 0;
-          background: linear-gradient(135deg, #e8f5e8 0%, #f0f8f0 100%);
-          background-attachment: fixed;
-          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-          color: #2d5a2d;
-          overflow-x: hidden;
-        }
-
-        #__next {
-          min-height: 100vh;
-          width: 100%;
-          max-width: 100vw;
-          background: transparent;
-          display: flex;
-          flex-direction: column;
-          overflow-x: hidden;
-        }
-      `}</style>
-
-      <style jsx>{`
-        /* Full-width Navbar Wrapper */
-        .navbarWrapper {
-          width: 100%;
-          background: linear-gradient(135deg, #2e7d32 0%, #4caf50 100%);
-          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-          z-index: 1000;
-        }
-
-        /* Main Container */
-        .container {
-          max-width: 1200px;
-          margin: 0 auto;
-          padding: 20px;
-          background: transparent;
-          min-height: calc(100vh - 120px);
-          position: relative;
-          flex: 1;
-          width: 100%;
-        }
-
-        /* Full-width Footer Wrapper */
-        .footerWrapper {
-          width: 100%;
-          background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
-          margin-top: auto;
-        }
-
-        /* Points Section */
-        .pointsSection {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin: 30px 0 40px;
-          background: linear-gradient(135deg, #ff6b35 0%, #f7931e 50%, #ffd200 100%);
-          padding: 15px 20px;
-          border-radius: 12px;
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-        }
-
-        .sectionTitle {
-          font-size: 1.6em;
-          color: #ffffff;
-          font-weight: 800;
-        }
-
-        .pointsDisplay {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          background: linear-gradient(135deg, #4caf50, #66bb6a);
-          padding: 12px 20px;
-          border-radius: 20px;
-          color: #ffffff;
-          font-weight: bold;
-          box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
-        }
-
-        .pointsIcon {
-          background: #ffd700;
-          border-radius: 50%;
-          padding: 5px;
-          font-size: 12px;
-        }
-
-        .pointsNumber {
-          font-size: 1.2em;
-        }
-
-        /* Products Grid */
-        .productsGrid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-          gap: 25px;
-          margin-bottom: 60px;
-        }
-
-        .productCard {
-          background: #ffffff;
-          border-radius: 8px;
-          padding: 16px;
-          text-align: center;
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-          border: 1px solid #ddd;
-          transition: all 0.2s ease;
-        }
-
-        .productCard:hover {
-          transform: translateY(-2px);
-          border-color: #ff9900;
-        }
-
-        .productImage {
-          width: 100%;
-          height: 200px;
-          object-fit: cover;
-          border-radius: 10px;
-          margin-bottom: 15px;
-          transition: transform 0.3s ease;
-        }
-
-        .productCard:hover .productImage {
-          transform: scale(1.05);
-        }
-
-        .productName {
-          font-size: 1em;
-          font-weight: 600;
-          color: #0f1111;
-          margin-bottom: 8px;
-        }
-
-        .productPoints {
-          color: #4caf50;
-          font-weight: bold;
-          margin-bottom: 4px;
-        }
-
-        .productPrice {
-          text-decoration: line-through;
-          color: #888;
-          margin-bottom: 12px;
-          font-size: 0.9em;
-        }
-
-        .redeemBtn {
-          background: #5cb85c;
-          color: #ffffff;
-          border: none;
-          padding: 10px 20px;
-          border-radius: 20px;
-          font-weight: 600;
-          cursor: pointer;
-          transition: all 0.2s ease;
-        }
-
-        .redeemBtn:hover {
-          background: #449d44;
-        }
-
-        /* Quote Section */
-        .quoteSection {
-          position: relative;
-          background: linear-gradient(135deg, #a1ffce 0%, #faffd1 40%, #76e4d9 100%);
-          padding: 2rem;
-          margin: 2rem 0 4rem;
-          border-radius: 20px;
-          text-align: center;
-          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-          overflow: hidden;
-        }
-
-        .quote {
-          font-style: italic;
-          font-size: 1.25rem;
-          color: #1b4332;
-          font-weight: 500;
-          line-height: 1.8;
-          padding: 0 1rem;
-        }
-
-        .quoteIcon,
-        .quoteIconBottom {
-          font-size: 2.5rem;
-          color: #2e7d32;
-          animation: float 3s ease-in-out infinite;
-        }
-
-        .quoteIcon {
-          position: absolute;
-          top: 10px;
-          left: 20px;
-          animation-delay: 0s;
-        }
-
-        .quoteIconBottom {
-          position: absolute;
-          bottom: 10px;
-          right: 20px;
-          animation-delay: 1.5s;
-        }
-
-        @keyframes float {
-          0%, 100% {
-            transform: translateY(0px);
-          }
-          50% {
-            transform: translateY(-10px);
-          }
-        }
-
-        /* Mobile Responsive */
-        @media (max-width: 768px) {
-          .container {
-            padding: 15px;
-            margin: 0;
-            max-width: 100%;
-          }
-
-          .pointsSection {
-            flex-direction: column;
-            gap: 15px;
-            text-align: center;
-            margin: 20px 0 30px;
-          }
-
-          .productsGrid {
-            grid-template-columns: 1fr;
-            gap: 20px;
-          }
-
-          .quote {
-            font-size: 1rem;
-            line-height: 1.6;
-          }
-
-          .quoteIcon,
-          .quoteIconBottom {
-            font-size: 2rem;
-          }
-
-          .quoteSection {
-            margin: 2rem 0 3rem;
-            padding: 1.5rem;
-          }
-
-          .sectionTitle {
-            font-size: 1.3em;
-          }
-
-          .pointsNumber {
-            font-size: 1.1em;
-          }
-        }
-
-        /* Tablet Responsive */
-        @media (max-width: 1024px) {
-          .container {
-            padding: 18px;
-            max-width: calc(100% - 20px);
-            margin: 0 auto;
-          }
-
-          .productsGrid {
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-          }
-        }
-
-        /* Large Screen Optimization */
-        @media (min-width: 1400px) {
-          .container {
-            max-width: 1400px;
-          }
-
-          .productsGrid {
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-          }
-        }
-      `}</style>
-    </>
+        <section className="mb-8">
+          <div className="bg-gradient-to-r from-green-100 to-green-200 rounded-2xl p-8 shadow-xl text-center relative border border-green-100">
+            <div className="absolute left-4 top-4 text-4xl text-green-700 opacity-30 select-none">
+              ❝
+            </div>
+            <p className="italic text-xl text-green-900 font-medium">
+              Every act of kindness towards our planet deserves recognition, and
+              every green choice you make today plants the seeds for a
+              sustainable tomorrow.
+            </p>
+            <div className="absolute right-4 bottom-4 text-4xl text-green-700 opacity-30 select-none">
+              ❞
+            </div>
+          </div>
+        </section>
+      </main>
+      <Footer />
+    </div>
   );
 }
