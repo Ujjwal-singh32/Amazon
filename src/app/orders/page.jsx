@@ -140,6 +140,13 @@ console.log(orders);
                           <button className="bg-yellow-400 hover:bg-yellow-500 px-4 py-2 text-sm rounded font-semibold">
                             🛠️ Get Product Support
                           </button>
+
+                          <button
+                            onClick={() => router.push(`/login`)}
+                            className="border border-gray-400 px-4 py-2 text-sm rounded font-medium"
+                          >
+                            ✅ Update Status
+                          </button>
                         </div>
                       </div>
                     </div>

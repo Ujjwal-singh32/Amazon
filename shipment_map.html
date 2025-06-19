@@ -17,7 +17,7 @@
             <meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
             <style>
-                #map_fb12db9273d26963e64d1f3d08a9aef9 {
+                #map_9e37a28bdabe5655e62ee0d4b75ffe4e {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -54,14 +54,14 @@
 <body>
     
     
-            <div class="folium-map" id="map_fb12db9273d26963e64d1f3d08a9aef9" ></div>
+            <div class="folium-map" id="map_9e37a28bdabe5655e62ee0d4b75ffe4e" ></div>
         
 </body>
 <script>
     
     
-            var map_fb12db9273d26963e64d1f3d08a9aef9 = L.map(
-                "map_fb12db9273d26963e64d1f3d08a9aef9",
+            var map_9e37a28bdabe5655e62ee0d4b75ffe4e = L.map(
+                "map_9e37a28bdabe5655e62ee0d4b75ffe4e",
                 {
                     center: [22.9734, 78.6569],
                     crs: L.CRS.EPSG3857,
@@ -78,7 +78,7 @@
 
         
     
-            var tile_layer_b246b0b112566ee8b909e09784e6ff86 = L.tileLayer(
+            var tile_layer_4aa9455425be0f317ea96989227dc042 = L.tileLayer(
                 "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                 {
   "minZoom": 0,
@@ -95,7 +95,55 @@
             );
         
     
-            tile_layer_b246b0b112566ee8b909e09784e6ff86.addTo(map_fb12db9273d26963e64d1f3d08a9aef9);
+            tile_layer_4aa9455425be0f317ea96989227dc042.addTo(map_9e37a28bdabe5655e62ee0d4b75ffe4e);
         
+    
+            var marker_db99df23f1ae0b28d20139c5bdd7e7dc = L.marker(
+                [23.4175695, 85.4394094],
+                {
+}
+            ).addTo(map_9e37a28bdabe5655e62ee0d4b75ffe4e);
+        
+    
+            var icon_75ff61dd444d693021af5f5ca6c7cbaa = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "truck",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_d57f082e75f44f1b7e885982db235106 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_9b6845479c42465879406e90a6e1f579 = $(`<div id="html_9b6845479c42465879406e90a6e1f579" style="width: 100.0%; height: 100.0%;">Shipment 1<br>BIT Mesra, Ranchi, Jharkhand, 835215, India</div>`)[0];
+                popup_d57f082e75f44f1b7e885982db235106.setContent(html_9b6845479c42465879406e90a6e1f579);
+            
+        
+
+        marker_db99df23f1ae0b28d20139c5bdd7e7dc.bindPopup(popup_d57f082e75f44f1b7e885982db235106)
+        ;
+
+        
+    
+    
+            marker_db99df23f1ae0b28d20139c5bdd7e7dc.bindTooltip(
+                `<div>
+                     BIT Mesra, Ranchi, Jharkhand, 835215, India
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_db99df23f1ae0b28d20139c5bdd7e7dc.setIcon(icon_75ff61dd444d693021af5f5ca6c7cbaa);
+            
 </script>
 </html>
