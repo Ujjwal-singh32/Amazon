@@ -19,7 +19,7 @@ OPENCAGE_API_KEY = os.getenv("OPENCAGE_API_KEY")
 
 # 🌐 Connect to MongoDB
 client = MongoClient(MONGO_URI)
-db = client["test"]
+db = client["Amazon"]
 orders_collection = db["orders"]
 user_collection = db["users"]
 # 📥 Fetch non-delivered, group orders
