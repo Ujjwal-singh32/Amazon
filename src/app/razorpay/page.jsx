@@ -114,6 +114,7 @@ const PaymentPage = () => {
     setLoading(true);
 
     try {
+      console.log("orderpayload" , JSON.stringify(orderPayload,null,2))
       const res = await axios.post("/api/payment/cod", {
         order: orderPayload,
       });

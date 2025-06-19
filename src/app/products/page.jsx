@@ -186,8 +186,9 @@ const SearchPage = () => {
                       <button
                         className="mt-3 w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 px-4 rounded shadow"
                         onClick={() =>
+                          
                           addToCart({
-                            id: product._id,
+                            id: product.productId,
                             name: product.name,
                             price: product.basePrice,
                             image: product.images?.[0],
