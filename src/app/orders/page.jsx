@@ -37,7 +37,7 @@ const OrdersPage = () => {
 
     fetchData();
   }, [user]);
-
+console.log(orders);
   return (
     <>
       <Navbar />
@@ -132,6 +132,10 @@ const OrdersPage = () => {
                         <div className="flex flex-wrap gap-2 mt-2">
                           <button
                             onClick={() => router.push(`/track?orderId=${order._id}`)}
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5dbdf6835d62b481a18481e4744e10070753f8ee
                             className="border border-gray-400 px-4 py-2 text-sm rounded font-medium"
                           >
                             📦 Track Order

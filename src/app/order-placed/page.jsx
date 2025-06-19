@@ -11,6 +11,7 @@ const OrderPlacedPage = () => {
 
   useEffect(() => {
     const stored = localStorage.getItem("latest_order");
+    console.log("stored" , stored);
     if (!stored) return router.push("/");
     setOrder(JSON.parse(stored));
   }, []);

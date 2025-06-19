@@ -32,8 +32,7 @@ orders = list(orders_collection.find({
         { "embeddedMap": { "$exists": False } }
     ]
 }))
-
-print(f"📦 Total matching orders: {len(orders)}")
+print(f"Total matching orders: {len(orders)}")
 
 # 📍 Geocode with OpenCage
 def opencage_geocode(address):
@@ -52,7 +51,7 @@ def opencage_geocode(address):
             loc = data["results"][0]["geometry"]
             return (loc["lat"], loc["lng"])
     except Exception as e:
-        print(f"❌ Geocoding failed for '{address}': {e}")
+        print(f" Geocoding failed for '{address}': {e}")
     return None
 
 # 📍 Construct and Geocode from MongoDB Orders
@@ -70,10 +69,10 @@ for order in orders:
     full_address = ", ".join([p for p in parts if p])
 
     if not full_address:
-        print(f"⚠️ Skipping order {order['_id']} due to incomplete address")
+        print(f" Skipping order {order['_id']} due to incomplete address")
         continue
 
-    print(f"📦 Geocoding order {order['_id']}: {full_address}")
+    print(f" Geocoding order {order['_id']}: {full_address}")
     coords = opencage_geocode(full_address)
 
     if coords:
@@ -83,7 +82,7 @@ for order in orders:
             "coords": coords
         })
     else:
-        print(f"❌ Geocoding failed for order {order['_id']} → {full_address}")
+        print(f" Geocoding failed for order {order['_id']} → {full_address}")
 
     time.sleep(0.5)
 
@@ -121,7 +120,7 @@ for group in shipment_groups:
             {"$set": {"discount": 100-discount}}
         )
 
-        print(f"🔁 Updated order {item['orderId']} with discount ₹{discount}")
+        print(f" Updated order {item['orderId']} with discount {discount}")
 
 # 🗺️ Generate Map
 m = folium.Map(location=[22.9734, 78.6569], zoom_start=5)
@@ -154,7 +153,7 @@ for i, group in enumerate(shipment_groups, 1):
 
 # 💾 Save map
 m.save("shipment_map.html")
-print("✅ Map saved to shipment_map.html — open in your browser.")
+print(" Map saved to shipment_map.html — open in your browser.")
 import gridfs
 
 # 🔗 Setup GridFS to store files in MongoDB
@@ -247,4 +246,4 @@ for current_order in geocoded:
     )
 
     os.remove(html_file_path)
-    print(f"✅ Map updated with current and background groups for {current_order['orderId']}")
+    print(f" Map updated with current and background groups for {current_order['orderId']}")
