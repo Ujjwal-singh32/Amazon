@@ -17,7 +17,7 @@
             <meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
             <style>
-                #map_a4cf4e6f4141b3694481ca01dc1bbe17 {
+                #map_93d25ee04745e52f217220afc60afd3a {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -54,14 +54,14 @@
 <body>
     
     
-            <div class="folium-map" id="map_a4cf4e6f4141b3694481ca01dc1bbe17" ></div>
+            <div class="folium-map" id="map_93d25ee04745e52f217220afc60afd3a" ></div>
         
 </body>
 <script>
     
     
-            var map_a4cf4e6f4141b3694481ca01dc1bbe17 = L.map(
-                "map_a4cf4e6f4141b3694481ca01dc1bbe17",
+            var map_93d25ee04745e52f217220afc60afd3a = L.map(
+                "map_93d25ee04745e52f217220afc60afd3a",
                 {
                     center: [22.9734, 78.6569],
                     crs: L.CRS.EPSG3857,
@@ -78,7 +78,7 @@
 
         
     
-            var tile_layer_cb89a54f7879eb2a3c4e4910a490873a = L.tileLayer(
+            var tile_layer_379b58b97f4862339958bc373efd5350 = L.tileLayer(
                 "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                 {
   "minZoom": 0,
@@ -95,7 +95,55 @@
             );
         
     
-            tile_layer_cb89a54f7879eb2a3c4e4910a490873a.addTo(map_a4cf4e6f4141b3694481ca01dc1bbe17);
+            tile_layer_379b58b97f4862339958bc373efd5350.addTo(map_93d25ee04745e52f217220afc60afd3a);
         
+    
+            var marker_4f2f7e7d958092afaf0d3da723e6de5e = L.marker(
+                [26.2973, 83.9208],
+                {
+}
+            ).addTo(map_93d25ee04745e52f217220afc60afd3a);
+        
+    
+            var icon_4e7e3a915406edd685d84088718363de = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "truck",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_d2a42c63a9e87472ec1814e7c0b87193 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_6733fd19df3a08a01a1c77958c7abf3e = $(`<div id="html_6733fd19df3a08a01a1c77958c7abf3e" style="width: 100.0%; height: 100.0%;">Shipment 1<br>Village - NAURANGIYA , Post- NAURANGIYA , madhuban, East-Champaran, Bihar, 843329, India</div>`)[0];
+                popup_d2a42c63a9e87472ec1814e7c0b87193.setContent(html_6733fd19df3a08a01a1c77958c7abf3e);
+            
+        
+
+        marker_4f2f7e7d958092afaf0d3da723e6de5e.bindPopup(popup_d2a42c63a9e87472ec1814e7c0b87193)
+        ;
+
+        
+    
+    
+            marker_4f2f7e7d958092afaf0d3da723e6de5e.bindTooltip(
+                `<div>
+                     Village - NAURANGIYA , Post- NAURANGIYA , madhuban, East-Champaran, Bihar, 843329, India
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_4f2f7e7d958092afaf0d3da723e6de5e.setIcon(icon_4e7e3a915406edd685d84088718363de);
+            
 </script>
 </html>
