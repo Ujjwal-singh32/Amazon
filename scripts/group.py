@@ -21,7 +21,7 @@ OPENCAGE_API_KEY = os.getenv("OPENCAGE_API_KEY")
 client = MongoClient(MONGO_URI)
 db = client["Amazon"]
 orders_collection = db["orders"]
-
+user_collection = db["users"]
 # 📥 Fetch non-delivered, group orders
 orders = list(orders_collection.find({
     "orderStatus": {"$ne": "delivered"},
@@ -119,8 +119,13 @@ for group in shipment_groups:
             {"_id": ObjectId(item["orderId"])},
             {"$set": {"discount": 100-discount}}
         )
+        order = orders_collection.find_one({"_id": ObjectId(item["orderId"])})
 
-        print(f" Updated order {item['orderId']} with discount {discount}")
+        user_collection.update_one(
+            {"userId": order["user"]},
+            {"$inc": {"walletPoints": 100-discount}}
+        )
+        print(f" Updated order {item['orderId']} with discount {100-discount}")
 
 # 🗺️ Generate Map
 m = folium.Map(location=[22.9734, 78.6569], zoom_start=5)
