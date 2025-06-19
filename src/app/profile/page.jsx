@@ -116,7 +116,6 @@ useEffect(() => {
     { name: 'Forest Area Saved', value: forestAreaSavedSqM }
   ];
 
-
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
@@ -135,7 +134,7 @@ useEffect(() => {
             <div className="text-center sm:text-left">
               <h2 className="text-xl font-semibold">{userData?.name}</h2>
               <p className="text-gray-600">
-                {userData?.isPrimeMember ? 'Prime Member' : 'Member'} since {new Date(userData?.memberSince).toLocaleDateString()}
+                {userData?.isPrimeMember ? 'Prime Member' : 'Member'} since {(new Date(userData?.createdAt)).toISOString().split("T")[0]}
               </p>
               {userData?.isTrustedReviewer && (
                 <div className="flex items-center justify-center sm:justify-start mt-1">
@@ -178,10 +177,10 @@ useEffect(() => {
 
             <div className="bg-orange-50 p-4 rounded-lg">
               <div className="flex items-center mb-2">
-                <span className="text-orange-600 mr-2">📅</span>
-                <span className="font-medium text-gray-700">Member Since</span>
+                <span className="text-orange-600 mr-2">💳</span>
+                <span className="font-medium text-gray-700">Wallet Points</span>
               </div>
-              <p className="text-gray-800">{new Date(userData?.memberSince).toLocaleDateString()}</p>
+              <p className="text-gray-800">{userData?.walletPoints}</p>
             </div>
 
             <div className="bg-red-50 p-4 rounded-lg">
