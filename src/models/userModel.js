@@ -21,7 +21,7 @@ const UserSchema = new mongoose.Schema({
   isPrimeMember: { type: Boolean, default: false },
   memberSince: { type: Date, default: Date.now },
   ordersPlaced: { type: Number, default: 0 },
-
+  walletPoints: { type: Number, default: 0 },
   // Badges and Trust
   isTrustedReviewer: { type: Boolean, default: false },
 
