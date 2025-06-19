@@ -35,11 +35,14 @@ export default function AmazonCart() {
   const [orderType, setOrderType] = useState("group");
   const [packaging, setPackaging] = useState("reusable");
   const [isClient, setIsClient] = useState(false);
+  const [gpts, setGpts] = useState(150); 
   const packagingOptions = {
     minimal: { price: 0, points: 0 },
     compostable: { price: 25, points: 100 },
     reusable: { price: 30, points: 150 },
   };
+
+
   useEffect(() => {
     // Hydration-safe check
     setIsClient(true);
@@ -50,7 +53,7 @@ export default function AmazonCart() {
     return null;
   }
   const itemsTotal = getTotalPrice();
-  const shipping = 40;
+  const shipping = 100;
   const discount = 15;
   const packagingPrice = packagingOptions[packaging].price;
   const getOrderTotal = () => {
@@ -214,7 +217,11 @@ export default function AmazonCart() {
                       ? "border-green-500 bg-green-50"
                       : "border-gray-200"
                       }`}
-                    onClick={() => setPackaging(option.key)}
+                    onClick={() => {
+                      setPackaging(option.key);
+                      setGpts(option.points); 
+                    }}
+
                   >
                     <div className="flex items-center">
                       {option.icon}
@@ -356,12 +363,15 @@ export default function AmazonCart() {
                   </div>
                 </div>
 
-                <div className="flex justify-center mb-6">
-                  <div className="bg-green-100 text-green-600 px-4 py-2 rounded-full text-sm font-medium">
-                    Congratulations, you will earn 150 green points on this
-                    order
+
+                {gpts > 0 && (
+                  <div className="flex justify-center mb-6">
+                    <div className="bg-green-100 text-green-600 px-4 py-2 rounded-full text-sm font-medium">
+                      🎉 Congratulations, you will earn {gpts} green points on this order
+                    </div>
                   </div>
-                </div>
+                )}
+
 
                 <button
                   className="w-full bg-yellow-400 text-black py-3 rounded-full text-lg font-medium hover:bg-yellow-500 mb-4"

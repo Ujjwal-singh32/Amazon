@@ -18,6 +18,8 @@ import {
 } from "@clerk/nextjs";
 import { useCart } from "@/context/cartContext";
 import { useProduct } from "@/context/ProductContext";
+import { toast } from "react-toastify";
+
 
 function Navbar() {
   const router = useRouter();
@@ -180,7 +182,28 @@ function Navbar() {
 
           <div
             className="relative flex items-center cursor-pointer"
-            onClick={() => router.push("/cart")}
+            onClick={() => {
+              if (total === 0) {
+                toast.error("Add items in Cart", {
+                  position: "top-right",
+                  autoClose: 3000,
+                  hideProgressBar: true,
+                  closeOnClick: true,
+                  pauseOnHover: false,
+                  draggable: false,
+                  progress: undefined,
+                  style: {
+                    background: "#fee2e2", // red-100
+                    color: "#b91c1c",       // red-700
+                    fontWeight: "600",
+                    border: "1px solid #fca5a5", // red-300
+                  },
+                });
+                return; // prevent redirect
+              }
+              router.push("/cart");
+            }}
+
           >
             <div className="relative">
               <ShoppingCartIcon className="h-10 w-10 text-white" />

@@ -28,9 +28,7 @@ export default function AmazonCheckout() {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isChanging, setIsChanging] = useState(false);
   const [showAddForm, setShowAddForm] = useState(false);
-
-  // Dummy wallet points for demo (replace with real data as needed)
-  const walletPoints = 12;
+  const [walletPoints, setWalletPoints] = useState(0);
   const [useWallet, setUseWallet] = useState(false);
   const [walletUsed, setWalletUsed] = useState(0);
 
@@ -41,19 +39,24 @@ export default function AmazonCheckout() {
 
   // Fetch user's saved addresses from MongoDB
   useEffect(() => {
-    if (!user?.id) return;
+  if (!user?.id) return;
 
-    axios
-      .get("/api/users", {
-        headers: { "x-user-id": user.id },
-      })
-      .then((res) => {
-        const addressList = res.data?.user?.address || [];
-        setAddresses(addressList);
-        setSelectedIndex(0);
-      })
-      .catch((err) => console.error("Error loading user address:", err));
-  }, [user]);
+  axios
+    .get("/api/users", {
+      headers: { "x-user-id": user.id },
+    })
+    .then((res) => {
+      const userData = res.data?.user;
+      const addressList = userData?.address || [];
+      const points = userData?.walletPoints || 0;
+
+      setAddresses(addressList);
+      setSelectedIndex(0);
+      setWalletPoints(points); // ✅ store wallet points
+    })
+    .catch((err) => console.error("Error loading user data:", err));
+}, [user]);
+
 
   const handleSaveAddress = async () => {
     const updatedAddresses = [...addresses, newAddress];
