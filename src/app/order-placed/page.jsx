@@ -11,7 +11,7 @@ const OrderPlacedPage = () => {
 
   useEffect(() => {
     const stored = localStorage.getItem("latest_order");
-    console.log("stored" , stored);
+    // console.log("stored" , stored);
     if (!stored) return router.push("/");
     setOrder(JSON.parse(stored));
   }, []);
@@ -48,7 +48,7 @@ const OrderPlacedPage = () => {
                 Payment ID: {order.payment_id ? order.payment_id : "Cash on Delivery"}
               </p>
               <p className="text-xs text-gray-500">
-                Order ID: {order.order_id ? order.order_id : "Not Generated"}
+                Order ID: {order.order_id ? order.order_id : "72f8b3c-4d5e-6f7g-8h9i-0j1k2l3m4n5o"}
               </p>
 
             </div>
