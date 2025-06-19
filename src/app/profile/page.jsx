@@ -32,36 +32,53 @@ export default function AmazonDashboard() {
 useEffect(() => {
   if (!user?.id) return;
 
-  const upsertUserAndFetch = async () => {
+  const fetchUserData = async () => {
     setLoading(true);
     try {
-      // 1. Call upsert endpoint (create or update based on existence)
-      await axios.post("/api/users/create", {
-        userId: user.id,
-        name: user.fullName,
-        email: user.emailAddresses[0]?.emailAddress,
-        phone: user.phoneNumbers[0]?.phoneNumber || "",
-      });
-
-      // 2. Fetch latest user data
+      // Step 1: Try to fetch the user
       const res = await axios.get("/api/users", {
-        headers: { "x-user-id": user.id },
+        headers: {
+          "x-user-id": user.id,
+        },
       });
 
       if (res.data?.user) {
         setUserData(res.data.user);
       } else {
-        console.warn("No user data returned after upsert.");
+        console.warn("User not found. Creating minimal user profile...");
+
+        // Step 2: Create minimal user profile
+        await axios.post("/api/users/create", {
+          userId: user.id,
+          name: user.fullName,
+          email: user.emailAddresses[0]?.emailAddress,
+          phone: user.phoneNumbers[0]?.phoneNumber || "",
+        });
+
+        // Step 3: Re-fetch after creation
+        const reFetch = await axios.get("/api/users", {
+          headers: {
+            "x-user-id": user.id,
+          },
+        });
+
+        if (reFetch.data?.user) {
+          setUserData(reFetch.data.user);
+        } else {
+          console.warn("User still not found after creation.");
+        }
       }
     } catch (error) {
-      console.error("Error during upsert or fetch:", error);
+      console.error("Error during fetch or fallback creation:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  upsertUserAndFetch();
+  fetchUserData();
 }, [user]);
+
+
 
 
 

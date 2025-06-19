@@ -82,7 +82,7 @@ for order in orders:
             "coords": coords
         })
     else:
-        print(f" Geocoding failed for order {order['_id']} → {full_address}")
+        print(f" Geocoding failed for order {order['_id']}  {full_address}")
 
     time.sleep(0.5)
 
@@ -158,7 +158,7 @@ for i, group in enumerate(shipment_groups, 1):
 
 # 💾 Save map
 m.save("shipment_map.html")
-print(" Map saved to shipment_map.html — open in your browser.")
+print(" Map saved to shipment_map.html  open in your browser.")
 import gridfs
 
 # 🔗 Setup GridFS to store files in MongoDB
