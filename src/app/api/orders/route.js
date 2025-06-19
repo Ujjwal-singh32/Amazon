@@ -19,7 +19,7 @@ export async function GET(req) {
       .sort({ placedAt: -1 })
       .lean();
 
-    console.log("orders checking with mtech",  JSON.stringify(orders, null, 2));
+    // console.log("orders checking with mtech",  JSON.stringify(orders, null, 2));
     // Step 2: Collect unique productIds
     const productUUIDs = [
       ...new Set(
@@ -28,7 +28,7 @@ export async function GET(req) {
         )
       ),
     ];
-    console.log("ppid" , productUUIDs);
+    // console.log("ppid" , productUUIDs);
     // Step 3: Fetch product details
     const products = await Product.find({
       productId: { $in: productUUIDs },
@@ -58,46 +58,8 @@ export async function GET(req) {
       })),
     }));
 
-    //     // Step 6: Update GreenStats in user model
-    //     let totalEmissions = 0;
-    //     let totalPlastics = 0;
-    //     let totalWater = 0;
-    //     let totalPoints = 0;
-    //     let grouped = 0;
 
-    //     for (const order of orders) {
-    //       for (const item of order.items) {
-    //         const product = productMap.get(item.productId);
-    //         if (!product) continue;
-
-    //         totalEmissions += (product.emissions || 0) * (item.quantity || 1);
-    //         totalPlastics += (product.plasticAvoided || 0) * (item.quantity || 1);
-    //         totalWater += (product.waterSaved || 0) * (item.quantity || 1);
-    //         totalPoints += (product.greenPoints || 0) * (item.quantity || 1);
-    //       }
-    //       if (order.deliveryOption === "group") grouped++;
-    //     }
-
-    //     const monthStr = new Date().toLocaleString("default", { month: "short" });
-
-    //     await User.updateOne(
-    //   { userId },
-    //   {
-    //     $set: {
-    //       ordersPlaced: orders.length,
-    //       "greenStats.monthlyCarbonData": [{ month: monthStr, value: totalEmissions }],
-    //       "greenStats.monthlyEmissionsData": [{ month: monthStr, value: totalEmissions }],
-    //       "greenStats.monthlyPlasticsData": [{ month: monthStr, value: totalPlastics }],
-    //       "greenStats.monthlyWaterData": [{ month: monthStr, value: totalWater }],
-    //       "greenStats.monthlyPointsData": [{ month: monthStr, value: totalPoints }],
-    //       "greenStats.monthlyGroupedOrdersData": [{ month: monthStr, value: grouped }],
-    //     },
-    //   },
-    //   { upsert: true }
-    // );
-
-    //  console.log("GreenStats:", totalEmissions, totalPlastics, totalWater, totalPoints, grouped);
-    console.log("orders from the backend", JSON.stringify(formatted, null, 2));
+    // console.log("orders from the backend", JSON.stringify(formatted, null, 2));
     return NextResponse.json({ orders: formatted });
   } catch (err) {
     console.error("Error fetching orders:", err);
