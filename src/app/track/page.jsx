@@ -48,22 +48,6 @@ export default function OrderTracking() {
         setOrderData(orderResult.order);
         setMapHtml(orderResult.mapHtml || '');
 
-        // Fetch HTML file from GridFS (fs.files)
-        const htmlResponse = await fetch('/api/getHtmlFile', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ orderId }),
-        });
-
-        if (htmlResponse.ok) {
-          const htmlResult = await htmlResponse.json();
-          console.log('HTML content received:', htmlResult.htmlContent ? 'Yes' : 'No');
-          setHtmlContent(htmlResult.htmlContent || '');
-        } else {
-          console.log('No HTML file found for this order');
-        }
 
       } catch (err) {
         console.error('Error fetching order:', err);

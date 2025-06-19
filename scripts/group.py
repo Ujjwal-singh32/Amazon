@@ -19,14 +19,18 @@ OPENCAGE_API_KEY = os.getenv("OPENCAGE_API_KEY")
 
 # 🌐 Connect to MongoDB
 client = MongoClient(MONGO_URI)
-db = client["test"]
+db = client["Amazon"]
 orders_collection = db["orders"]
 
 # 📥 Fetch non-delivered, group orders
 orders = list(orders_collection.find({
     "orderStatus": {"$ne": "delivered"},
     "deliveryOption": "group",
-    "embeddedMap": {"$exists": False}
+    "$or": [
+        { "embeddedMap": { "$eq": "empty" } },
+        { "embeddedMap": { "$eq": "" } },
+        { "embeddedMap": { "$exists": False } }
+    ]
 }))
 print(f"Total matching orders: {len(orders)}")
 

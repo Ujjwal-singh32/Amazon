@@ -28,6 +28,14 @@ const OrderSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  discount: {
+    type: Number,
+    default: 0, // Optional: default to 0
+  },
+  embeddedMap: {
+    type: String,
+    default: "empty", // Optional: default to empty string
+  },
   placedAt: { type: Date, default: Date.now },
 });
 
