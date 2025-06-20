@@ -4,7 +4,6 @@ import Order from "@/models/orderModel";
 import User from "@/models/userModel";
 import Product from "@/models/productModel";
 
-
 export async function POST(req) {
   try {
     const body = await req.json();
@@ -34,10 +33,10 @@ export async function POST(req) {
         priceAtPurchase: item.priceAtPurchase,
       })),
       totalAmount: order.totalAmount,
-      paymentStatus: 'paid',
-      orderStatus: 'placed',
+      paymentStatus: "paid",
+      orderStatus: "placed",
       shippingAddress: order.shippingAddress,
-      deliveryOption: order.deliveryOption || 'individual',
+      deliveryOption: order.deliveryOption || "individual",
       packagingPoints: order.packagingPoints || 0,
       placedAt: new Date(),
     });
@@ -56,7 +55,7 @@ export async function POST(req) {
       emissions: 0,
       plastics: 0,
       water: 0,
-      groupedOrders: order.deliveryOption === 'group' ? 1 : 0,
+      groupedOrders: order.deliveryOption === "group" ? 1 : 0,
     };
 
     for (const item of order.items) {
@@ -65,11 +64,12 @@ export async function POST(req) {
 
       const qty = item.quantity || 1;
 
-      orderStats.carbon += (product.sustainableScore * qty).toFixed(2);
+      orderStats.carbon += parseFloat((product.sustainableScore * qty).toFixed(2));
       orderStats.points += Math.floor(product.greenPoints * qty);
-      orderStats.emissions += (product.emissions * qty).toFixed(2);
-      orderStats.plastics += (product.plasticAvoided * qty).toFixed(2);
-      orderStats.water += (product.waterSaved * qty).toFixed(2);
+      orderStats.emissions += parseFloat((product.emissions * qty).toFixed(2));
+      orderStats.plastics += parseFloat((product.plasticAvoided * qty).toFixed(2));
+      orderStats.water += parseFloat((product.waterSaved * qty).toFixed(2));
+
     }
 
     if (!existingUser) {
@@ -78,7 +78,7 @@ export async function POST(req) {
         userId,
         name,
         email,
-        phone: phone || '',
+        phone: phone || "",
         address: order.shippingAddress ? [order.shippingAddress] : [],
         isPrimeMember: false,
         memberSince: null,
@@ -91,7 +91,9 @@ export async function POST(req) {
           monthlyEmissionsData: [{ month, value: orderStats.emissions }],
           monthlyPlasticsData: [{ month, value: orderStats.plastics }],
           monthlyWaterData: [{ month, value: orderStats.water }],
-          monthlyGroupedOrdersData: [{ month, value: orderStats.groupedOrders }],
+          monthlyGroupedOrdersData: [
+            { month, value: orderStats.groupedOrders },
+          ],
         },
       });
       await newUser.save();
@@ -146,7 +148,10 @@ export async function POST(req) {
       );
     }
 
-    return NextResponse.json({ success: true, order: newOrder }, { status: 201 });
+    return NextResponse.json(
+      { success: true, order: newOrder },
+      { status: 201 }
+    );
   } catch (error) {
     console.error("COD order error:", error);
     return NextResponse.json(

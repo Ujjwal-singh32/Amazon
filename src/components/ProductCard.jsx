@@ -100,9 +100,10 @@ function ProductCard({
             <p className={`font-medium mb-1 ${isOrganic ? "text-green-800" : "text-red-500"}`}>
               🌱 Green Points: {isOrganic ? greenPoints : 0}
             </p>
-            <div className="w-full h-2 bg-green-200 rounded-full">
+            <div className={`w-full ${isOrganic ? "bg-green-100" : "bg-red-100"} rounded h-2`}>
+
               <div
-                className={`h-2 rounded-full ${isOrganic ? "bg-green-500" : "bg-gray-300"}`}
+                className={`h-2 rounded-full ${isOrganic ? "bg-green-500" : "bg-red-300"}`}
                 style={{ width: `${isOrganic ? Math.min(greenPoints / 10, 100) : 0}%` }}
               ></div>
             </div>
@@ -112,7 +113,7 @@ function ProductCard({
             <p className={`font-medium mb-1 ${isOrganic ? "text-green-800" : "text-red-500"}`}>
               ♻️ Sustainable Score: {isOrganic ? sustainableScore : 0}
             </p>
-            <div className="w-full h-2 bg-green-200 rounded-full">
+            <div className={`w-full ${isOrganic ? "bg-green-100" : "bg-red-100"} rounded h-2`}>
               <div
                 className={`h-2 rounded-full ${isOrganic ? "bg-green-500" : "bg-gray-300"}`}
                 style={{ width: `${isOrganic ? Math.min(sustainableScore, 100) : 0}%` }}

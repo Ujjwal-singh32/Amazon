@@ -9,46 +9,56 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import GreenNavbar from "@/components/GreenNavbar";
 import GreenFooter from "@/components/GreenFooter";
+import axios from "axios";
 
 const SearchPage = () => {
     const searchParams = useSearchParams();
     const router = useRouter();
     const { organicProducts: totalProducts, loading } = useProduct();
     const query = searchParams.get("query")?.toLowerCase() || "";
-    const tag = searchParams.get("tag")?.toLowerCase() || "";
-
     const { addToCart } = useCart();
     const [results, setResults] = useState([]);
     const [showMobileFilters, setShowMobileFilters] = useState(false);
     const [sortBy, setSortBy] = useState("");
+    const [page, setPage] = useState(1);
+    const [isFetching, setIsFetching] = useState(false);
 
     useEffect(() => {
-        if (loading) return;
-        let filtered = [];
+        if (loading || !query) return;
 
-        if (query) {
-            const cleanedQuery = query.trim().toLowerCase();
-            filtered = totalProducts.filter((product) => {
-                const tags = (product.tags || [])
-                    .flatMap((tag) => tag.split(","))
-                    .map((t) => t.trim().toLowerCase());
+        const fetchRecommendations = async () => {
+            setIsFetching(true);
+            try {
+                const res = await axios.post("/api/green-ml-recommendation", {
+                    query,
+                    page
+                }, {
+                    headers: { "Content-Type": "application/json" }
+                });
 
-                return tags.includes(cleanedQuery) || product.name.toLowerCase().includes(cleanedQuery);
-            });
-        } else if (tag) {
-            const cleanedTag = tag.trim().toLowerCase();
-            filtered = totalProducts.filter((product) => {
-                const tags = (product.tags || [])
-                    .flatMap((tag) => tag.split(","))
-                    .map((t) => t.trim().toLowerCase());
-                return tags.includes(cleanedTag);
-            });
-        } else {
-            filtered = totalProducts;
-        }
 
-        setResults(filtered);
-    }, [query, tag, totalProducts, loading]);
+                const data = await res.data;
+                if (data?.recommended?.length > 0) {
+                    setResults((prev) => [...prev, ...data.recommended]);
+                } else {
+                    setResults([]);
+                }
+            } catch (err) {
+                console.error("Recommendation fetch error:", err);
+                setResults([]);
+            }
+        };
+
+        fetchRecommendations();
+
+
+    }, [query, totalProducts, loading, page]);
+
+    useEffect(() => {
+        setResults([]);
+        setPage(1);
+    }, [query]);
+
 
     const sortResults = (items) => {
         let sorted = [...items];
@@ -59,7 +69,8 @@ const SearchPage = () => {
         return sorted;
     };
 
-    const sortedResults = sortResults(results);
+    // const sortedResults = sortResults(results);
+    const sortedResults = (results);
 
     return (
         <>
@@ -67,8 +78,9 @@ const SearchPage = () => {
             <div className="bg-green-200">
                 <div className="p-4 max-w-7xl mx-auto ">
                     <h1 className="text-2xl font-bold mb-6 text-center">
-                        {query && <>Search Results for: <span className="text-purple-600">"{query}"</span></>}
-                        {tag && <>Showing Products Tagged: <span className="text-purple-600">"{tag}"</span></>}
+                        {query && (
+                            <>Search Results for: <span className="text-purple-600">"{query.replace(/%/g, " ")}"</span></>
+                        )}
                         {!query && !tag && "All Products"}
                     </h1>
 
@@ -89,9 +101,9 @@ const SearchPage = () => {
                         <div className="w-full lg:w-3/4">
                             {sortedResults.length > 0 ? (
                                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                                    {sortedResults.map((product) => (
+                                    {sortedResults.map((product, idx) => (
                                         <div
-                                            key={product._id}
+                                            key={`${product.productId}-${idx}`}
                                             className={`${product.isOrganic ? "bg-green-50" : "bg-white"
                                                 } shadow-md rounded-lg p-4 hover:shadow-lg transition duration-300 relative`}
                                         >
@@ -162,9 +174,9 @@ const SearchPage = () => {
                                                     className="mt-3 w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 px-4 rounded shadow"
                                                     onClick={() =>
                                                         addToCart({
-                                                            id: product._id,
+                                                            id: product.productId,
                                                             name: product.name,
-                                                            price: product.price,
+                                                            price: product.basePrice,
                                                             image: product.images?.[0],
                                                         })
                                                     }
@@ -175,8 +187,22 @@ const SearchPage = () => {
                                         </div>
                                     ))}
                                 </div>
+                            ) : isFetching ? (
+                                <div className="flex justify-center items-center py-16">
+                                    <div className="animate-spin rounded-full h-10 w-10 border-4 border-purple-600 border-t-transparent" />
+                                </div>
                             ) : (
                                 <p className="text-center text-gray-500">No products found.</p>
+                            )}
+                            {sortedResults.length > 0 && (
+                                <div className="flex justify-center mt-8">
+                                    <button
+                                        onClick={() => setPage((prev) => prev + 1)}
+                                        className="px-6 py-2 bg-purple-600 text-white rounded shadow hover:bg-purple-700 transition"
+                                    >
+                                        Load More
+                                    </button>
+                                </div>
                             )}
                         </div>
                     </div>

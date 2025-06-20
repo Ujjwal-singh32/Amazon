@@ -7,65 +7,68 @@ import { useCart } from "@/context/cartContext";
 import { useProduct } from "@/context/ProductContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-
+import axios from "axios";
 const SearchPage = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { totalProducts, loading } = useProduct();
   const query = searchParams.get("query")?.toLowerCase() || "";
-  const tag = searchParams.get("tag")?.toLowerCase() || "";
 
   const { addToCart } = useCart();
   const [results, setResults] = useState([]);
+  const [isFetching, setIsFetching] = useState(false);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [sortBy, setSortBy] = useState("");
   const [showGreenTooltip, setShowGreenTooltip] = useState(false);
   const [firstGreenId, setFirstGreenId] = useState(null);
   const greenTooltipTimeout = useRef(null);
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
-    if (loading) return;
-    let filtered = [];
+    if (loading || !query) return;
 
-    if (query) {
-      const cleanedQuery = query.trim().toLowerCase();
-      filtered = totalProducts.filter((product) => {
-        const tags = (product.tags || [])
-          .flatMap((tag) => tag.split(","))
-          .map((t) => t.trim().toLowerCase());
+    const fetchRecommendations = async () => {
+      setIsFetching(true);
+      try {
+        const formatted = query.trim().replace(/\s+/g, "%");
+        const res = await axios.post("/api/ml-recommendation", {
+          query: formatted,
+          page
+        }, {
+          headers: { "Content-Type": "application/json" }
+        });
 
-        return tags.includes(cleanedQuery) || product.name.toLowerCase().includes(cleanedQuery);
-      });
-    } else if (tag) {
-      const cleanedTag = tag.trim().toLowerCase();
-      filtered = totalProducts.filter((product) => {
-        const tags = (product.tags || [])
-          .flatMap((tag) => tag.split(","))
-          .map((t) => t.trim().toLowerCase());
-        return tags.includes(cleanedTag);
-      });
-    } else {
-      filtered = totalProducts;
-    }
 
-    setResults(filtered);
+        const data = await res.data;
+        if (data?.recommended?.length > 0) {
+          setResults((prev) => [...prev, ...data.recommended]);
+          const firstGreen = data.recommended.find((p) => p.isOrganic);
+          if (firstGreen) {
+            setFirstGreenId(firstGreen._id);
+            setShowGreenTooltip(true);
+            if (greenTooltipTimeout.current) clearTimeout(greenTooltipTimeout.current);
+            greenTooltipTimeout.current = setTimeout(() => setShowGreenTooltip(false), 2000);
+          }
+        } else {
+          setResults([]);
+        }
+      } catch (err) {
+        console.error("Recommendation fetch error:", err);
+        setResults([]);
+      }
+    };
 
-    // Tooltip logic for first green product
-    const firstGreen = filtered.find((p) => p.isOrganic);
-    if (firstGreen) {
-      setFirstGreenId(firstGreen._id);
-      setShowGreenTooltip(true);
-      if (greenTooltipTimeout.current) clearTimeout(greenTooltipTimeout.current);
-      greenTooltipTimeout.current = setTimeout(() => setShowGreenTooltip(false), 2000);
-    } else {
-      setFirstGreenId(null);
-      setShowGreenTooltip(false);
-    }
-    // Cleanup on unmount
+    fetchRecommendations();
+
     return () => {
       if (greenTooltipTimeout.current) clearTimeout(greenTooltipTimeout.current);
     };
-  }, [query, tag, totalProducts, loading]);
+  }, [query, totalProducts, loading, page]);
+
+  useEffect(() => {
+    setResults([]);
+    setPage(1);
+  }, [query]);
 
   const sortResults = (items) => {
     let sorted = [...items];
@@ -75,16 +78,28 @@ const SearchPage = () => {
     else if (sortBy === "name-desc") sorted.sort((a, b) => b.name.localeCompare(a.name));
     return sorted;
   };
+  // function safeDecode(query) {
+  //   try {
+  //     return decodeURIComponent(query);
+  //   } catch (e) {
+  //     return query.replace(/%/g, " ");
+  //   }
+  // }
 
-  const sortedResults = sortResults(results);
-
+  // const sortedResults = sortResults(results);
+  const sortedResults = (results);
+  console.log("sorted results", sortedResults);
   return (
     <>
       <Navbar />
       <div className="p-4 max-w-7xl mx-auto">
         <h1 className="text-2xl font-bold mb-6 text-center">
-          {query && <>Search Results for: <span className="text-purple-600">"{query}"</span></>}
-          {tag && <>Showing Products Tagged: <span className="text-purple-600">"{tag}"</span></>}
+          {query && (
+            <>
+              Search Results for: <span className="text-purple-600">"{query}"</span>
+            </>
+          )}
+
           {!query && !tag && "All Products"}
         </h1>
 
@@ -107,12 +122,12 @@ const SearchPage = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                 {sortedResults.map((product, idx) => (
                   <div
-                    key={product._id}
+                    key={`${product.productId}-${idx}`}
                     className={`${product.isOrganic ? "bg-green-50" : "bg-white"
                       } shadow-md rounded-lg p-4 hover:shadow-lg transition duration-300 relative`}
                   >
                     {/* Tooltip for first green product */}
-                    {showGreenTooltip && firstGreenId === product._id && (
+                    {showGreenTooltip && firstGreenId === product.productId && (
                       <div className="absolute -top-12 left-1/2 -translate-x-1/2 flex flex-col items-center z-40">
                         <div className="bg-green-600 text-white px-4 py-2 rounded shadow-lg animate-bounce text-sm font-semibold whitespace-nowrap">
                           🌱 Eco-friendly choice! Buy green products for a better planet!
@@ -142,7 +157,8 @@ const SearchPage = () => {
                       className="cursor-pointer"
                     >
                       <Image
-                        src={product.images?.[0] || "/fallback.jpg"}
+                        // src={product.images?.[0] || "/fallback.jpg"}
+                        src={product?.images?.[0] || "/fallback.jpg"}
                         alt={product.name}
                         width={250}
                         height={250}
@@ -164,9 +180,11 @@ const SearchPage = () => {
                           <span className={`${product.isOrganic ? "text-green-800" : "text-red-500"}`}> 🌱 Green Points</span>
                           <span>{product.isOrganic ? product.greenPoints || 0 : 0}</span>
                         </div>
-                        <div className="w-full bg-green-100 rounded h-2 ">
+
+                        <div className={`w-full ${product.isOrganic ? "bg-green-100" : "bg-red-100"} rounded h-2`}>
+
                           <div
-                            className={`${product.isOrganic ? "bg-green-500" : "bg-gray-300"} h-2 rounded`}
+                            className={`${product.isOrganic ? "bg-green-500" : "bg-red-300"} h-2 rounded`}
                             style={{ width: `${product.isOrganic ? product.greenPoints || 0 : 0}%` }}
                           />
                         </div>
@@ -174,7 +192,8 @@ const SearchPage = () => {
                           <span className={`${product.isOrganic ? "text-green-800" : "text-red-500"}`}> ♻️ Sustainable Score</span>
                           <span>{product.isOrganic ? product.sustainableScore || 0 : 0}</span>
                         </div>
-                        <div className="w-full bg-green-100 rounded h-2">
+                        <div className={`w-full ${product.isOrganic ? "bg-green-100" : "bg-red-100"} rounded h-2`}>
+
                           <div
                             className={`${product.isOrganic ? "bg-green-700" : "bg-red-500"} h-2 rounded`}
                             style={{ width: `${product.isOrganic ? product.sustainableScore || 0 : 0}%` }}
@@ -186,7 +205,7 @@ const SearchPage = () => {
                       <button
                         className="mt-3 w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 px-4 rounded shadow"
                         onClick={() =>
-                          
+
                           addToCart({
                             id: product.productId,
                             name: product.name,
@@ -201,8 +220,22 @@ const SearchPage = () => {
                   </div>
                 ))}
               </div>
+            ) : isFetching ? (
+              <div className="flex justify-center items-center py-16">
+                <div className="animate-spin rounded-full h-10 w-10 border-4 border-purple-600 border-t-transparent" />
+              </div>
             ) : (
               <p className="text-center text-gray-500">No products found.</p>
+            )}
+            {sortedResults.length > 0 && (
+              <div className="flex justify-center mt-8">
+                <button
+                  onClick={() => setPage((prev) => prev + 1)}
+                  className="px-6 py-2 bg-purple-600 text-white rounded shadow hover:bg-purple-700 transition"
+                >
+                  Load More
+                </button>
+              </div>
             )}
           </div>
         </div>

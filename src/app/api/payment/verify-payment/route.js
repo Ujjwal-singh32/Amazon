@@ -67,11 +67,11 @@ export async function POST(request) {
 
       const qty = item.quantity || 1;
 
-      orderStats.carbon += product.sustainableScore * qty;
+       orderStats.carbon += parseFloat((product.sustainableScore * qty).toFixed(2));
       orderStats.points += Math.floor(product.greenPoints * qty);
-      orderStats.emissions += product.emissions * qty;
-      orderStats.plastics += product.plasticAvoided * qty;
-      orderStats.water += product.waterSaved * qty;
+      orderStats.emissions += parseFloat((product.emissions * qty).toFixed(2));
+      orderStats.plastics += parseFloat((product.plasticAvoided * qty).toFixed(2));
+      orderStats.water += parseFloat((product.waterSaved * qty).toFixed(2));
     }
 
     if (!existingUser) {

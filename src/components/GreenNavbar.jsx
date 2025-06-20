@@ -25,14 +25,21 @@ export default function GreenNavbar() {
     const [suggestions, setSuggestions] = useState([]);
     const { user } = useUser();
     const { organicProducts: totalProducts } = useProduct();
+        
     useEffect(() => {
         setIsClient(true);
     }, []);
     const handleSearch = (e) => {
         e.preventDefault();
         if (!searchTerm.trim()) return;
-        router.push(`/green-products?query=${encodeURIComponent(searchTerm)}`);
+
+        // Replace all spaces with %
+        const formattedQuery = searchTerm.trim().replace(/\s+/g, "%");
+
+        router.push(`/green-products?query=${formattedQuery}`);
+        setSearchTerm("");
     };
+
     if (!isClient) {
         return (
             <nav className="sticky top-0 z-50 bg-green-600 text-white px-4 py-2 flex items-center justify-between flex-wrap">
@@ -84,35 +91,8 @@ export default function GreenNavbar() {
                         type="text"
                         placeholder="Search"
                         value={searchTerm}
-                        onChange={(e) => {
-                            const value = e.target.value.toLowerCase().trim();
-                            setSearchTerm(value);
-
-                            if (!value) {
-                                setSuggestions([]);
-                                return;
-                            }
-
-                            // Step 1: Flatten and normalize all tags
-                            const allTags = totalProducts.flatMap((p) => {
-                                if (!p.tags) return [];
-                                return p.tags.flatMap((tag) =>
-                                    tag.split(",").map((t) => t.trim().toLowerCase())
-                                );
-                            });
-
-                            // Step 2: Remove duplicates
-                            const uniqueTags = [...new Set(allTags)];
-
-                            // Step 3: Match partial substrings (more responsive suggestions)
-                            const filteredTags = uniqueTags.filter((tag) =>
-                                tag.includes(value)
-                            );
-
-                            // Step 4: Limit to 6 suggestions
-                            setSuggestions(filteredTags.slice(0, 6));
-                        }}
-                        className="bg-white h-full p-2 flex-grow flex-shrink rounded-l-md focus:outline-none px-4 text-black"
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="bg-white h-full p-2 flex-grow rounded-l-md focus:outline-none px-4 text-black"
                     />
 
 
