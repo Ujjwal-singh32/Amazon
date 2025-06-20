@@ -24,6 +24,7 @@ const UserSchema = new mongoose.Schema({
   walletPoints: { type: Number, default: 0 },
   // Badges and Trust
   isTrustedReviewer: { type: Boolean, default: false },
+  ecoPackages: { type: Number, default: 0 }, 
 
   // GreenKart Monthly Sustainability Metrics
   greenStats: {

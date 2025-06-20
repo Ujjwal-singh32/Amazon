@@ -60,8 +60,9 @@ export async function POST(request) {
       water: 0,
       groupedOrders: originalOrder.deliveryOption === 'group' ? 1 : 0,
     };
-    console.log("packagingPoints", originalOrder.packagingPoints);
+    // console.log("packagingPoints", originalOrder.packagingPoints);
     orderStats.points+= Math.floor(originalOrder.packagingPoints || 0);
+  
 
     for (const item of originalOrder.items) {
       const product = await Product.findOne({ productId: item.productId });
@@ -89,6 +90,7 @@ export async function POST(request) {
         memberSince: null,
         isTrustedReviewer: true,
         ordersPlaced: 1,
+        ecoPackages: originalOrder.packagingPoints>0 ? 1 : 0,
         lastStatsUpdatedAt: new Date(),
         greenStats: {
           monthlyCarbonData: [{ month, value: orderStats.carbon }],
@@ -137,6 +139,7 @@ export async function POST(request) {
             address: originalOrder.shippingAddress,
           },
           $inc: {
+            ecoPackages: originalOrder.packagingPoints > 0 ? 1 : 0,
             ordersPlaced: 1,
           },
           $setOnInsert: {
