@@ -357,14 +357,14 @@ export default function OrderTracking() {
             <div className="bg-green-100 border border-green-300 text-green-900 p-4 rounded-md mb-6 shadow-sm">
               <h3 className="font-semibold text-lg mb-1">🎉 Congrats!</h3>
               <p>
-                You have saved <span className="font-bold text-green-700">₹{orderData.discount}</span> on this group order.
-                It will be added to your wallet upon successful delivery of your order.
+                You have saved <span className="font-bold text-green-700">₹{Number(orderData.discount).toFixed(2)}</span> on this group order.
+                It has been added to your Amazon Pay Wallet.
               </p>
             </div>
          )}    
 
           {/* Map Section */}
-          {mapHtml && (
+          {mapHtml && mapHtml.trim() !== "empty" && (
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
               <h2 className="text-xl font-bold text-gray-900 mb-4">Delivery Map</h2>
               <div className="w-full h-96 rounded-lg overflow-hidden border border-gray-200">
@@ -378,51 +378,22 @@ export default function OrderTracking() {
             </div>
           )}
 
-          {/* HTML Content Section from GridFS - ABOVE CONTACT SUPPORT */}
-          {htmlContent && (
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-              <h2 className="text-xl font-bold text-gray-900 mb-4">Additional Information</h2>
-              <div className="w-full rounded-lg overflow-hidden border border-gray-200">
-                <iframe
-                  srcDoc={htmlContent}
-                  className="w-full min-h-96"
-                  title="Additional Content"
-                  style={{ border: 'none' }}
-                  onLoad={(e) => {
-                    // Auto-resize iframe based on content
-                    try {
-                      const iframe = e.target;
-                      const doc = iframe.contentDocument || iframe.contentWindow.document;
-                      if (doc && doc.body) {
-                        const height = doc.body.scrollHeight;
-                        iframe.style.height = Math.max(height, 400) + 'px';
-                      }
-                    } catch (error) {
-                      console.log('Could not auto-resize iframe:', error);
-                    }
-                  }}
-                />
-              </div>
-            </div>
-          )}
             {/* Delivery Timeline */}
             <div className="space-y-4">
               {deliverySteps.map((step, index) => (
                 <div key={step.id} className="flex items-start">
                   <div className="flex-shrink-0 mr-4">
                     <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                      step.current 
-                        ? 'bg-blue-500 text-white' 
-                        : step.completed 
-                        ? 'bg-green-100 text-green-600' 
-                        : 'bg-gray-200 text-gray-400'
+                      index === deliverySteps.length - 1
+                        ? 'bg-blue-500 text-white'
+                        : 'bg-green-100 text-green-600' 
                     }`}>
-                      {step.completed ? (
+                      {index === deliverySteps.length - 1 ? (
+                        <div className="w-2 h-2 bg-white rounded-full"></div> 
+                      ) : (
                         <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                           <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                         </svg>
-                      ) : (
-                        <div className="w-2 h-2 bg-current rounded-full"></div>
                       )}
                     </div>
                   </div>
@@ -433,6 +404,7 @@ export default function OrderTracking() {
                   </div>
                 </div>
               ))}
+
             </div>
           </div>
 
