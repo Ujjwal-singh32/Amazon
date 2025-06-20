@@ -3,7 +3,6 @@
 import { useParams, useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { products } from "@/assets/assets";
 import Navbar from "@/components/Navbar";
 import { useCart } from "@/context/cartContext"; // ⬅️ import this
 import { toast, ToastContainer } from "react-toastify";
@@ -20,7 +19,9 @@ const ProductDetailsPage = () => {
   const [product, setProduct] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [selectedSize, setSelectedSize] = useState(null);
+  const [greenOptions, setGreenOptions] = useState([]);
+
+
   useEffect(() => {
     const fetchProduct = async () => {
       try {
@@ -47,58 +48,73 @@ const ProductDetailsPage = () => {
 
     fetchProduct();
   }, [productId]);
+   const productTags = (product?.tags || [])
+      .flatMap(tag => tag.split(","))
+      .map(tag => tag.toLowerCase().trim())
+      .filter(Boolean);
+
+  useEffect(() => {
+    if (!product) return;
+    
+
+    const matchedProducts = totalProducts
+      .filter((p) => p.productId !== product?.productId)
+      .map((p) => {
+        const pTags = (p.tags || [])
+          .flatMap(tag => tag.split(","))
+          .map(tag => tag.toLowerCase().trim())
+          .filter(Boolean);
+
+        const matchCount = pTags.reduce((count, tag) =>
+          productTags.includes(tag) ? count + 1 : count,
+          0
+        );
+
+        return { ...p, matchCount };
+      })
+      .filter(p => p.matchCount > 0);
+
+    const grouped = {};
+    matchedProducts.forEach(p => {
+      if (!grouped[p.matchCount]) grouped[p.matchCount] = [];
+      grouped[p.matchCount].push(p);
+    });
+
+    Object.keys(grouped).forEach(key => {
+      grouped[key] = [...grouped[key]].sort(() => Math.random() - 0.5);
+    });
+
+    const similarProducts = Object.keys(grouped)
+      .sort((a, b) => b - a)
+      .flatMap(key => grouped[key])
+      .slice(0, 20);
+
+    setGreenOptions(similarProducts); // ✅ now safely inside effect
+
+  }, [product, totalProducts]);
 
   if (loading) return <div className="p-4">Loading...</div>;
   if (!product) return <div className="p-4">Product not found.</div>;
 
-
-
-  const productTags = (product.tags || [])
-    .flatMap(tag => tag.split(","))
-    .map(tag => tag.toLowerCase().trim())
-    .filter(Boolean);
-
-  // Utility to shuffle an array
-  const shuffleArray = (arr) => {
-    return [...arr].sort(() => Math.random() - 0.5);
+  const fetchGreenAlternatives = async () => {
+    try {
+      const res = await fetch(`/api/green-alternatives?productId=${product.productId}`);
+      const data = await res.json();
+      if (res.ok) {
+        const alternatives = data.alternatives.map(p => {
+          const pTags = (p.tags || []).map(tag => tag.toLowerCase());
+          const matchCount = pTags.reduce((count, tag) => (productTags.includes(tag) ? count + 1 : count), 0);
+          return { ...p, matchCount };
+        });
+        console.log("Green Alternatives:", alternatives);
+        setGreenOptions(alternatives);
+      } else {
+        toast.error(data.error || "Failed to fetch green alternatives");
+      }
+    } catch (error) {
+      toast.error("Error fetching green alternatives");
+    }
   };
-
-  // Step 1: Get products with matchCount
-  const matchedProducts = totalProducts
-    .filter((p) => p.productId !== product.productId) // Exclude the same product
-    .map((p) => {
-      const pTags = (p.tags || [])
-        .flatMap(tag => tag.split(","))
-        .map(tag => tag.toLowerCase().trim())
-        .filter(Boolean);
-
-      const matchCount = pTags.reduce((count, tag) =>
-        productTags.includes(tag) ? count + 1 : count,
-        0
-      );
-
-      return { ...p, matchCount };
-    })
-    .filter(p => p.matchCount > 0);
-
-  // Step 2: Group by matchCount
-  const grouped = {};
-  matchedProducts.forEach(p => {
-    if (!grouped[p.matchCount]) grouped[p.matchCount] = [];
-    grouped[p.matchCount].push(p);
-  });
-
-  // Step 3: Shuffle each group
-  Object.keys(grouped).forEach(key => {
-    grouped[key] = shuffleArray(grouped[key]);
-  });
-
-  // Step 4: Sort keys by descending matchCount and flatten
-  const similarProducts = Object.keys(grouped)
-    .sort((a, b) => b - a)
-    .flatMap(key => grouped[key])
-    .slice(0, 20); // Top N similar
-
 
 
   // ✅ Handle Add to Cart
@@ -119,7 +135,7 @@ const ProductDetailsPage = () => {
       quantity: 1,
     });
     toast.success("Added to Cart");
-    router.push("/cart");
+    // router.push("/cart");
   };
   const computeGrade = (score) => {
     if (score >= 85) return "A";
@@ -128,6 +144,15 @@ const ProductDetailsPage = () => {
     if (score >= 40) return "D";
     return "E";
   };
+
+  const GreenPopup = () => (
+    <div
+      onClick={fetchGreenAlternatives}
+      className="animate-bounce bg-green-50 border border-green-400 text-green-800 font-semibold rounded-lg px-4 py-2 mt-4 mb-4 cursor-pointer text-sm text-center shadow-lg hover:bg-green-100 transition duration-300"
+    >
+      ♻️ Greener options available — Click here to explore eco-friendly alternatives!
+    </div>
+  );
 
   return (
     <>
@@ -163,6 +188,7 @@ const ProductDetailsPage = () => {
                 height={600}
                 className="rounded-lg object-contain w-full max-h-[400px]"
               />
+              {!product.isOrganic && <GreenPopup />}
 
               {/* 🌿 Lottie Animation below image if Organic */}
               {product.isOrganic && (
@@ -279,7 +305,7 @@ const ProductDetailsPage = () => {
 
         {/* Similar Products */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6">
-          {similarProducts.map((item) => {
+          {greenOptions.map((item) => {
             const score = item.sustainableScore || 0;
             const greenPoints = item.greenPoints || 0;
             const grade = computeGrade(score);
