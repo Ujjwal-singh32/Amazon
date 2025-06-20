@@ -60,6 +60,8 @@ export async function POST(request) {
       water: 0,
       groupedOrders: originalOrder.deliveryOption === 'group' ? 1 : 0,
     };
+    console.log("packagingPoints", originalOrder.packagingPoints);
+    orderStats.points+= Math.floor(originalOrder.packagingPoints || 0);
 
     for (const item of originalOrder.items) {
       const product = await Product.findOne({ productId: item.productId });
@@ -69,6 +71,7 @@ export async function POST(request) {
 
        orderStats.carbon += parseFloat((product.sustainableScore * qty).toFixed(2));
       orderStats.points += Math.floor(product.greenPoints * qty);
+      
       orderStats.emissions += parseFloat((product.emissions * qty).toFixed(2));
       orderStats.plastics += parseFloat((product.plasticAvoided * qty).toFixed(2));
       orderStats.water += parseFloat((product.waterSaved * qty).toFixed(2));
