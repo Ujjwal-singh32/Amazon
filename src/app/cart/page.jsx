@@ -35,7 +35,7 @@ export default function AmazonCart() {
   const [orderType, setOrderType] = useState("group");
   const [packaging, setPackaging] = useState("reusable");
   const [isClient, setIsClient] = useState(false);
-  const [gpts, setGpts] = useState(150); 
+  const [gpts, setGpts] = useState(150);
   const packagingOptions = {
     minimal: { price: 0, points: 0 },
     compostable: { price: 25, points: 100 },
@@ -87,7 +87,7 @@ export default function AmazonCart() {
       points: packagingOptions["reusable"].points,
     },
   ];
-
+  //  console.log("cartItems", cartItems);
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
@@ -219,7 +219,7 @@ export default function AmazonCart() {
                       }`}
                     onClick={() => {
                       setPackaging(option.key);
-                      setGpts(option.points); 
+                      setGpts(option.points);
                     }}
 
                   >
@@ -246,6 +246,7 @@ export default function AmazonCart() {
             </div>
 
             {/* Items in Cart */}
+
             <div className="bg-white rounded-lg border p-6">
               <h2 className="text-xl font-medium mb-6">Items in your cart</h2>
 
@@ -258,7 +259,7 @@ export default function AmazonCart() {
                       key={item.id}
                       className="flex flex-col sm:flex-row gap-4 pb-6 border-b"
                     >
-                      <div className="w-32 h-32 bg-gray-100 rounded-lg overflow-hidden relative">
+                      <div className="w-32 h-32 bg-gray-100 rounded-lg overflow-hidden relative cursor-pointer" onClick={() => router.push(`/products/${item.id}`)}>
                         {item.image ? (
                           <Image
                             src={item.image}
@@ -326,8 +327,8 @@ export default function AmazonCart() {
                 )}
               </div>
             </div>
-            
-            
+
+
 
           </div>
 
@@ -392,7 +393,7 @@ export default function AmazonCart() {
                       isGroupOrder,
                       shipping: shipping,
                       discount: discount,
-                      finalTotal: +getOrderTotal(), 
+                      finalTotal: +getOrderTotal(),
                     };
 
                     localStorage.setItem("checkoutSummary", JSON.stringify(summaryData));
@@ -413,5 +414,5 @@ export default function AmazonCart() {
       <Footer />
     </div>
   );
-  
+
 }
