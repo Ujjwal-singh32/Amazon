@@ -1,5 +1,5 @@
 import dbConnect from "@/lib/db"; // your DB connection util
-import User from "@/models/User";  // your user model
+import User from "@/models/userModel"; // your user model
 
 export default async function handler(req, res) {
   if (req.method !== "PATCH") {

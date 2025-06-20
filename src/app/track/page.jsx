@@ -1,10 +1,11 @@
 "use client";
-import { useState, useEffect } from 'react';
+import { useState, useEffect ,Suspense} from 'react';
 import Head from 'next/head';
 import { useSearchParams } from 'next/navigation';
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
-export default function OrderTracking() {
+import LoadingSpinner from "@/components/LoadingSpinner";
+const  OrderTrackingfunc = () =>{
   const [showReschedule, setShowReschedule] = useState(false);
   const [showInstructions, setShowInstructions] = useState(false);
   const [orderData, setOrderData] = useState(null);
@@ -469,5 +470,12 @@ export default function OrderTracking() {
         <Footer/>
       </div>
     </>
+  );
+}
+export default function OrderTrackingf() {
+  return (
+    <Suspense fallback={<LoadingSpinner />}>
+      < OrderTrackingfunc/>
+    </Suspense>
   );
 }
