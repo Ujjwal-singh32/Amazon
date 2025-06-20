@@ -1,6 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
+// import { CartProvider } from "@/context/cartContext";
 import { CartProvider } from "@/context/cartContext";
 import { ProductProvider } from "@/context/ProductContext";
 import { ToastContainer } from "react-toastify";
