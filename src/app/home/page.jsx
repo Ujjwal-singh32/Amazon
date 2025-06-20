@@ -21,6 +21,25 @@ const ProductSlider = dynamic(() => import("@/components/ProductSlider"), {
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
+// Fixed list of 15 categories
+const fixedCategories = [
+  "Baby Care",
+  "Beauty and Grooming",
+  "Coffee Tea and Beverages",
+  "Diet and Nutrition",
+  "Exercise and Fitness",
+  "Garden and Outdoors",
+  "Gourmet and Grocery",
+  "Health and personal care",
+  "Home and Kitchen",
+  "Home Decor",
+  "Household supplies",
+  "Kitchen and Dining",
+  "Kitchen Storage and containers",
+  "Sports and fitness",
+  "Yoga"
+];
+
 const shuffleArray = (array) => {
   return array
     .map((value) => ({ value, sort: Math.random() }))
@@ -62,30 +81,30 @@ export default function HomePage() {
       maxFeatured + maxDeals + maxBestSellers,
       maxFeatured + maxDeals + maxBestSellers + maxRecommended
     );
-    const categoryMap = new Map();
-    const usedImages = new Set();
 
-    for (const product of totalProducts) {
-      if (!Array.isArray(product.tags)) continue;
-
-      for (const tag of product.tags) {
-        if (!tag.trim()) continue;
-        const image = product.images?.[0] || "https://pngimg.com/uploads/amazon/amazon_PNG11.png";
-        if (usedImages.has(image)) continue; // Skip if image already used
-
-        if (!categoryMap.has(tag)) {
-          categoryMap.set(tag, {
-            title: tag,
-            image: image,
-            link: `/products?tag=${encodeURIComponent(tag)}`
-          });
-          usedImages.add(image); // Mark image as used
-        }
-      }
-    }
-
-    const categoryArray = Array.from(categoryMap.values());
-    console.log("category ", categoryArray);
+    // Only show these 15 categories with their images (jpg)
+    const categoryImages = {
+      "Baby Care": require("@/assets/Baby Care.jpg"),
+      "Beauty and Grooming": require("@/assets/Beauty and Grooming.jpg"),
+      "Coffee Tea and Beverages": require("@/assets/Coffee Tea and Beverages.jpg"),
+      "Diet and Nutrition": require("@/assets/Diet and Nutrition.jpg"),
+      "Exercise and Fitness": require("@/assets/Exercise and Fitness.jpg"),
+      "Garden and Outdoors": require("@/assets/Garden and Outdoors.jpg"),
+      "Gourmet and Grocery": require("@/assets/Gourmet and Grocery.jpg"),
+      "Health and personal care": require("@/assets/Health and personal care.jpg"),
+      "Home and Kitchen": require("@/assets/Home and Kitchen.jpg"),
+      "Home Decor": require("@/assets/Home Decor.jpg"),
+      "Household supplies": require("@/assets/Household supplies.jpg"),
+      "Kitchen and Dining": require("@/assets/Kitchen and Dining.jpg"),
+      "Kitchen Storage and containers": require("@/assets/Kitchen Storage and containers.jpg"),
+      "Sports and fitness": require("@/assets/Sports and fitness.jpg"),
+      "Yoga": require("@/assets/Yoga.jpg"),
+    };
+    const categoryArray = fixedCategories.map((cat) => ({
+      title: cat,
+      image: categoryImages[cat],
+      link: `/products?query=${encodeURIComponent(cat)}`
+    }));
     setAllCategories(categoryArray);
     setDisplayCategories(categoryArray.slice(0, 18));
 
@@ -211,7 +230,7 @@ export default function HomePage() {
           <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-2xl font-bold text-gray-800 mb-6">Shop by Category</h2>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-5 gap-6">
               {visibleCategories.map((category) => (
                 <CategoryCard
                   key={category.title}

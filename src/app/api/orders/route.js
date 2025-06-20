@@ -47,7 +47,7 @@ export async function GET(req) {
     const formatted = orders.map((order) => ({
       ...order,
       userInfo: {
-        name: userInfo.first_name + " " + userInfo.last_name,
+        name: [userInfo.first_name, userInfo.last_name].filter(Boolean).join(" "),
         email: userInfo.email_addresses?.[0]?.email_address || "",
         phone: userInfo.phone_numbers?.[0]?.phone_number || "",
       },
