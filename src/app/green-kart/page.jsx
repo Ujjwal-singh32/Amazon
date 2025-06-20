@@ -8,6 +8,9 @@ import { useRouter } from "next/navigation";
 import { useCart } from "@/context/cartContext";
 import { useProduct } from "@/context/ProductContext";
 import GreenFooter from "@/components/GreenFooter";
+import { toast } from "react-toastify";
+import GoGreenIntro from "@/components/GoGreenIntro";
+
 export default function Home() {
   const router = useRouter();
   const { addToCart } = useCart();
@@ -16,16 +19,28 @@ export default function Home() {
   const [visibleCategoryCount, setVisibleCategoryCount] = useState(30);
 
   const handleAddToCart = (product) => {
-    addToCart({
-      id: product.productId,
-      title: product.name,
-      price: parseFloat(product.basePrice),
-      description: product.description,
-      category: product.category || "Others",
-      image: product.images?.[0] || "/default.jpg",
-      rating: { rate: 4.5, count: 100 },
-    });
-  };
+  addToCart({
+    id: product.productId,
+    title: product.name,
+    price: parseFloat(product.basePrice),
+    description: product.description,
+    category: product.category || "Others",
+    image: product.images?.[0] || "/default.jpg",
+    rating: { rate: 4.5, count: 100 },
+  });
+
+  toast.success(`Green item added to cart`, {
+    position: "top-right",
+    autoClose: 2000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    icon: "🛒",
+  });
+};
+
 
   const featuredProducts = useMemo(() => {
     const shuffled = [...products].sort(() => 0.5 - Math.random());
@@ -51,6 +66,7 @@ export default function Home() {
 
   return (
     <>
+      <GoGreenIntro />
       <GreenNavbar />
 
       {/* Hero */}
