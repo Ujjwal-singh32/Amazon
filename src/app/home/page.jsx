@@ -6,6 +6,8 @@ import Footer from "@/components/Footer";
 import dynamic from "next/dynamic";
 import { useState, useEffect } from "react";
 import { useProduct } from "@/context/ProductContext";
+import AmazonWelcomeAnimation from "@/components/AmazonWelcomeAnimation";
+
 const ImageCarousel = dynamic(() => import("@/components/ImageCarousel"), {
   ssr: false,
 });
@@ -58,6 +60,12 @@ export default function HomePage() {
   const [bestSellers, setBestSellers] = useState([]);
   const [recommendedProducts, setRecommendedProducts] = useState([]);
   const [loadingSections, setLoadingSections] = useState(true);
+  const [showSplash, setShowSplash] = useState(true);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => setShowSplash(false), 3000);
+    return () => clearTimeout(timeout);
+  }, []);
 
   // Guard any DOM-dependent logic until after hydration
   useEffect(() => {
@@ -118,14 +126,10 @@ export default function HomePage() {
   }, [totalProducts]);
 
 
-  if (!isClient || loadingSections) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-500"></div>
-        {/* Or use a skeleton loader if you have one */}
-      </div>
-    );
+  if (!isClient || loadingSections || showSplash) {
+    return <AmazonWelcomeAnimation />;
   }
+
   const visibleCategories = allCategories.slice(0, visibleCategoryCount);
   const isExpanded = visibleCategoryCount >= Math.min(allCategories.length, 18 + 12); // or a safer dynamic check
   // Fixing this to recompute accurately every time
@@ -134,6 +138,7 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white">
+      
       <Navbar />
 
       <main className="py-0 space-y-8 px-2">
