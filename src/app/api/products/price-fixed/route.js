@@ -9,20 +9,30 @@ export async function GET(req) {
     // Step 1: Fetch all products with invalid price
     const invalidProducts = await Product.find({
       $or: [
-        { price: { $not: { $type: "number" } } }, 
-        { price: { $lt: 100 } },
-        { price: { $exists: false } },
+        {
+          basePrice: { $not: { $type: "number" } }
+        },
+        {
+          basePrice: { $lt: 100 }
+        },
+        {
+          basePrice: { $exists: false }
+        },
       ],
     });
 
     const updates = [];
 
     for (const product of invalidProducts) {
-      const newPrice = parseFloat((Math.random() * 1000).toFixed(2) + 200);
+      const newPrice = parseFloat((Math.random() * 1000).toFixed(2)) + 200;
 
       await Product.updateOne(
         { _id: product._id },
-        { $set: { price: newPrice } }
+        {
+          $set: {
+            basePrice: newPrice
+          }
+        }
       );
 
       updates.push({ id: product._id, oldPrice: product.price, newPrice });

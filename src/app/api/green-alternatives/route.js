@@ -1,17 +1,27 @@
+// File: /src/app/api/green-alternatives/route.js
 import Product from "@/models/productModel";
 import connectDB from "@/lib/db";
 
-export default async function handler(req, res) {
+export async function GET(req) {
   await connectDB();
 
-  const { productId } = req.query;
-  if (!productId) return res.status(400).json({ error: "productId is required" });
+  const { searchParams } = new URL(req.url);
+  const productId = searchParams.get("productId");
+
+  if (!productId) {
+    return new Response(JSON.stringify({ error: "productId is required" }), {
+      status: 400,
+    });
+  }
 
   try {
     const product = await Product.findOne({ productId });
 
-    if (!product)
-      return res.status(404).json({ error: "Product not found" });
+    if (!product) {
+      return new Response(JSON.stringify({ error: "Product not found" }), {
+        status: 404,
+      });
+    }
 
     const alternatives = await Product.find({
       isOrganic: true,
@@ -19,11 +29,15 @@ export default async function handler(req, res) {
       tags: { $in: product.tags },
     })
       .sort({ sustainableScore: -1 })
-      .limit(5);
+      .limit(20);
 
-    return res.status(200).json({ alternatives });
+    return new Response(JSON.stringify({ alternatives }), {
+      status: 200,
+    });
   } catch (error) {
     console.error("Error fetching green alternatives:", error);
-    return res.status(500).json({ error: "Internal server error" });
+    return new Response(JSON.stringify({ error: "Internal server error" }), {
+      status: 500,
+    });
   }
 }

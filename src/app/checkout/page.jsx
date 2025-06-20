@@ -73,15 +73,15 @@ export default function AmazonCheckout() {
     setShowAddForm(false);
     setIsChanging(false);
 
-    try {
-      await axios.put("/api/users/address", {
-        shippingAddress: updatedAddresses,
-      }, {
-        headers: { "x-user-id": user.id },
-      });
-    } catch (err) {
-      console.error("Failed to save address:", err);
-    }
+    // try {
+    //   await axios.put("/api/users/address", {
+    //     shippingAddress: updatedAddresses,
+    //   }, {
+    //     headers: { "x-user-id": user.id },
+    //   });
+    // } catch (err) {
+    //   console.error("Failed to save address:", err);
+    // }
   };
 
   const calculateTotal = () => {
