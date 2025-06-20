@@ -2,7 +2,7 @@
 
 import { useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef ,Suspense } from "react";
 import { useCart } from "@/context/cartContext";
 import { useProduct } from "@/context/ProductContext";
 import Navbar from "@/components/Navbar";
@@ -10,7 +10,7 @@ import Footer from "@/components/Footer";
 import axios from "axios";
 import LoadingSpinner from "@/components/LoadingSpinner";
 
-const SearchPage = () => {
+const SearchPageContent = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { totalProducts, loading } = useProduct();
@@ -254,6 +254,13 @@ const SearchPage = () => {
   );
 };
 
+export default function SearchPage() {
+  return (
+    <Suspense fallback={<LoadingSpinner />}>
+      <SearchPageContent />
+    </Suspense>
+  );
+}
 const Filters = ({ sortBy, setSortBy }) => (
   <>
     <div className="mb-6">
@@ -309,4 +316,3 @@ const Filters = ({ sortBy, setSortBy }) => (
   </>
 );
 
-export default SearchPage;
