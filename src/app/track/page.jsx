@@ -26,7 +26,7 @@ export default function OrderTracking() {
         return;
       }
 
-      console.log('Fetching order with ID:', orderId);
+      // console.log('Fetching order with ID:', orderId);
 
       try {
         // Fetch order details from MongoDB
@@ -44,7 +44,7 @@ export default function OrderTracking() {
         }
 
         const orderResult = await orderResponse.json();
-        console.log('Order data received:', orderResult);
+        // console.log('Order data received:', orderResult);
         setOrderData(orderResult.order);
         setMapHtml(orderResult.mapHtml || '');
 

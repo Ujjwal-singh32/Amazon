@@ -55,7 +55,7 @@ export async function POST(req) {
       water: 0,
       groupedOrders: order.deliveryOption === "group" ? 1 : 0,
     };
-    console.log("packagingPoints", order.packagingPoints);
+    // console.log("packagingPoints", order.packagingPoints);
     orderStats.points+= Math.floor(order.packagingPoints );
 
     for (const item of order.items) {

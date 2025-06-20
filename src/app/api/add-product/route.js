@@ -49,7 +49,6 @@ export async function POST(request) {
             waterSaved,
             plasticAvoided,
         } = data.fields;
-        console.log('Parsed fields:', data);
 
         const uploadedImages = [];
         const images = Array.isArray(data.files.images)

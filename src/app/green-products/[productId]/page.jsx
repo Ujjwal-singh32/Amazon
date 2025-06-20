@@ -105,7 +105,7 @@ const ProductDetailsPage = () => {
 
     // ✅ Handle Add to Cart
     const handleAddToCart = (item, size = null) => {
-        console.log("add to cart clicked");
+        // console.log("add to cart clicked");
 
         // if (item._id === product._id && !size) {
         //   toast.error("Please Select a Size");

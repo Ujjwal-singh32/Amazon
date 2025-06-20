@@ -109,7 +109,7 @@ const ProductDetailsPage = () => {
           const matchCount = pTags.reduce((count, tag) => (productTags.includes(tag) ? count + 1 : count), 0);
           return { ...p, matchCount };
         });
-        console.log("Green Alternatives:", alternatives);
+        // console.log("Green Alternatives:", alternatives);
         setGreenOptions(alternatives);
       } else {
         toast.error(data.error || "Failed to fetch green alternatives");
@@ -122,7 +122,7 @@ const ProductDetailsPage = () => {
 
   // ✅ Handle Add to Cart
   const handleAddToCart = (item, size = null) => {
-    console.log("add to cart clicked");
+    // console.log("add to cart clicked");
 
     // if (item._id === product._id && !size) {
     //   toast.error("Please Select a Size");
