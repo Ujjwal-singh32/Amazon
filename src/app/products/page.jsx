@@ -167,8 +167,8 @@ const SearchPage = () => {
                     </div>
 
                     <div className="mt-3">
-                      <h2 className="text-md font-semibold line-clamp-2 min-h-[48px]">{product.name}</h2>
-                      <p className="text-gray-600 text-sm line-clamp-2 h-[38px] mt-1">
+                      <h2 className="text-md font-semibold line-clamp-2 min-h-[48px] cursor-pointer"  onClick={() => router.push(`/products/${product.productId}`)}>{product.name}</h2>
+                      <p className="text-gray-600 text-sm line-clamp-2 h-[38px] mt-1 cursor-pointer"  onClick={() => router.push(`/products/${product.productId}`)}>
                         {product.description}
                       </p>
                       <p className="text-black font-bold text-lg mt-2">₹{product.basePrice}</p>

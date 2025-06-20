@@ -340,7 +340,7 @@ const ProductDetailsPage = () => {
                 {/* Product Info */}
                 <div className="flex flex-col justify-between flex-grow p-4">
                   <div className="flex flex-col gap-1">
-                    <p className="text-sm font-medium text-center line-clamp-2">{item.name}</p>
+                    <p className="text-sm font-medium text-center line-clamp-2 cursor-pointer"onClick={() => router.push(`/products/${item.productId}`)}>{item.name}</p>
                     <p className="text-center text-purple-700 font-bold">₹{item.basePrice}</p>
 
                     {/* Show only for Organic Products */}
