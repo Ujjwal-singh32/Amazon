@@ -63,22 +63,26 @@ export default function HomePage() {
       maxFeatured + maxDeals + maxBestSellers + maxRecommended
     );
     const categoryMap = new Map();
+    const usedImages = new Set();
 
     for (const product of totalProducts) {
       if (!Array.isArray(product.tags)) continue;
 
       for (const tag of product.tags) {
         if (!tag.trim()) continue;
+        const image = product.images?.[0] || "https://pngimg.com/uploads/amazon/amazon_PNG11.png";
+        if (usedImages.has(image)) continue; // Skip if image already used
+
         if (!categoryMap.has(tag)) {
           categoryMap.set(tag, {
             title: tag,
-            image: product.images?.[0] || "https://pngimg.com/uploads/amazon/amazon_PNG11.png",
+            image: image,
             link: `/products?tag=${encodeURIComponent(tag)}`
           });
+          usedImages.add(image); // Mark image as used
         }
       }
     }
-
 
     const categoryArray = Array.from(categoryMap.values());
     console.log("category ", categoryArray);
