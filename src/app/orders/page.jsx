@@ -7,6 +7,8 @@ import Footer from "@/components/Footer";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { useUser } from "@clerk/nextjs";
+import LoadingSpinner from "@/components/LoadingSpinner";
+
 
 const OrdersPage = () => {
   const [orders, setOrders] = useState([]);
@@ -61,7 +63,7 @@ console.log(orders);
         </div>
 
         {loading ? (
-          <p>Loading...</p>
+          <LoadingSpinner/>
         ) : view === "orders" ? (
           orders.length === 0 ? (
             <p className="text-center text-gray-500 mt-10">You have no orders.</p>

@@ -13,6 +13,7 @@ import Lottie from "lottie-react";
 import leafAnimation from "@/animations/leaf.json";
 import GreenNavbar from "@/components/GreenNavbar";
 import GreenFooter from "@/components/GreenFooter";
+import LoadingSpinner from "@/components/LoadingSpinner";
 const ProductDetailsPage = () => {
     const { productId } = useParams();
     const { addToCart } = useCart();
@@ -49,7 +50,7 @@ const ProductDetailsPage = () => {
         fetchProduct();
     }, [productId]);
 
-    if (loading) return <div className="p-4">Loading...</div>;
+    if (loading) return <LoadingSpinner />;
     if (!product) return <div className="p-4">Product not found.</div>;
 
 

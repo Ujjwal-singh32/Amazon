@@ -8,6 +8,8 @@ import { useProduct } from "@/context/ProductContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import axios from "axios";
+import LoadingSpinner from "@/components/LoadingSpinner";
+
 const SearchPage = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -78,17 +80,9 @@ const SearchPage = () => {
     else if (sortBy === "name-desc") sorted.sort((a, b) => b.name.localeCompare(a.name));
     return sorted;
   };
-  // function safeDecode(query) {
-  //   try {
-  //     return decodeURIComponent(query);
-  //   } catch (e) {
-  //     return query.replace(/%/g, " ");
-  //   }
-  // }
-
-  // const sortedResults = sortResults(results);
+ 
   const sortedResults = (results);
-  console.log("sorted results", sortedResults);
+
   return (
     <>
       <Navbar />
@@ -221,9 +215,7 @@ const SearchPage = () => {
                 ))}
               </div>
             ) : isFetching ? (
-              <div className="flex justify-center items-center py-16">
-                <div className="animate-spin rounded-full h-10 w-10 border-4 border-purple-600 border-t-transparent" />
-              </div>
+              <LoadingSpinner />
             ) : (
               <p className="text-center text-gray-500">No products found.</p>
             )}
