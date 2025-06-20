@@ -99,7 +99,7 @@ useEffect(() => {
     monthlyWaterData: [],
     monthlyGroupedOrdersData: []
   };
-  console.log("Green Stats:", greenStats);
+  // console.log("Green Stats:", greenStats);
   // Compute derived totals
   const emissionsSavedKg = greenStats.monthlyEmissionsData.reduce((sum, item) => sum + (item.value || 0), 0);
   const plasticsAvoidedKg = greenStats.monthlyPlasticsData.reduce((sum, item) => sum + (item.value || 0), 0);

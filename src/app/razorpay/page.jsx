@@ -63,7 +63,7 @@ const PaymentPage = () => {
       const orderPayload = storedOrder ? JSON.parse(storedOrder) : null;
 
       if (!orderPayload) return alert("Order info not found");
-      console.log("Order payload", orderPayload);
+      // console.log("Order payload", orderPayload);
       // 2. Create Razorpay order
       const { data } = await axios.post("/api/payment/create-order", {
         order: orderPayload,
@@ -129,7 +129,7 @@ const PaymentPage = () => {
     setLoading(true);
 
     try {
-      console.log("orderpayload", JSON.stringify(orderPayload, null, 2))
+      // console.log("orderpayload", JSON.stringify(orderPayload, null, 2))
       const res = await axios.post("/api/payment/cod", {
         order: orderPayload,
       });

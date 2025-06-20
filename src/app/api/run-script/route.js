@@ -58,7 +58,7 @@ export async function POST(req) {
     } else {
       scriptStatus.success = true;
       scriptStatus.message = "Shipments dispatched ✅";
-      console.log("Script output:", stdout);
+      // console.log("Script output:", stdout);
     }
   });
 

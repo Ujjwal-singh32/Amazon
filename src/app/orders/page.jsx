@@ -39,7 +39,7 @@ const OrdersPage = () => {
 
     fetchData();
   }, [user]);
-console.log(orders);
+// console.log(orders);
   return (
     <>
       <Navbar />

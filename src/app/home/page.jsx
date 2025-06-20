@@ -54,7 +54,7 @@ export default function HomePage() {
   const [displayCategories, setDisplayCategories] = useState([]);
   const [visibleCategoryCount, setVisibleCategoryCount] = useState(18); // initial
   const { totalProducts, loading } = useProduct();
-  console.log("totalpr", totalProducts);
+  // console.log("totalpr", totalProducts);
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [dealsProducts, setDealsProducts] = useState([]);
   const [bestSellers, setBestSellers] = useState([]);
@@ -121,7 +121,7 @@ export default function HomePage() {
     setBestSellers(best);
     setRecommendedProducts(recommended);
 
-    console.log("Sections loaded");
+    // console.log("Sections loaded");
     setLoadingSections(false); // Done loading
   }, [totalProducts]);
 
