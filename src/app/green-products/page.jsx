@@ -5,10 +5,9 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { useCart } from "@/context/cartContext";
 import { useProduct } from "@/context/ProductContext";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 import GreenNavbar from "@/components/GreenNavbar";
 import GreenFooter from "@/components/GreenFooter";
+import LoadingSpinner from "@/components/LoadingSpinner";
 import axios from "axios";
 
 const SearchPage = () => {
@@ -71,6 +70,17 @@ const SearchPage = () => {
 
     // const sortedResults = sortResults(results);
     const sortedResults = (results);
+    if ((loading || (isFetching && results.length === 0)) && query) {
+    return (
+      <>
+        <GreenNavbar />
+        <div className="min-h-screen flex items-center justify-center bg-green-100">
+          <LoadingSpinner />
+        </div>
+        <GreenFooter />
+      </>
+    );
+  }
 
     return (
         <>

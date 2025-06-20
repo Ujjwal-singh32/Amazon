@@ -10,6 +10,7 @@ import { useProduct } from "@/context/ProductContext";
 import Footer from "@/components/Footer";
 import Lottie from "lottie-react";
 import leafAnimation from "@/animations/leaf.json";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 const ProductDetailsPage = () => {
   const { productId } = useParams();
@@ -20,6 +21,7 @@ const ProductDetailsPage = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [loading, setLoading] = useState(true);
   const [greenOptions, setGreenOptions] = useState([]);
+  const [isGreenLoading, setIsGreenLoading] = useState(true);
 
 
   useEffect(() => {
@@ -48,15 +50,14 @@ const ProductDetailsPage = () => {
 
     fetchProduct();
   }, [productId]);
-   const productTags = (product?.tags || [])
-      .flatMap(tag => tag.split(","))
-      .map(tag => tag.toLowerCase().trim())
-      .filter(Boolean);
+  const productTags = (product?.tags || [])
+    .flatMap(tag => tag.split(","))
+    .map(tag => tag.toLowerCase().trim())
+    .filter(Boolean);
 
   useEffect(() => {
     if (!product) return;
-    
-
+    setIsGreenLoading(true);
     const matchedProducts = totalProducts
       .filter((p) => p.productId !== product?.productId)
       .map((p) => {
@@ -89,11 +90,13 @@ const ProductDetailsPage = () => {
       .flatMap(key => grouped[key])
       .slice(0, 20);
 
-    setGreenOptions(similarProducts); // ✅ now safely inside effect
-
+    setTimeout(() => {
+      setGreenOptions(similarProducts);
+      setIsGreenLoading(false);
+    }, 200);
   }, [product, totalProducts]);
 
-  if (loading) return <div className="p-4">Loading...</div>;
+  if (loading) return <LoadingSpinner />;
   if (!product) return <div className="p-4">Product not found.</div>;
 
   const fetchGreenAlternatives = async () => {
@@ -304,86 +307,91 @@ const ProductDetailsPage = () => {
         </div>
 
         {/* Similar Products */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6">
-          {greenOptions.map((item) => {
-            const score = item.sustainableScore || 0;
-            const greenPoints = item.greenPoints || 0;
-            const grade = computeGrade(score);
-            const isOrganic = item.isOrganic;
+        {isGreenLoading ? (
+          <LoadingSpinner />
+        ) :greenOptions.length > 0 ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6">
+            {greenOptions.map((item) => {
+              const score = item.sustainableScore || 0;
+              const greenPoints = item.greenPoints || 0;
+              const grade = computeGrade(score);
+              const isOrganic = item.isOrganic;
 
-            return (
-              <div
-                key={item.productId}
-                className={`rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 flex flex-col h-[440px] w-full relative ${isOrganic ? "bg-green-50" : "bg-white"
-                  }`}
-              >
-                {/* Grade Badge only for Organic */}
-                {isOrganic && (
-                  <span className="absolute top-2 right-2 bg-green-600 text-white text-xs font-bold px-2.5 py-1 rounded-full z-30 shadow-md ring-1 ring-green-300 backdrop-blur-sm">
-                    {grade}
-                  </span>
-                )}
-
-                {/* Product Image */}
+              return (
                 <div
-                  className="relative w-full h-[220px] cursor-pointer"
-                  onClick={() => router.push(`/products/${item.productId}`)}
+                  key={item.productId}
+                  className={`rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 flex flex-col h-[440px] w-full relative ${isOrganic ? "bg-green-50" : "bg-white"
+                    }`}
                 >
-                  <Image
-                    src={item.images?.[0] || "/fallback.jpg"}
-                    alt={item.name}
-                    fill
-                    className="rounded-t-xl object-contain"
-                  />
-                </div>
+                  {/* Grade Badge only for Organic */}
+                  {isOrganic && (
+                    <span className="absolute top-2 right-2 bg-green-600 text-white text-xs font-bold px-2.5 py-1 rounded-full z-30 shadow-md ring-1 ring-green-300 backdrop-blur-sm">
+                      {grade}
+                    </span>
+                  )}
 
-                {/* Product Info */}
-                <div className="flex flex-col justify-between flex-grow p-4">
-                  <div className="flex flex-col gap-1">
-                    <p className="text-sm font-medium text-center line-clamp-2 cursor-pointer"onClick={() => router.push(`/products/${item.productId}`)}>{item.name}</p>
-                    <p className="text-center text-purple-700 font-bold">₹{item.basePrice}</p>
-
-                    {/* Show only for Organic Products */}
-                    <div className="mt-2 space-y-1 text-xs">
-                      {/* Green Points */}
-                      <div className={`flex justify-between ${isOrganic ? "text-gray-700" : "text-red-500"}`}>
-                        <span>🌱 Green Points</span>
-                        <span>{isOrganic ? greenPoints : 0}</span>
-                      </div>
-                      <div className="w-full bg-green-100 rounded-full h-2">
-                        <div
-                          className={`${isOrganic ? "bg-green-500" : "bg-gray-300"} h-2 rounded-full`}
-                          style={{ width: `${isOrganic ? (greenPoints > 100 ? 95 : greenPoints) : 0}%` }}
-                        ></div>
-                      </div>
-
-                      {/* Sustainable Score */}
-                      <div className={`flex justify-between mt-1 ${isOrganic ? "text-gray-700" : "text-red-500"}`}>
-                        <span>♻️ Sustainable Score</span>
-                        <span>{isOrganic ? score : 0}</span>
-                      </div>
-                      <div className="w-full bg-green-100 rounded-full h-2">
-                        <div
-                          className={`${isOrganic ? "bg-green-700" : "bg-gray-300"} h-2 rounded-full`}
-                          style={{ width: `${isOrganic ? score : 0}%` }}
-                        ></div>
-                      </div>
-                    </div>
-
+                  {/* Product Image */}
+                  <div
+                    className="relative w-full h-[220px] cursor-pointer"
+                    onClick={() => router.push(`/products/${item.productId}`)}
+                  >
+                    <Image
+                      src={item.images?.[0] || "/fallback.jpg"}
+                      alt={item.name}
+                      fill
+                      className="rounded-t-xl object-contain"
+                    />
                   </div>
 
-                  {/* Add to Cart Button */}
-                  <button
-                    className="mt-4 w-full bg-yellow-400 hover:bg-yellow-500 text-black text-sm font-semibold py-2 rounded-full"
-                    onClick={() => handleAddToCart(item)}
-                  >
-                    Add to Cart
-                  </button>
+                  {/* Product Info */}
+                  <div className="flex flex-col justify-between flex-grow p-4">
+                    <div className="flex flex-col gap-1">
+                      <p className="text-sm font-medium text-center line-clamp-2 cursor-pointer" onClick={() => router.push(`/products/${item.productId}`)}>{item.name}</p>
+                      <p className="text-center text-purple-700 font-bold">₹{item.basePrice}</p>
+
+                      {/* Show only for Organic Products */}
+                      <div className="mt-2 space-y-1 text-xs">
+                        {/* Green Points */}
+                        <div className={`flex justify-between ${isOrganic ? "text-gray-700" : "text-red-500"}`}>
+                          <span>🌱 Green Points</span>
+                          <span>{isOrganic ? greenPoints : 0}</span>
+                        </div>
+                        <div className="w-full bg-green-100 rounded-full h-2">
+                          <div
+                            className={`${isOrganic ? "bg-green-500" : "bg-gray-300"} h-2 rounded-full`}
+                            style={{ width: `${isOrganic ? (greenPoints > 100 ? 95 : greenPoints) : 0}%` }}
+                          ></div>
+                        </div>
+
+                        {/* Sustainable Score */}
+                        <div className={`flex justify-between mt-1 ${isOrganic ? "text-gray-700" : "text-red-500"}`}>
+                          <span>♻️ Sustainable Score</span>
+                          <span>{isOrganic ? score : 0}</span>
+                        </div>
+                        <div className="w-full bg-green-100 rounded-full h-2">
+                          <div
+                            className={`${isOrganic ? "bg-green-700" : "bg-gray-300"} h-2 rounded-full`}
+                            style={{ width: `${isOrganic ? score : 0}%` }}
+                          ></div>
+                        </div>
+                      </div>
+
+                    </div>
+
+                    {/* Add to Cart Button */}
+                    <button
+                      className="mt-4 w-full bg-yellow-400 hover:bg-yellow-500 text-black text-sm font-semibold py-2 rounded-full"
+                      onClick={() => handleAddToCart(item)}
+                    >
+                      Add to Cart
+                    </button>
+                  </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>):(
+  <p className="text-center text-gray-500 mt-6">No similar products found.</p>
+)}
         {/* Customer Review */}
         <div className="max-w-7xl mx-auto p-4 sm:p-6 flex flex-col md:flex-row gap-6">
           {/* Graph Section */}

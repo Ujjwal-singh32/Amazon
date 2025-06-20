@@ -25,7 +25,9 @@ export default function GreenNavbar() {
     const [suggestions, setSuggestions] = useState([]);
     const { user } = useUser();
     const { organicProducts: totalProducts } = useProduct();
-        
+    const [city, setCity] = useState("Jamshedpur");
+    const [stateName, setStateName] = useState("Jharkhand");
+
     useEffect(() => {
         setIsClient(true);
     }, []);
@@ -39,6 +41,34 @@ export default function GreenNavbar() {
         router.push(`/green-products?query=${formattedQuery}`);
         setSearchTerm("");
     };
+
+    useEffect(() => {
+        const fetchUserLocation = async () => {
+            try {
+                const res = await fetch("/api/users", {
+                    headers: {
+                        "x-user-id": user?.id,
+                    },
+                });
+
+                const data = await res.json();
+                console.log("User Location Data:", JSON.stringify(data));
+
+                const addressArray = data?.user?.address;
+                if (Array.isArray(addressArray) && addressArray.length > 0) {
+                    const primaryAddress = addressArray[0];
+                    setCity(primaryAddress.city || "Jamshedpur");
+                    setStateName(primaryAddress.state || "Jharkhand");
+                }
+            } catch (err) {
+                console.error("Error fetching user location:", err);
+            }
+        };
+
+        if (user?.id) {
+            fetchUserLocation();
+        }
+    }, [user]);
 
     if (!isClient) {
         return (
@@ -78,8 +108,8 @@ export default function GreenNavbar() {
                 />
                 {/* <span> Greenkart</span> */}
                 <div className="text-white ml-3 flex flex-col cursor-pointer">
-                    <p className="text-xs">Deliver to Jamshedpur 831014</p>
-                    <p className="font-bold text-sm">Update Location</p>
+                    <p className="text-xs">Deliver to {city}</p>
+                    <p className="font-bold text-sm">{stateName}</p>
                 </div>
             </div>
 

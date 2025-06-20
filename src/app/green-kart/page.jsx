@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { FaLeaf } from "react-icons/fa";
 import GreenNavbar from "@/components/GreenNavbar";
 import GreenFooter from "@/components/GreenFooter";
@@ -9,6 +9,7 @@ import { useCart } from "@/context/cartContext";
 import { useProduct } from "@/context/ProductContext";
 import { toast } from "react-toastify";
 import GoGreenIntro from "@/components/GoGreenIntro";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 export default function Home() {
   const router = useRouter();
@@ -17,6 +18,7 @@ export default function Home() {
 
   const [visibleCategoryCount, setVisibleCategoryCount] = useState(30);
   const [showIntro, setShowIntro] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
   const handleAddToCart = (product) => {
     addToCart({
@@ -40,6 +42,12 @@ export default function Home() {
       icon: "🛒",
     });
   };
+  useEffect(() => {
+  if (products.length > 0) {
+    setIsLoading(false);
+  }
+}, [products]);
+
 
   const featuredProducts = useMemo(() => {
     const shuffled = [...products].sort(() => 0.5 - Math.random());
@@ -64,7 +72,13 @@ export default function Home() {
   }, [products]);
 
   return (
-    <>
+    
+     <>
+      
+      {isLoading ? (
+      <LoadingSpinner />
+    ) : (
+      <>
       {showIntro ? (
         <GoGreenIntro onComplete={() => setShowIntro(false)} />
       ) : (
@@ -229,10 +243,12 @@ export default function Home() {
               </div>
             )}
           </section>
-
+         </>
+    )}
           <GreenFooter />
         </>
       )}
     </>
   );
 }
+

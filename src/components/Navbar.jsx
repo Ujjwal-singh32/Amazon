@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Bars3Icon,
   MagnifyingGlassIcon,
@@ -29,6 +29,8 @@ function Navbar() {
   const [searchTerm, setSearchTerm] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [city, setCity] = useState("Jamshedpur");
+  const [stateName, setStateName] = useState("Jharkhand");
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -40,9 +42,39 @@ function Navbar() {
     router.push(`/products?query=${formattedQuery}`);
     setSearchTerm("");
   };
-
   const { user } = useUser();
-  console.log("user", user);
+
+  useEffect(() => {
+  const fetchUserLocation = async () => {
+    try {
+      const res = await fetch("/api/users", {
+        headers: {
+          "x-user-id": user?.id,
+        },
+      });
+
+      const data = await res.json();
+      console.log("User Location Data:", JSON.stringify(data));
+
+      const addressArray = data?.user?.address;
+      if (Array.isArray(addressArray) && addressArray.length > 0) {
+        const primaryAddress = addressArray[0];
+        setCity(primaryAddress.city || "Jamshedpur");
+        setStateName(primaryAddress.state || "Jharkhand");
+      }
+    } catch (err) {
+      console.error("Error fetching user location:", err);
+    }
+  };
+
+  if (user?.id) {
+    fetchUserLocation();
+  }
+}, [user]);
+
+
+  
+  
   return (
     <div className="sticky top-0 z-50">
       {/* Top nav */}
@@ -62,8 +94,8 @@ function Navbar() {
         {/* Delivery Location and Search Bar (hidden on mobile, shown on sm and up) */}
         <div className="hidden md:flex flex-grow items-center">
           <div className="text-white ml-8 flex flex-col cursor-pointer">
-            <p className="text-xs">Deliver to Jamshedpur</p>
-            <p className="font-bold text-sm">Update Location</p>
+            <p className="text-xs">Deliver to {city}</p>
+            <p className="font-bold text-sm">{stateName}</p>
           </div>
 
 
@@ -197,8 +229,8 @@ function Navbar() {
           </form>
           <div className="space-y-4">
             <div className="flex flex-col space-y-2">
-              <p className="text-sm">Deliver to Jamshedpur 831014</p>
-              <p className="font-bold">Update Location</p>
+              <p className="text-sm">Deliver to {city}</p>
+              <p className="font-bold">{stateName}</p>
             </div>
             <div className="border-t border-gray-700 pt-4">
               <p className="font-bold mb-2">Account & Lists</p>
