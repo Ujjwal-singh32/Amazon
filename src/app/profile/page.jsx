@@ -10,15 +10,21 @@ import axios from 'axios';
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
 
 // Custom tooltip component for better styling
-const CustomTooltip = ({ active, payload, label }) => {
+
+const CustomTooltip = ({ active, payload, label, unit = "" }) => {
   if (active && payload && payload.length) {
     return (
       <div className="bg-white p-3 rounded-lg shadow-lg border border-gray-100">
         <p className="text-gray-600 font-medium">{label}</p>
-        <p className="text-emerald-600 font-bold">{`${payload[0].value} ${payload[0].name}`}</p>
+        <p className="text-emerald-600 font-bold">
+          <span >
+            {payload[0].value} {unit}
+          </span>
+        </p>
       </div>
     );
   }
+
   return null;
 };
 
@@ -29,54 +35,54 @@ export default function AmazonDashboard() {
   const [loading, setLoading] = useState(true);
 
 
-useEffect(() => {
-  if (!user?.id) return;
+  useEffect(() => {
+    if (!user?.id) return;
 
-  const fetchUserData = async () => {
-    setLoading(true);
-    try {
-      // Step 1: Try to fetch the user
-      const res = await axios.get("/api/users", {
-        headers: {
-          "x-user-id": user.id,
-        },
-      });
-
-      if (res.data?.user) {
-        setUserData(res.data.user);
-      } else {
-        console.warn("User not found. Creating minimal user profile...");
-
-        // Step 2: Create minimal user profile
-        await axios.post("/api/users/create", {
-          userId: user.id,
-          name: user.fullName,
-          email: user.emailAddresses[0]?.emailAddress,
-          phone: user.phoneNumbers[0]?.phoneNumber || "",
-        });
-
-        // Step 3: Re-fetch after creation
-        const reFetch = await axios.get("/api/users", {
+    const fetchUserData = async () => {
+      setLoading(true);
+      try {
+        // Step 1: Try to fetch the user
+        const res = await axios.get("/api/users", {
           headers: {
             "x-user-id": user.id,
           },
         });
 
-        if (reFetch.data?.user) {
-          setUserData(reFetch.data.user);
+        if (res.data?.user) {
+          setUserData(res.data.user);
         } else {
-          console.warn("User still not found after creation.");
-        }
-      }
-    } catch (error) {
-      console.error("Error during fetch or fallback creation:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+          console.warn("User not found. Creating minimal user profile...");
 
-  fetchUserData();
-}, [user]);
+          // Step 2: Create minimal user profile
+          await axios.post("/api/users/create", {
+            userId: user.id,
+            name: user.fullName,
+            email: user.emailAddresses[0]?.emailAddress,
+            phone: user.phoneNumbers[0]?.phoneNumber || "",
+          });
+
+          // Step 3: Re-fetch after creation
+          const reFetch = await axios.get("/api/users", {
+            headers: {
+              "x-user-id": user.id,
+            },
+          });
+
+          if (reFetch.data?.user) {
+            setUserData(reFetch.data.user);
+          } else {
+            console.warn("User still not found after creation.");
+          }
+        }
+      } catch (error) {
+        console.error("Error during fetch or fallback creation:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, [user]);
 
 
 
@@ -107,7 +113,7 @@ useEffect(() => {
   const waterSavedLiters = greenStats.monthlyWaterData.reduce((sum, item) => sum + (item.value || 0), 0);
   const groupedOrders = greenStats.monthlyGroupedOrdersData.reduce((sum, item) => sum + (item.value || 0), 0);
   const forestAreaSavedSqM = greenStats.monthlyCarbonData.reduce((sum, item) => sum + (item.value || 0), 0) * 0.5;
-  const ecoPackages = userData?.ecoPackages || 0; 
+  const ecoPackages = userData?.ecoPackages || 0;
 
   const impactData = [
     { name: 'Emissions Saved', value: emissionsSavedKg },
@@ -309,7 +315,7 @@ useEffect(() => {
                       <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                       <XAxis dataKey="month" stroke="#666" />
                       <YAxis stroke="#666" />
-                      <Tooltip content={<CustomTooltip />} />
+                      <Tooltip content={<CustomTooltip unit="kg CO₂" />} />
                       <Legend />
                       <Area
                         type="monotone"
@@ -336,7 +342,7 @@ useEffect(() => {
                       <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                       <XAxis dataKey="month" stroke="#666" />
                       <YAxis stroke="#666" />
-                      <Tooltip content={<CustomTooltip />} />
+                      <Tooltip content={<CustomTooltip unit="kg" />} />
                       <Legend />
                       <Bar
                         dataKey="value"
@@ -370,7 +376,7 @@ useEffect(() => {
                       <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                       <XAxis dataKey="month" stroke="#666" />
                       <YAxis stroke="#666" />
-                      <Tooltip content={<CustomTooltip />} />
+                      <Tooltip content={<CustomTooltip unit="liters" />} />
                       <Legend />
                       <Line
                         type="monotone"
@@ -397,7 +403,7 @@ useEffect(() => {
                       <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                       <XAxis dataKey="month" stroke="#666" />
                       <YAxis stroke="#666" />
-                      <Tooltip content={<CustomTooltip />} />
+                      <Tooltip content={<CustomTooltip unit="orders" />} />
                       <Legend />
                       <Bar
                         dataKey="value"
@@ -432,7 +438,18 @@ useEffect(() => {
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                   </Pie>
-                  <Tooltip />
+                  <Tooltip
+                    formatter={(value, name) => {
+                      const units = {
+                        "Water Saved": "liters",
+                        "Plastics Avoided": "kg",
+                        "Emissions Saved": "kg CO₂",
+                        "Forest Area Saved": "sqr ft",
+                      };
+                      return [`${value} ${units[name] || ""}`, name];
+                    }}
+                  />
+
                   <Legend />
                 </PieChart>
               </ResponsiveContainer>
