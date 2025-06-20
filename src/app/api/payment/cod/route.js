@@ -13,7 +13,6 @@ export async function POST(req) {
       !order ||
       !order.user ||
       !order.items ||
-      !order.totalAmount ||
       !order.shippingAddress
     ) {
       return NextResponse.json(
