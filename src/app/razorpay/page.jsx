@@ -22,6 +22,19 @@ const PaymentPage = () => {
       router.push("/cart");
     }
   }, [user]);
+  const deductWalletPoints = async (userId, points) => {
+    if (points > 0) {
+      try {
+        await axios.post("/api/wallet", {
+          userId,
+          points,
+        });
+      } catch (err) {
+        console.error("Failed to deduct wallet points:", err);
+      }
+    }
+  };
+
 
   const loadRazorpayScript = () => {
     return new Promise((resolve) => {
@@ -50,7 +63,7 @@ const PaymentPage = () => {
       const orderPayload = storedOrder ? JSON.parse(storedOrder) : null;
 
       if (!orderPayload) return alert("Order info not found");
-
+      console.log("Order payload", orderPayload);
       // 2. Create Razorpay order
       const { data } = await axios.post("/api/payment/create-order", {
         order: orderPayload,
@@ -82,6 +95,8 @@ const PaymentPage = () => {
 
             // Optional: cleanup
             localStorage.removeItem(`checkout_${user.id}`);
+            await deductWalletPoints(orderPayload.user, orderPayload.wallet || 0);
+
             clearCart();
             // 5. Navigate to order placed page
             router.push("/order-placed");
@@ -114,7 +129,7 @@ const PaymentPage = () => {
     setLoading(true);
 
     try {
-      console.log("orderpayload" , JSON.stringify(orderPayload,null,2))
+      console.log("orderpayload", JSON.stringify(orderPayload, null, 2))
       const res = await axios.post("/api/payment/cod", {
         order: orderPayload,
       });
@@ -122,6 +137,8 @@ const PaymentPage = () => {
       if (res.data.success) {
         localStorage.setItem("latest_order", JSON.stringify(res.data.order));
         localStorage.removeItem(`checkout_${user.id}`);
+        await deductWalletPoints(orderPayload.user, orderPayload.wallet || 0);
+
         clearCart();
         router.push("/order-placed");
       } else {
@@ -157,20 +174,26 @@ const PaymentPage = () => {
 
         <button
           onClick={handleRazorpayPayment}
-          disabled={loading}
-          className={`mb-4 w-full bg-green-600 hover:bg-green-700 text-white font-semibold px-8 py-3 rounded-full transition duration-300 transform hover:scale-105 focus:outline-none ${loading ? "opacity-50 cursor-not-allowed" : "animate-pulse"
-            }`}
+          disabled={loading || orderPayload.totalAmount === 0}
+          className={`mb-4 w-full ${orderPayload.totalAmount === 0
+            ? "bg-red-400 text-white cursor-not-allowed"
+            : "bg-green-600 hover:bg-green-700 text-white animate-pulse"
+            } font-semibold px-8 py-3 rounded-full transition duration-300 transform hover:scale-105 focus:outline-none`}
         >
-          {loading ? "Processing..." : `Pay ₹${orderPayload.totalAmount.toFixed(2)} with Razorpay`}
-
+          {orderPayload.totalAmount === 0
+            ? "Not available for ₹0 Orders"
+            : loading
+              ? "Processing..."
+              : `Pay ₹${orderPayload.totalAmount.toFixed(2)} with Razorpay`}
         </button>
+
 
         <button
           onClick={handleCashOnDelivery}
           disabled={loading}
           className="w-full bg-white text-green-700 font-semibold px-8 py-3 rounded-full border-2 border-green-700 hover:bg-green-50 transition duration-300 transform hover:scale-105"
         >
-          {loading ? "Placing Order..." : "Cash on Delivery"}
+          {loading ? "Processing..." : "Cash on Delivery"}
         </button>
       </div>
     </div>

@@ -32,6 +32,7 @@ export default function AmazonCheckout() {
   const [useWallet, setUseWallet] = useState(false);
   const [walletUsed, setWalletUsed] = useState(0);
 
+
   useEffect(() => {
     const data = localStorage.getItem("checkoutSummary");
     if (data) setSummary(JSON.parse(data));
@@ -73,15 +74,6 @@ export default function AmazonCheckout() {
     setShowAddForm(false);
     setIsChanging(false);
 
-    // try {
-    //   await axios.put("/api/users/address", {
-    //     shippingAddress: updatedAddresses,
-    //   }, {
-    //     headers: { "x-user-id": user.id },
-    //   });
-    // } catch (err) {
-    //   console.error("Failed to save address:", err);
-    // }
   };
 
   const calculateTotal = () => {
@@ -110,6 +102,7 @@ export default function AmazonCheckout() {
       deliveryOption: summary.orderType === "group" ? "group" : "individual",
       placedAt: new Date().toISOString(),
       packagingPoints: summary.packaging?.points || 0,
+      wallet:walletUsed
     };
 
     const key = `checkout_${user.id}`;

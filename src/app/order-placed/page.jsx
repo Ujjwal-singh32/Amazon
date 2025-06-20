@@ -98,10 +98,10 @@ const OrderPlacedPage = () => {
         {/* Buttons */}
         <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
           <button
-            onClick={() => router.push("/cart")}
+            onClick={() => router.push("/orders")}
             className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-full transition"
           >
-            Go to Cart
+            Your Orders
           </button>
 
           <button
