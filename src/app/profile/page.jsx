@@ -107,7 +107,7 @@ useEffect(() => {
   const waterSavedLiters = greenStats.monthlyWaterData.reduce((sum, item) => sum + (item.value || 0), 0);
   const groupedOrders = greenStats.monthlyGroupedOrdersData.reduce((sum, item) => sum + (item.value || 0), 0);
   const forestAreaSavedSqM = greenStats.monthlyCarbonData.reduce((sum, item) => sum + (item.value || 0), 0) * 0.5;
-  const ecoPackages = 0; 
+  const ecoPackages = userData?.ecoPackages || 0; 
 
   const impactData = [
     { name: 'Emissions Saved', value: emissionsSavedKg },

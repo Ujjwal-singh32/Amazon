@@ -39,7 +39,6 @@ export async function POST(req) {
       packagingPoints: order.packagingPoints || 0,
       placedAt: new Date(),
     });
-    // console.log("New Order Created:", order);
 
     // Upsert user and update sustainability stats
     const { user: userId, name, email, phone } = order;
@@ -86,6 +85,7 @@ export async function POST(req) {
         memberSince: null,
         isTrustedReviewer: true,
         ordersPlaced: 1,
+        ecoPackages: originalOrder.packagingPoints > 0 ? 1 : 0,
         lastStatsUpdatedAt: new Date(),
         greenStats: {
           monthlyCarbonData: [{ month, value: orderStats.carbon }],
@@ -137,6 +137,7 @@ export async function POST(req) {
           },
           $inc: {
             ordersPlaced: 1,
+            ecoPackages: order.packagingPoints > 0 ? 1 : 0,
           },
           $setOnInsert: {
             isPrimeMember: false,
