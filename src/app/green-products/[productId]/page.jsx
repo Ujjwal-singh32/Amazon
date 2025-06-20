@@ -3,7 +3,7 @@
 import { useParams, useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { products } from "@/assets/assets";
+// import { products } from "@/assets/assets";
 import Navbar from "@/components/Navbar";
 import { useCart } from "@/context/cartContext"; // ⬅️ import this
 import { toast, ToastContainer } from "react-toastify";

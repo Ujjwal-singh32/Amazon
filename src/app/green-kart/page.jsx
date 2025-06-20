@@ -103,7 +103,7 @@ export default function Home() {
             </div>
             <img
               loading="lazy"
-              src="/env2.jpeg"
+              src="/Green_Image.jpeg"
               alt="Green Mission"
               className="w-full md:w-1/2 h-48 md:h-64 rounded-xl shadow-lg object-cover"
             />
