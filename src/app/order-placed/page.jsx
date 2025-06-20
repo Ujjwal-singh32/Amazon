@@ -4,17 +4,25 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { toast } from "react-toastify";
 
 const OrderPlacedPage = () => {
   const router = useRouter();
   const [order, setOrder] = useState(null);
 
   useEffect(() => {
-    const stored = localStorage.getItem("latest_order");
-    // console.log("stored" , stored);
-    if (!stored) return router.push("/");
-    setOrder(JSON.parse(stored));
-  }, []);
+  const stored = localStorage.getItem("latest_order");
+
+  if (!stored) return router.push("/");
+
+  const parsed = JSON.parse(stored);
+  setOrder(parsed);
+
+  toast.success("Order placed successfully!", {
+    toastId: "order-placed-toast" // avoids duplicate toasts
+  });
+}, []);
+
 
   if (!order) return null;
 

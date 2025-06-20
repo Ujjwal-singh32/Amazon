@@ -9,6 +9,7 @@ import Image from 'next/image';
 import { useUser } from "@clerk/nextjs";
 import axios from "axios";
 import { FaWallet } from "react-icons/fa";
+import { toast } from "react-toastify";
 
 export default function AmazonCheckout() {
   const router = useRouter();
@@ -83,11 +84,18 @@ export default function AmazonCheckout() {
   };
 
   const handleProceed = async () => {
-    if (!user) return alert("Please log in");
+  if (!user) {
+    toast.error("Please log in to continue.");
+    return;
+  }
 
-    const selectedAddress = addresses[selectedIndex];
-    if (!selectedAddress) return alert("Select or add a delivery address first");
+  const selectedAddress = addresses[selectedIndex];
+  if (!selectedAddress) {
+    toast.error("Select or add a delivery address first.");
+    return;
+  }
 
+  try {
     const orderPayload = {
       user: user.id,
       items: cartItems.map((item) => ({
@@ -102,13 +110,20 @@ export default function AmazonCheckout() {
       deliveryOption: summary.orderType === "group" ? "group" : "individual",
       placedAt: new Date().toISOString(),
       packagingPoints: summary.packaging?.points || 0,
-      wallet:walletUsed
+      wallet: walletUsed
     };
 
     const key = `checkout_${user.id}`;
     localStorage.setItem(key, JSON.stringify(orderPayload));
+
+    toast.success("Redirecting to payment gateway...");
     router.push("/razorpay");
-  };
+  } catch (error) {
+    console.error("Checkout error:", error);
+    toast.error("Something went wrong during checkout.");
+  }
+};
+
 
   if (!summary) {
     return (

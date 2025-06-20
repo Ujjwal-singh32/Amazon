@@ -8,6 +8,7 @@ import Footer from "@/components/Footer";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { toast } from "react-toastify";
 
 export default function RewardsPage() {
   const { user } = useUser();
@@ -30,31 +31,37 @@ export default function RewardsPage() {
   }, [user]);
 
   const handleRedeem = async (reward) => {
-    if (greenPoints < reward.points) {
-      alert("Not enough points to redeem this reward.");
-      return;
-    }
+  if (greenPoints < reward.points) {
+    toast.error("Not enough points to redeem this reward.");
+    return;
+  }
 
-    setLoading(true);
-    try {
-      await axios.post("/api/rewards/redeem", {
-        userId: user.id,
-        product: {
-          name: reward.name,
-          image: reward.image,
-          greenPoints: reward.points,
-        },
-      });
+  setLoading(true);
+  try {
+    await axios.post("/api/rewards/redeem", {
+      userId: user.id,
+      product: {
+        name: reward.name,
+        image: reward.image,
+        greenPoints: reward.points,
+      },
+    });
 
-      setGreenPoints((prev) => prev - reward.points);
-      alert(`Redeemed ${reward.name} successfully!`);
-    } catch (err) {
-      console.error("Redeem failed", err);
-      alert("Something went wrong while redeeming.");
-    } finally {
-      setLoading(false);
-    }
-  };
+    setGreenPoints((prev) => prev - reward.points);
+
+    toast.success(`🎉 ${reward.name} redeemed successfully!`, {
+      position: "top-right",
+      autoClose: 3000,
+      className: "bg-green-100 text-green-800 font-semibold border border-green-300",
+    });
+  } catch (err) {
+    console.error("Redeem failed", err);
+    toast.error("Something went wrong while redeeming.");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const rewards = [
     {
