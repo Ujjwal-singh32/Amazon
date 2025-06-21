@@ -116,10 +116,10 @@ export default function AmazonDashboard() {
   const ecoPackages = userData?.ecoPackages || 0;
 
   const impactData = [
-    { name: 'Emissions Saved', value: emissionsSavedKg.toFixed(1) },
-    { name: 'Plastics Avoided', value: plasticsAvoidedKg.toFixed(1) },
-    { name: 'Water Saved', value: waterSavedLiters.toFixed(1) },
-    { name: 'Forest Area Saved', value: forestAreaSavedSqM.toFixed(1) }
+    { name: 'Emissions Saved', value: emissionsSavedKg },
+    { name: 'Plastics Avoided', value: plasticsAvoidedKg },
+    { name: 'Water Saved', value: waterSavedLiters },
+    { name: 'Forest Area Saved', value: forestAreaSavedSqM }
   ];
 
   return (
@@ -221,7 +221,7 @@ export default function AmazonDashboard() {
                 <span className="mr-2">☁️</span>
                 <span className="text-sm">Emissions Saved</span>
               </div>
-              <div className="text-xl sm:text-2xl font-bold">{emissionsSavedKg.toFixed(1)} kg CO2</div>
+              <div className="text-xl sm:text-2xl font-bold">{emissionsSavedKg.toFixed(2)} kg CO2</div>
               <div className="text-xs opacity-90">saved this month</div>
               <div className="text-xs mt-1 opacity-80">Equivalent to planting a small tree</div>
             </div>
@@ -231,7 +231,7 @@ export default function AmazonDashboard() {
                 <span className="mr-2">♻️</span>
                 <span className="text-sm">Plastics Avoided</span>
               </div>
-              <div className="text-xl sm:text-2xl font-bold">{plasticsAvoidedKg.toFixed(1)} kg</div>
+              <div className="text-xl sm:text-2xl font-bold">{plasticsAvoidedKg.toFixed(2)} kg</div>
               <div className="text-xs opacity-90">plastic waste prevented</div>
               <div className="text-xs mt-1 opacity-80">Enough to fill a medium recycling bin</div>
             </div>
@@ -256,7 +256,7 @@ export default function AmazonDashboard() {
                 <span className="mr-2">💧</span>
                 <span className="text-sm">Water Saved</span>
               </div>
-              <div className="text-xl sm:text-2xl font-bold">{waterSavedLiters.toFixed(1)} L</div>
+              <div className="text-xl sm:text-2xl font-bold">{waterSavedLiters.toFixed(2)} L</div>
               <div className="text-xs opacity-90">this month</div>
               <div className="text-xs mt-1 opacity-80">Equivalent to 2.5 bathtubs</div>
             </div>
@@ -287,7 +287,7 @@ export default function AmazonDashboard() {
                 <span className="mr-2">🌲</span>
                 <span className="text-sm">Forest Impact</span>
               </div>
-              <div className="text-xl sm:text-2xl font-bold">{forestAreaSavedSqM.toFixed(1)} m²</div>
+              <div className="text-xl sm:text-2xl font-bold">{forestAreaSavedSqM.toFixed(2)} m²</div>
               <div className="text-xs opacity-90">forest area protected</div>
             </div>
           </div>
@@ -305,7 +305,7 @@ export default function AmazonDashboard() {
                 </h3>
                 <div className="h-[300px]">
                   <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={greenStats.monthlyEmissionsData.toFixed(1)}>
+                    <AreaChart data={greenStats.monthlyEmissionsData}>
                       <defs>
                         <linearGradient id="emissionsGradient" x1="0" y1="0" x2="0" y2="1">
                           <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.8} />
@@ -338,7 +338,7 @@ export default function AmazonDashboard() {
                 </h3>
                 <div className="h-[300px]">
                   <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={greenStats.monthlyPlasticsData.toFixed(1)}>
+                    <BarChart data={greenStats.monthlyPlasticsData}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                       <XAxis dataKey="month" stroke="#666" />
                       <YAxis stroke="#666" />
@@ -366,7 +366,7 @@ export default function AmazonDashboard() {
                 </h3>
                 <div className="h-[300px]">
                   <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={greenStats.monthlyWaterData.toFixed(1)}>
+                    <LineChart data={greenStats.monthlyWaterData}>
                       <defs>
                         <linearGradient id="waterGradient" x1="0" y1="0" x2="0" y2="1">
                           <stop offset="5%" stopColor="#0EA5E9" stopOpacity={0.8} />

@@ -14,7 +14,7 @@ export async function POST(req) {
       return NextResponse.json({ error: "Missing userId" }, { status: 400 });
     }
 
-    const months = ["Mar", "Apr", "May"];
+    const months = ["Mar", "Apr", "May" ,"Jun"];
 
     // Unique values for each stat
     const monthlyCarbonData = months.map(month => ({

@@ -188,7 +188,7 @@ export default function HomePage() {
                 key={product.productId}
                 id={product.productId}
                 title={product.name}
-                price={product.basePrice.toFixed(2)}
+                price={product.basePrice}
                 description={product.description}
                 category={product.tags[0]}
                 image={product.images[0] || "https://pngimg.com/uploads/amazon/amazon_PNG11.png"}
@@ -211,7 +211,7 @@ export default function HomePage() {
                   key={product.productId}
                   id={product.productId}
                   title={product.name}
-                  price={product.basePrice.toFixed(2)}
+                  price={product.basePrice}
                   description={product.description}
                   category={product.tags[0]}
                   image={product.images[0] || "https://pngimg.com/uploads/amazon/amazon_PNG11.png"}
@@ -232,7 +232,7 @@ export default function HomePage() {
                   key={product.productId}
                   id={product.productId}
                   title={product.name}
-                  price={product.basePrice.toFixed(2)}
+                  price={product.basePrice}
                   description={product.description}
                   category={product.tags[0]}
                   image={product.images[0] || "https://pngimg.com/uploads/amazon/amazon_PNG11.png"}
@@ -312,7 +312,7 @@ export default function HomePage() {
                 <ProductCard key={product.productId}
                   id={product.productId}
                   title={product.name}
-                  price={product.basePrice.toFixed(2)}
+                  price={product.basePrice}
                   description={product.description}
                   category={product.tags[0]}
                   image={product.images[0] || "https://pngimg.com/uploads/amazon/amazon_PNG11.png"}
