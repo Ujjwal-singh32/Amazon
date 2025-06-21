@@ -53,8 +53,8 @@ export default function HomePage() {
   const [allCategories, setAllCategories] = useState([]);
   const [displayCategories, setDisplayCategories] = useState([]);
   const [visibleCategoryCount, setVisibleCategoryCount] = useState(18); // initial
-  const { totalProducts, loading } = useProduct();
-  // console.log("totalpr", totalProducts);
+  const { homeProducts, loading } = useProduct();
+  // console.log("totalpr", homeProducts);
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [dealsProducts, setDealsProducts] = useState([]);
   const [bestSellers, setBestSellers] = useState([]);
@@ -87,12 +87,12 @@ export default function HomePage() {
   useEffect(() => {
     setIsClient(true);
 
-    if (!totalProducts || totalProducts.length === 0) {
-      console.warn("⚠️ totalProducts is empty or undefined");
+    if (!homeProducts || homeProducts.length === 0) {
+      console.warn("⚠️ homeProducts is empty or undefined");
       return;
     }
 
-    const shuffled = shuffleArray(totalProducts);
+    const shuffled = shuffleArray(homeProducts);
     const maxFeatured = 20;
     const maxDeals = 16;
     const maxBestSellers = 16;
@@ -139,7 +139,7 @@ export default function HomePage() {
 
     // console.log("Sections loaded");
     setLoadingSections(false); // Done loading
-  }, [totalProducts]);
+  }, [homeProducts]);
 
 
   if (showSplash) {
