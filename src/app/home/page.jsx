@@ -188,14 +188,14 @@ export default function HomePage() {
                 key={product.productId}
                 id={product.productId}
                 title={product.name}
-                price={product.basePrice}
+                price={product.basePrice.toFixed(2)}
                 description={product.description}
                 category={product.tags[0]}
                 image={product.images[0] || "https://pngimg.com/uploads/amazon/amazon_PNG11.png"}
                 rating={product.rating || "⭐⭐⭐⭐"}
                 isOrganic={product.isOrganic}
                 sustainableScore={product.sustainableScore}
-                greenPoints={product.greenPoints}
+                greenPoints={product.greenPoints.toFixed(0)}
               />
             ))}
           </div>
@@ -211,14 +211,14 @@ export default function HomePage() {
                   key={product.productId}
                   id={product.productId}
                   title={product.name}
-                  price={product.basePrice}
+                  price={product.basePrice.toFixed(2)}
                   description={product.description}
                   category={product.tags[0]}
                   image={product.images[0] || "https://pngimg.com/uploads/amazon/amazon_PNG11.png"}
                   rating={product.rating || "⭐⭐⭐⭐"}
                   isOrganic={product.isOrganic}
                   sustainableScore={product.sustainableScore}
-                  greenPoints={product.greenPoints}
+                  greenPoints={product.greenPoints.toFixed(0)}
                 />
               ))}
             </ProductSlider>
@@ -232,14 +232,14 @@ export default function HomePage() {
                   key={product.productId}
                   id={product.productId}
                   title={product.name}
-                  price={product.basePrice}
+                  price={product.basePrice.toFixed(2)}
                   description={product.description}
                   category={product.tags[0]}
                   image={product.images[0] || "https://pngimg.com/uploads/amazon/amazon_PNG11.png"}
                   rating={product.rating || "⭐⭐⭐⭐"}
                   isOrganic={product.isOrganic}
                   sustainableScore={product.sustainableScore}
-                  greenPoints={product.greenPoints}
+                  greenPoints={product.greenPoints.toFixed(0)}
                 />
               ))}
             </ProductSlider>
@@ -312,14 +312,14 @@ export default function HomePage() {
                 <ProductCard key={product.productId}
                   id={product.productId}
                   title={product.name}
-                  price={product.basePrice}
+                  price={product.basePrice.toFixed(2)}
                   description={product.description}
                   category={product.tags[0]}
                   image={product.images[0] || "https://pngimg.com/uploads/amazon/amazon_PNG11.png"}
                   rating={product.rating || "⭐⭐⭐⭐"}
                   isOrganic={product.isOrganic}
                   sustainableScore={product.sustainableScore}
-                  greenPoints={product.greenPoints}
+                  greenPoints={product.greenPoints.toFixed(0)}
                 />
 
               ))}

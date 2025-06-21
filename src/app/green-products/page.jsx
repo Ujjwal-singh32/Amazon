@@ -152,14 +152,15 @@ const SearchPageContent  = () => {
                                                 <p className="text-gray-600 text-sm line-clamp-2 h-[38px] mt-1 cursor-pointer"onClick={() => router.push(`/green-products/${product.productId}`)}>
                                                     {product.description}
                                                 </p>
-                                                <p className="text-black font-bold text-lg mt-2">₹{product.basePrice}</p>
+                                                <p className="text-black font-bold text-lg mt-2">₹{product.basePrice.toFixed(2)}</p>
+
 
                                                 {/* Green Points + Sustainable Score */}
                                                 {product.isOrganic && (
                                                     <div className="mt-2 space-y-2">
                                                         <div className="flex justify-between text-xs text-gray-600">
                                                             <span>Green Points</span>
-                                                            <span>{product.greenPoints || 0}</span>
+                                                            <span>{product.greenPoints.toFixed(0) || 0}</span>
                                                         </div>
                                                         <div className="w-full bg-green-100 rounded h-2">
                                                             <div
@@ -186,7 +187,7 @@ const SearchPageContent  = () => {
                                                         addToCart({
                                                             id: product.productId,
                                                             name: product.name,
-                                                            price: product.basePrice,
+                                                            price: product.basePrice.toFixed(2),
                                                             image: product.images?.[0],
                                                         })
                                                     }

@@ -71,7 +71,7 @@ const PaymentPage = () => {
 
       const options = {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-        amount: data.amount,
+        amount: data.amount.toFixed(2),
         currency: data.currency,
         name: "GreenCart",
         description: "Order Payment",

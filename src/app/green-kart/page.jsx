@@ -30,7 +30,7 @@ export default function Home() {
     addToCart({
       id: product.productId,
       title: product.name,
-      price: parseFloat(product.basePrice),
+      price: parseFloat(product.basePrice).toFixed(2),
       description: product.description,
       category: product.category || "Others",
       image: product.images?.[0] || "/default.jpg",
@@ -126,7 +126,7 @@ export default function Home() {
                 <h2 className="text-2xl font-bold text-green-800 mb-4">Featured Organic Products</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
                   {featuredProducts.map((product) => {
-                    const price = parseFloat(product.basePrice) || 0;
+                    const price = parseFloat(product.basePrice).toFixed(2) || 0;
                     const image = product.images?.[0] || "/default.jpg";
                     return (
                       <div
@@ -165,12 +165,12 @@ export default function Home() {
                           <div className="mt-2 space-y-2">
                             <div className="flex justify-between text-xs text-gray-600">
                               <span>Green Points</span>
-                              <span>{product.greenPoints || 0}</span>
+                              <span>{product.greenPoints.toFixed(0) || 0}</span>
                             </div>
                             <div className="w-full bg-green-100 rounded h-2">
                               <div
                                 className="bg-green-500 h-2 rounded"
-                                style={{ width: `${product.greenPoints || 0}%` }}
+                                style={{ width: `${product.greenPoints.toFixed(0) || 0}%` }}
                               />
                             </div>
                             <div className="flex justify-between text-xs text-gray-600 mt-1">

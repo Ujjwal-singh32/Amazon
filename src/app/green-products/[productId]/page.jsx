@@ -115,7 +115,7 @@ const ProductDetailsPage = () => {
         addToCart({
             id: item.productId,
             name: item.name,
-            price: item.basePrice,
+            price: item.basePrice.toFixed(2),
             image: item.images[0],
             size: size,
             quantity: 1,
@@ -195,7 +195,7 @@ const ProductDetailsPage = () => {
                         </p>
                         <p className="text-gray-700 text-sm mb-4">{product.description}</p>
                         <p className="text-purple-700 font-bold text-lg sm:text-xl mb-4">
-                            ₹{product.basePrice}
+                            ₹{product.basePrice.toFixed(2)}
                         </p>
                         {product.isOrganic && (
                             <div className="bg-gradient-to-br from-green-50 via-emerald-50 to-lime-100 border border-emerald-200 rounded-xl p-5 mb-6 text-sm space-y-4 shadow-sm">
@@ -316,7 +316,7 @@ const ProductDetailsPage = () => {
                                 <div className="flex flex-col justify-between flex-grow p-4">
                                     <div className="flex flex-col gap-1">
                                         <p className="text-sm font-medium text-center line-clamp-2 cursor-pointer" onClick={() => router.push(`/green-products/${item.productId}`)}>{item.name}</p>
-                                        <p className="text-center text-purple-700 font-bold">₹{item.basePrice}</p>
+                                        <p className="text-center text-purple-700 font-bold">₹{item.basePrice.toFixed(2)}</p>
 
                                         {/* Show only for Organic Products */}
                                         {isOrganic ? (

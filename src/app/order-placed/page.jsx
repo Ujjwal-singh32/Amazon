@@ -68,7 +68,7 @@ const OrderPlacedPage = () => {
                 {order.items?.map((item, idx) => (
                   <li key={idx} className="text-sm text-gray-800">
                     Product ID: {item.productId} × {item.quantity} — ₹
-                    {item.priceAtPurchase}
+                    {item.priceAtPurchase.toFixed(2)}
                   </li>
                 ))}
               </ul>
