@@ -116,10 +116,10 @@ export default function AmazonDashboard() {
   const ecoPackages = userData?.ecoPackages || 0;
 
   const impactData = [
-    { name: 'Emissions Saved', value: emissionsSavedKg },
-    { name: 'Plastics Avoided', value: plasticsAvoidedKg },
-    { name: 'Water Saved', value: waterSavedLiters },
-    { name: 'Forest Area Saved', value: forestAreaSavedSqM }
+    { name: 'Emissions Saved', value: emissionsSavedKg.toFixed(1) },
+    { name: 'Plastics Avoided', value: plasticsAvoidedKg.toFixed(1) },
+    { name: 'Water Saved', value: waterSavedLiters.toFixed(1) },
+    { name: 'Forest Area Saved', value: forestAreaSavedSqM.toFixed(1) }
   ];
 
   return (
@@ -241,7 +241,7 @@ export default function AmazonDashboard() {
                 <span className="mr-2">🎯</span>
                 <span className="text-sm">Green Points</span>
               </div>
-              <div className="text-2xl font-bold">{greenPoints}</div>
+              <div className="text-2xl font-bold">{greenPoints.toFixed(0)}</div>
               <div className="text-xs opacity-90 mb-3">Current Balance</div>
               <button
                 className="bg-white hover:bg-yellow-300 text-green-800 font-medium px-3 py-1 rounded text-xs transition duration-200 w-full sm:w-auto"
@@ -305,7 +305,7 @@ export default function AmazonDashboard() {
                 </h3>
                 <div className="h-[300px]">
                   <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={greenStats.monthlyEmissionsData}>
+                    <AreaChart data={greenStats.monthlyEmissionsData.toFixed(1)}>
                       <defs>
                         <linearGradient id="emissionsGradient" x1="0" y1="0" x2="0" y2="1">
                           <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.8} />
@@ -338,7 +338,7 @@ export default function AmazonDashboard() {
                 </h3>
                 <div className="h-[300px]">
                   <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={greenStats.monthlyPlasticsData}>
+                    <BarChart data={greenStats.monthlyPlasticsData.toFixed(1)}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                       <XAxis dataKey="month" stroke="#666" />
                       <YAxis stroke="#666" />
@@ -366,7 +366,7 @@ export default function AmazonDashboard() {
                 </h3>
                 <div className="h-[300px]">
                   <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={greenStats.monthlyWaterData}>
+                    <LineChart data={greenStats.monthlyWaterData.toFixed(1)}>
                       <defs>
                         <linearGradient id="waterGradient" x1="0" y1="0" x2="0" y2="1">
                           <stop offset="5%" stopColor="#0EA5E9" stopOpacity={0.8} />

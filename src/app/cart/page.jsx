@@ -237,7 +237,7 @@ export default function AmazonCart() {
                         </div>
                       )}
                       <div className="text-sm text-gray-600 mt-1">
-                        {option.price === 0 ? "FREE" : `₹${option.price}`}
+                        {option.price === 0 ? "FREE" : `₹${option.price.toFixed(2)}`}
                       </div>
                     </div>
                   </div>
@@ -351,11 +351,11 @@ export default function AmazonCart() {
                   </div>
                   <div className="flex justify-between">
                     <span>Packaging fee:</span>
-                    <span>₹{packagingPrice}</span>
+                    <span>₹{packagingPrice.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between text-green-600">
                     <span>Discount:</span>
-                    <span>- ₹{discount}</span>
+                    <span>- ₹{discount.toFixed(2)}</span>
                   </div>
                   <hr />
                   <div className="flex justify-between text-xl font-bold">
@@ -386,7 +386,7 @@ export default function AmazonCart() {
                         key: packaging,
                         title: options.find((opt) => opt.key === packaging)?.title,
                         desc: options.find((opt) => opt.key === packaging)?.desc,
-                        price: packagingDetails.price,
+                        price: packagingDetails.price.toFixed(2),
                         points: packagingDetails.points,
                       },
                       itemsTotal: itemsTotal,

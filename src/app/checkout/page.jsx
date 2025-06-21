@@ -80,7 +80,7 @@ export default function AmazonCheckout() {
   const calculateTotal = () => {
     if (!summary) return 0;
     const base = getTotalPrice() + (summary.shipping || 0) + (summary.packaging?.price || 0) - (summary.discount || 0);
-    return Math.max(0, base - (useWallet ? walletUsed : 0));
+    return Math.max(0, base.toFixed(2) - (useWallet ? walletUsed : 0));
   };
 
   const handleProceed = async () => {
@@ -101,7 +101,7 @@ export default function AmazonCheckout() {
       items: cartItems.map((item) => ({
         productId: item.id,
         quantity: item.quantity,
-        priceAtPurchase: item.price,
+        priceAtPurchase: item.price.toFixed(2),
       })),
       totalAmount: calculateTotal(),
       paymentStatus: "pending",
@@ -251,7 +251,7 @@ export default function AmazonCheckout() {
                         Selected Packaging: {summary.packaging?.title}
                       </div>
                       <div className="text-sm text-blue-600">{summary.packaging?.desc}</div>
-                      <div className="text-sm text-blue-500 mt-1">Cost: ₹{summary.packaging?.price}</div>
+                      <div className="text-sm text-blue-500 mt-1">Cost: ₹{summary.packaging?.price.toFixed(2)}</div>
                     </div>
                     <Truck className="text-blue-600" />
                   </div>
@@ -294,7 +294,7 @@ export default function AmazonCheckout() {
                     <div className="flex-1">
                       <p className="font-medium text-sm">{item.name}</p>
                       <p className="text-xs text-gray-500">Qty: {item.quantity}</p>
-                      <p className="font-semibold">₹{(item.price * item.quantity).toFixed(2)}</p>
+                      <p className="font-semibold">₹{(item.price.toFixed(2) * item.quantity).toFixed(2)}</p>
                     </div>
                   </div>
                 ))}

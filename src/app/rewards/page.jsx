@@ -226,7 +226,7 @@ export default function RewardsPage() {
                     variant="secondary"
                     className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold tracking-wide shadow"
                   >
-                    {product.points} Points
+                    {product.points.toFixed(0)} Points
                   </Badge>
                   <span className="text-gray-400 line-through text-sm">
                     {product.price}
