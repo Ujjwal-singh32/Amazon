@@ -62,10 +62,26 @@ export default function HomePage() {
   const [loadingSections, setLoadingSections] = useState(true);
   const [showSplash, setShowSplash] = useState(true);
 
+
+
   useEffect(() => {
-    const timeout = setTimeout(() => setShowSplash(false), 3000);
+  const hasSeen = sessionStorage.getItem("hasSeenHomeSplash");
+
+  if (!hasSeen) {
+    // First time: show splash for 2.5s
+    const timeout = setTimeout(() => {
+      sessionStorage.setItem("hasSeenHomeSplash", "true");
+      setShowSplash(false);
+    }, 2500);
     return () => clearTimeout(timeout);
-  }, []);
+  } else {
+    // Skip splash if already seen
+    setShowSplash(false);
+  }
+}, []);
+
+
+
 
   // Guard any DOM-dependent logic until after hydration
   useEffect(() => {
@@ -126,7 +142,7 @@ export default function HomePage() {
   }, [totalProducts]);
 
 
-  if (!isClient || loadingSections || showSplash) {
+  if (showSplash) {
     return <AmazonWelcomeAnimation />;
   }
 

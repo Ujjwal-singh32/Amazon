@@ -115,17 +115,19 @@ for group in shipment_groups:
         continue
     discount = round(SHIPPING_FEE / group_size, 2)
     for item in group:
+        discount_value = round(100 - discount, 2)
+
         result = orders_collection.update_one(
             {"_id": ObjectId(item["orderId"])},
-            {"$set": {"discount": 100-discount}}
+            {"$set": {"discount": discount_value}}
         )
         order = orders_collection.find_one({"_id": ObjectId(item["orderId"])})
 
         user_collection.update_one(
             {"userId": order["user"]},
-            {"$inc": {"walletPoints": 100-discount}}
+            {"$inc": {"walletPoints": discount_value}}
         )
-        print(f" Updated order {item['orderId']} with discount {100-discount}")
+        print(f" Updated order {item['orderId']} with discount {discount_value}")
 
 # 🗺️ Generate Map
 m = folium.Map(location=[22.9734, 78.6569], zoom_start=5)

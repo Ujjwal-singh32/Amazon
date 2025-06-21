@@ -17,7 +17,13 @@ export default function Home() {
   const { organicProducts: products } = useProduct();
 
   const [visibleCategoryCount, setVisibleCategoryCount] = useState(30);
-  const [showIntro, setShowIntro] = useState(true);
+  const [showIntro, setShowIntro] = useState(() => {
+  if (typeof window !== 'undefined') {
+    return !sessionStorage.getItem("hasSeenGreenIntro");
+  }
+  return true;
+});
+
   const [isLoading, setIsLoading] = useState(true);
 
   const handleAddToCart = (product) => {
@@ -80,7 +86,13 @@ export default function Home() {
     ) : (
       <>
       {showIntro ? (
-        <GoGreenIntro onComplete={() => setShowIntro(false)} />
+        <GoGreenIntro
+          onComplete={() => {
+            sessionStorage.setItem("hasSeenGreenIntro", "true");
+            setShowIntro(false);
+          }}
+        />
+
       ) : (
         <>
           <GreenNavbar />

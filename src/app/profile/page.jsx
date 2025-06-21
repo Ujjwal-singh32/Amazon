@@ -446,7 +446,10 @@ export default function AmazonDashboard() {
                         "Emissions Saved": "kg CO₂",
                         "Forest Area Saved": "sqr ft",
                       };
-                      return [`${value} ${units[name] || ""}`, name];
+                      const formatted = typeof value === "number"
+                        ? value.toFixed(2)
+                        : value;
+                      return [`${formatted} ${units[name] || ""}`, name];
                     }}
                   />
 
