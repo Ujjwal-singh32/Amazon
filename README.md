@@ -10,7 +10,7 @@ Due to the large file size of the AI model and some technical constraints, we we
 
 Please refer to the attached PDF for a detailed demonstration of the prototype in action.
 
-**[📄 View the Working Prototype Demo (PDF)](./public/Prototype%20HackOn-S5.pdf)**
+**[📄 View the Working Prototype Demo (PDF) on Google Drive](https://drive.google.com/file/d/1VQgCOtPETcsS1JYC76N428RzUEkishtN/view?usp=sharing)**
 
 ---
 
