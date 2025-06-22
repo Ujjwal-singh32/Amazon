@@ -117,6 +117,12 @@ src/
 
 ## 7. 🖼️ Demo
 
+Due to the large file size of the AI model and some technical constraints, we were unable to deploy the full working prototype online. However, to ensure transparency and showcase our solution, we have attached a PDF that provides a comprehensive walkthrough of the working prototype, including key features, user flows, and screenshots.
+
+Please refer to the attached PDF for a detailed demonstration of the prototype in action.
+
+**[📄 View the Working Prototype Demo (PDF)](./public/Prototype%20HackOn-S5.pdf)**
+
 ---
 
 ## 8. 🚀 Towards Scalibility
