@@ -4,7 +4,17 @@
 
 ---
 
-## 1. 🚩 Problem Statement
+## 1. 🖼️ Demo
+
+Due to the large file size of the AI model and some technical constraints, we were unable to deploy the full working prototype online. However, to ensure transparency and showcase our solution, we have attached a PDF that provides a comprehensive walkthrough of the working prototype, including key features, user flows, and screenshots.
+
+Please refer to the attached PDF for a detailed demonstration of the prototype in action.
+
+**[📄 View the Working Prototype Demo (PDF)](./public/Prototype%20HackOn-S5.pdf)**
+
+---
+
+## 2. 🚩 Problem Statement
 Eco-conscious shoppers face real barriers:
 - Scattered sustainable options across platforms
 - Lack of trust due to greenwashing and unclear certifications
@@ -13,7 +23,7 @@ Eco-conscious shoppers face real barriers:
 
 ---
 
-## 2. 💡 Solution Overview
+## 3. 💡 Solution Overview
 We developed a one-stop, AI-powered platform for sustainable shopping. where in we:
 - Centralized verified eco-friendly products
 - Offered transparent eco-grading and impact stats
@@ -22,7 +32,7 @@ We developed a one-stop, AI-powered platform for sustainable shopping. where in 
 
 ---
 
-## 3. 🌟 Key Features
+## 4. 🌟 Key Features
 ### AI-Driven Discovery
 - Smart search and filter for green/organic products
 - Eco-scores and badges for verified sustainable products
@@ -56,7 +66,7 @@ We developed a one-stop, AI-powered platform for sustainable shopping. where in 
 
 ---
 
-## 4. 🛒 User Journey (Step-by-Step)
+## 5. 🛒 User Journey Walkthrough
 1. **Discover:**
    - AI suggests eco-products based on the user's search
    - Browse GreenKart for verified sustainable options
@@ -76,7 +86,7 @@ We developed a one-stop, AI-powered platform for sustainable shopping. where in 
 
 ---
 
-## 5. 📊 Impact & Metrics (Futuristic)
+## 6. 📊 Impact & Metrics (Futuristic)
 - 🚚 45% less CO₂ in last-mile delivery (group buying)
 - ♻ 2kg plastic saved per user/month (eco-packaging)
 - 📈 2.5x more eco-decisions (impact tracking & rewards)
@@ -84,7 +94,7 @@ We developed a one-stop, AI-powered platform for sustainable shopping. where in 
 
 ---
 
-## 6. 🏗️ Tech Stack & Architecture
+## 7. 🏗️ Tech Stack & Architecture
 - **Frontend:** Next.js 15, React 19, Tailwind CSS, Recharts
 - **Backend:** Next.js API Routes, Node.js, MongoDB
 - **Auth:** Clerk
@@ -115,16 +125,6 @@ src/
 
 ---
 
-## 7. 🖼️ Demo
-
-Due to the large file size of the AI model and some technical constraints, we were unable to deploy the full working prototype online. However, to ensure transparency and showcase our solution, we have attached a PDF that provides a comprehensive walkthrough of the working prototype, including key features, user flows, and screenshots.
-
-Please refer to the attached PDF for a detailed demonstration of the prototype in action.
-
-**[📄 View the Working Prototype Demo (PDF)](./public/Prototype%20HackOn-S5.pdf)**
-
----
-
 ## 8. 🚀 Towards Scalibility
 - **Marketplace Expansion:** Electronics, fashion, home goods, and more
 - **Smarter AI:** Multilingual, context-aware, always learning
@@ -133,8 +133,7 @@ Please refer to the attached PDF for a detailed demonstration of the prototype i
 
 ---
 
-## 9. 👥 Team & Acknowledgements
-**Team CLUE CREW:**
+## 9. 👥 Team Members
 - Aditya Tiwari
 - Rohit Ratnam
 - Ujjwal Singh
