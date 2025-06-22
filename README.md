@@ -14,7 +14,7 @@ Eco-conscious shoppers face real barriers:
 ---
 
 ## 2. 💡 Solution Overview
-We developed a one-stop, AI-powered, community-driven platform for sustainable shopping. where in we:
+We developed a one-stop, AI-powered platform for sustainable shopping. where in we:
 - Centralized verified eco-friendly products
 - Offered transparent eco-grading and impact stats
 - Enabled group buying and eco-packaging selection
@@ -22,25 +22,23 @@ We developed a one-stop, AI-powered, community-driven platform for sustainable s
 
 ---
 
-## 3. 🌟 Key Features (In-Depth)
+## 3. 🌟 Key Features
 ### AI-Driven Discovery
-- Personalized product recommendations based on user profile and purchase history
 - Smart search and filter for green/organic products
 - Eco-scores and badges for verified sustainable products
 
 ### Green Store
 - Dedicated GreenKart section for only organic/eco-friendly products
-- Each product displays sustainability metrics: carbon saved, water saved, plastic avoided, green points
+- Each product displays sustainability metrics: carbon saved, water saved, plastic avoided, sustainability score
 - Dynamic badges and eco-grades (A–E) on product cards
 
 ### Smart Cart & Eco-Checkout
-- Add/remove/update items, quantity management
 - Choose between Minimalist, Compostable, or Reusable packaging at checkout
 - Group order option to consolidate deliveries and reduce emissions
 - Real-time calculation of carbon savings and green points
 
 ### Impact Dashboard
-- User dashboard with graphs for:
+- User dashboard with visual data for:
   - Carbon saved
   - Water saved
   - Plastic avoided
@@ -50,17 +48,17 @@ We developed a one-stop, AI-powered, community-driven platform for sustainable s
 ### Rewards & Gamification
 - Earn green points for every sustainable action (eco-purchase, group order, eco-packaging)
 - Redeem points for eco-friendly rewards (e.g., bamboo cutlery, solar power bank)
-- Leaderboards and badges for top contributors
 
 ### Admin/Product Management
 - Add new products with detailed sustainability metrics and images
 - Dynamic product variety, pricing, and stock management
+- Shipment handling for group buy
 
 ---
 
 ## 4. 🛒 User Journey (Step-by-Step)
 1. **Discover:**
-   - AI suggests eco-products based on your profile
+   - AI suggests eco-products based on the user's search
    - Browse GreenKart for verified sustainable options
 2. **Shop:**
    - Add products to cart
@@ -74,7 +72,6 @@ We developed a one-stop, AI-powered, community-driven platform for sustainable s
    - Access personal impact dashboard
 5. **Engage:**
    - Redeem green points for rewards
-   - Compete on leaderboards
    - Invite friends and build local eco-communities
 
 ---
@@ -88,12 +85,11 @@ We developed a one-stop, AI-powered, community-driven platform for sustainable s
 ---
 
 ## 6. 🏗️ Tech Stack & Architecture
-- **Frontend:** Next.js 15, React 19, Tailwind CSS, Recharts, Lottie
-- **Backend:** Next.js API Routes, Node.js, MongoDB (Mongoose)
+- **Frontend:** Next.js 15, React 19, Tailwind CSS, Recharts
+- **Backend:** Next.js API Routes, Node.js, MongoDB
 - **Auth:** Clerk
 - **Payments:** Razorpay
 - **Media:** Cloudinary
-- **Other:** Lucide/Heroicons, React Context API, Toastify
 
 ### Folder Structure
 ```
@@ -117,19 +113,9 @@ src/
 - **Order:**
   - User, items, total, payment & order status, shipping address, delivery option, packaging points, placedAt
 
-### Key Components
-- **Navbar/GreenNavbar:** Navigation, search, user menu
-- **ProductCard/ProductSlider:** Product display with eco-badges
-- **Cart/Checkout:** Cart management, packaging selection, group order
-- **Profile:** Impact dashboard, stats charts
-- **Rewards:** Redeem green points for eco-products
-
 ---
 
-## 7. 🖼️ Screenshots
-| Home Page | GreenKart Dashboard | Rewards |
-|-----------|--------------------|---------|
-| ![Home](Image.jpg) | ![Dashboard](Image.jpg) | ![Rewards](Image.jpg) |
+## 7. 🖼️ Demo
 
 ---
 
