@@ -6,7 +6,7 @@
 
 ## 1. 🖼️ Demo
 
-Due to the large file size of the AI model and some technical constraints, we were unable to deploy the full working prototype online. However, to ensure transparency and showcase our solution, we have attached a PDF that provides a comprehensive walkthrough of the working prototype, including key features, user flows, and screenshots.
+As student developers working within free-tier infrastructure limits, we prioritized enterprise-grade architecture and modular scalability over constrained demo deployment. While the full AI-powered prototype is not live due to resource limitations, we’ve provided a comprehensive PDF walkthrough to transparently showcase the complete user flow and feature set — demonstrating the project’s readiness for real-world deployment at scale.
 
 Please refer to the attached PDF for a detailed demonstration of the prototype in action.
 
