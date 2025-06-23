@@ -6,7 +6,7 @@
 
 ## 1. 🖼️ Demo
 
-As student developers working within free-tier infrastructure limits, we prioritized enterprise-grade architecture and modular scalability over constrained demo deployment. While the full AI-powered prototype is not live due to resource limitations, we’ve provided a comprehensive PDF walkthrough to transparently showcase the complete user flow and feature set — demonstrating the project’s readiness for real-world deployment at scale.
+Deployed Link : https://amazon-app-gules.vercel.app/home
 
 Please refer to the attached PDF for a detailed demonstration of the prototype in action.
 
